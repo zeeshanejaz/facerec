@@ -1,0 +1,30 @@
+The core face recognition code was written at Colorado State
+University by the following people:
+
+  Beveridge, Ross
+  Bolme, David
+  She, Kai
+  Teixeira, Marcio
+
+----
+
+The eigensolver (src/csuSubspaceCVEigen.c) is written by
+Dmitry Abrosimov and was taken from the Intel Open Computer
+Vision Library. The full library can be downloaded here:
+
+  http://www.intel.com/research/mrl/research/opencv/
+
+Please see the LICENSE file for the license governing
+that library
+
+----
+
+The files "extras/gnuplot_i.*" files are from the
+gnuplot_i module by N. Devillard. The complete
+package (including documentation), can be
+obtained from:
+
+  http://ndevilla.free.fr/gnuplot/gnuplot_i/index.html
+
+Please see the LICENSE file for the license governing
+these files
