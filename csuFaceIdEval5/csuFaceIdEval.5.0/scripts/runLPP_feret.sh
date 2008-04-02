@@ -12,7 +12,7 @@ run() {
 
 run mkdir -p train/feret
 
-# Running standard feret PCA training.
+# Running feret LPP training.
 
 run csuSubspaceTrain -lpp -t 2 -k 4 -imDir data/FERET/normSep2002sfi imagelistsferet_training.srt train/feret/feretLPP.train
 
@@ -24,4 +24,4 @@ run mkdir -p distances/feret/LPP_Euclidean
 # Projecting face images onto LPP basis and computing distances
 
 run csuSubspaceProject -imDir data/FERET/normSep2002sfi train/feret/feretLPP.train iimagelists/all.srt distances/feret/LPP_Euclidean Euclidean
-run echo 'Indicator file used by the scripts to know whether the data in this directory is valid' > distances/scraps/lppDataExists.txt
+run echo 'Indicator file used by the scripts to know whether the data in this directory is valid' > distances/feret/lppDataExists.txt
