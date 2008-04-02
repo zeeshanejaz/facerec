@@ -21,7 +21,7 @@ run csuSubspaceTrain -lda -imDir data/FERET/normSep2002sfi imagelists/feret_trai
 rm -rf distances/feret/LDA_ldaSoft
 run mkdir -p distances/feret/LDA_ldaSoft
 
-# Projecting face images onto PCA basis and computing distances
+# Projecting face images onto LDA basis and computing distances
 
 run csuSubspaceProject -imDir data/FERET/normSep2002sfi train/feret/feretLDA.train imagelists/all.srt distances/feret/LDA_ldaSoft ldaSoft
 
