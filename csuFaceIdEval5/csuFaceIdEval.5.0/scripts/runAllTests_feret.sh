@@ -16,6 +16,7 @@ run() {
 run scripts/runPreprocessing_feret.sh
 run scripts/runPCA_feret.sh
 run scripts/runLDA_feret.sh
+run scripts/runLPP_feret.sh
 run scripts/runBayesian_feret.sh
 run scripts/makeRankCurves_feret.sh
 extras/plotRankCurves.py -html
