@@ -558,5 +558,40 @@ matrixSumOfSquares (Matrix m)
   return sumOfSquares;
 }
 
+/*START: Changed by Zeeshan: for LPP*/
+/*B if is a positive definitive matrix, then
+We can find B = LL' using cholesky decomposition
+returns L*/
+Matrix choleskyDecomposition (Matrix B)
+{
+	int i, j;
+	Matrix LP = makeZeroMatrix(B->row_dim, B->col_dim);
 
+	//iterate over lower matrix only
+	for( i = 0 ; i < B->row_dim ; i++ )
+		for( j = 0 ; j <= i ; j++ )
+		{
+			if(i == j)
+				ME(LP, i, j) = sqrt(ME(B, i, j) - computeDigonalSum(LP, i, i));
+			else
+				ME(LP, i, j) = (ME(B, i, j) - computeDigonalSum(LP, i, j) ) / ME(LP, j, j);
+		}
 
+	return LP;
+}
+
+/*used by cholesky decomposition, computes sum 
+	upto a specified row and specified column*/
+FTYPE computeDigonalSum (Matrix LP, int i, int j)
+{
+	int k;
+	FTYPE Sum = 0;
+	
+	for(k = 0; k < j; k++)
+	{
+		Sum = Sum + (ME(LP, i, k) * ME(LP, j, k));
+	}
+
+	return Sum;
+}
+/*END: Changed by Zeeshan: for LPP*/

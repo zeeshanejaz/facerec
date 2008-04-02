@@ -120,4 +120,11 @@ FTYPE matrixSumOfSquares (Matrix mat);
 
 void printMatrix(const char* label, Matrix m);
 
+/*START: Changed by Zeeshan: for LPP*/
+Matrix choleskyDecomposition (Matrix B);
+/*used by cholesky decomposition, computes sum 
+	upto a specified row and specified column*/
+FTYPE computeDigonalSum (Matrix LP, int i, int j);
+/*END: Changed by Zeeshan: for LPP*/
+
 #endif

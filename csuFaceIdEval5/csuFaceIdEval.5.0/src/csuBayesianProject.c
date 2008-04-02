@@ -227,7 +227,10 @@ FTYPE
 computeRho (Subspace *s)
 {
   int i;
-  FTYPE tmp = 0.0;
+  FTYPE tmp = 1.0;
+  
+  if(CONST_Nt(s) == CONST_M(s))
+	return tmp;
 
   tmp = 0.0;
   for (i = CONST_M(s); i < CONST_Nt(s); i++)

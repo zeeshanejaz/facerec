@@ -30,6 +30,17 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 */
 
+/*
+Changes Under License Permision By Zeeshan Ejaz Bhatti
+Center for Advanced Studies in Engineering, Islamabad, Pakistan.
+Implementation of Laplacianfaces Algorithm for Face Recognition
+November 2007...
+
+Changes in this file:
+	Changed the struct Subspace for support LPP
+	Changed function prototype declaration	
+*/
+
 #ifndef CSU_COMMON_SUBSPACE_INCLUDED
 #define CSU_COMMON_SUBSPACE_INCLUDED
 
@@ -61,9 +72,20 @@ typedef struct
   CutOffMode cutOffMode;
   double cutOff;
   int dropNVectors;
+
+  /*START 	Changed by Zeeshan: For LPP*/
+  int useLPP;
+  int neighbourCount;
+  double t;
+  /*END 	Changed by Zeeshan: For LPP*/
 } Subspace;
 
-void subspaceTrain (Subspace *s, Matrix images, ImageList *srt, int numSubjects, int dropNVectors, CutOffMode cutOffMode, double cutOff, int useLDA, int writeTextInterm);
+void subspaceTrain (Subspace *s, Matrix images, ImageList *srt, int numSubjects, int dropNVectors, CutOffMode cutOffMode, double cutOff, int useLDA, int writeTextInterm
+  /*START 	Changed by Zeeshan: For LPP*/
+  ,int useLPP, int neighbourCount, double t
+  /*END 	Changed by Zeeshan: For LPP*/
+);
+
 void writeSubspace (Subspace *s, char *training_filename, char *imageList, int argc, char**argv);
 void readSubspace (Subspace *s, const char* trainingFile, int quiet);
 

@@ -30,13 +30,28 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 */
 
+/*
+Changes Under License Permision By Zeeshan Ejaz Bhatti
+Center for Advanced Studies in Engineering, Islamabad, Pakistan.
+Implementation of Laplacianfaces Algorithm for Face Recognition
+November 2007...
+
+Changes in this file:
+	Changed the struct Subspace for support LPP
+	Changed function prototype declaration	
+*/
+
 #include <csuCommon.h>
 
 /* How many lines in the training file header have useful text */
-#define TRAINING_HEADER_ENTRIES 10
+#define TRAINING_HEADER_ENTRIES 13	//Changed by Zeeshan: For LPP 
 
 void
-subspaceTrain (Subspace *s, Matrix images, ImageList *srt, int numSubjects, int dropNVectors, CutOffMode cutOffMode, double cutOff, int useLDA, int writeTextInterm)
+subspaceTrain (Subspace *s, Matrix images, ImageList *srt, int numSubjects, int dropNVectors, CutOffMode cutOffMode, double cutOff, int useLDA, int writeTextInterm
+   /*START Changed by Zeeshan: For LPP*/
+   ,int useLPP, int neighbourCount, double t
+   /*END Changed by Zeeshan: For LPP*/
+)
 {
   int i;
   Matrix m;
@@ -53,6 +68,18 @@ subspaceTrain (Subspace *s, Matrix images, ImageList *srt, int numSubjects, int 
 
   s->numSubjects    = numSubjects;
   s->numPixels      = images->row_dim;
+
+  /*START Changed by Zeeshan: For LPP*/
+   s->useLPP 	    = useLPP;
+   s->neighbourCount= neighbourCount;
+   s->t		    = t;
+
+  /*********************************************************************
+   * STEP ZERO: Make sure LDA and LPP are executed exclusively
+   ********************************************************************/
+  DEBUG_CHECK (!(s->useLDA && s->useLPP), "Either LDA or LPP should be executed.");
+  /*END Changed by Zeeshan: For LPP*/
+
 
   /*********************************************************************
    * STEP ONE: Calculate the eigenbasis
@@ -232,6 +259,37 @@ subspaceTrain (Subspace *s, Matrix images, ImageList *srt, int numSubjects, int 
       s->values = fisherValues;
       s->basis  = combinedBasis;
     }
+
+  /*START Changed by Zeeshan: For LPP*/
+  /*********************************************************************
+   * STEP FOUR: Do the LPP if specified
+   ********************************************************************/
+  if (s->useLPP)
+    {
+      /* Need to project original images into PCA space */
+
+      Matrix laplacianBasis, laplacianValues, combinedBasis;
+      Matrix imspca = transposeMultiplyMatrixL (s->basis, images);
+      
+      MESSAGE("Computing Locality Preservation Projections for "
+	      "training images projected into PCA subspace.");
+
+      laplacianTrain (s, imspca, &laplacianBasis, &laplacianValues, writeTextInterm);
+
+      combinedBasis = multiplyMatrix (s->basis, laplacianBasis);
+      basis_normalize (combinedBasis);
+     
+// saveMatrixAscii("/root/Desktop/pca.mat", "PCA", s->basis, matlabFormat);
+// saveMatrixAscii("/root/Desktop/lpp.mat", "LPP", laplacianBasis, matlabFormat);
+// saveMatrixAscii("/root/Desktop/com.mat", "COM", combinedBasis, matlabFormat);
+
+      MESSAGE2ARG ("PCA and LPP Combined. Combined projection expressed as %d by "
+		   "%d matrix.", combinedBasis->row_dim, combinedBasis->col_dim);
+
+      s->values = laplacianValues;
+      s->basis  = combinedBasis;
+    }
+  /*END Changed by Zeeshan: For LPP*/
 }
 
 /**
@@ -251,8 +309,14 @@ subspaceTrain (Subspace *s, Matrix images, ImageList *srt, int numSubjects, int 
    line7: BASIS_VALUE_COUNT = <number of eigen values>
    line8: BASIS_VECTOR_COUNT = <number of eigen vectors>
    line9: DROPPED_FROM_FRONT = <zero or more dropped from front>
-   line10 -> line256: RESERVED
- 
+
+*END Changed by Zeeshan: For LPP*
+   line10: USE_LPP = <true if lpp was turned on>
+   line11: NEIGHBOURS = <no. k-neighbours for LPP>
+   Line12: T = <the value for T for weight computation>
+   line13 -> line256: RESERVED
+*END Changed by Zeeshan: For LPP* 
+
    If the additional entries are added to the header, increment the variable
    TRAINING_HEADER_ENTRIES
 */
@@ -299,10 +363,16 @@ writeSubspace (Subspace *s, char *training_filename, char *imageList, int argc, 
   fprintf (file, "BASIS_VECTOR_COUNT = %d\n", s->basis->col_dim);
   fprintf (file, "DROPPED_FROM_FRONT = %d\n", s->dropNVectors);
 
-  for (i = 11; i < 256; i++){
+  fprintf (file, "USE_LPP = %s\n", s->useLPP ? "YES" : "NO" );
+  fprintf (file, "NEIGHBOURS = %d\n", s->neighbourCount);
+  fprintf (file, "T = %e\n", s->t);
+
+  for (i = 14; i < 256; i++){
     fprintf (file, "\n");
   }
 
+/**/
+  
   /* write out the pixel count */
   writeInt (file, s->mean->row_dim);
 
@@ -380,6 +450,19 @@ readSubspace (Subspace *s, const char* trainingFile, int quiet)
     else
       s->useLDA = 1;
 
+
+/*START: Changed by Zeeshan: for LPP*/
+    sscanf(header[10], "%s%*s%s", junk, text);
+
+    if (strcmp(text, "NO") == 0)
+      s->useLPP = 0;
+    else
+      s->useLPP = 1;
+
+//TODO: read t and neighbour count
+/*END: Changed by Zeeshan: for LPP*/
+
+
     readInt (file,&rowDim);
     s->numPixels = rowDim;
     DEBUG_INT (3, "Vector size", rowDim);
@@ -442,8 +525,8 @@ centerThenProjectImages (Subspace *s, Matrix images)
 
 /*
  This function reads images in to a vector.  That vector is then mean subtracted
- and then projected onto an optimal basis (PCA or LDA).  Returned is a matrix that
- contains the images after they have been projected onto the subspace.
+ and then projected onto an optimal basis (PCA, LDA or LPP). Returned is a matrix
+ that contains the images after they have been projected onto the subspace.
  */
 Matrix
 readAndProjectImages (Subspace *s, char *imageNamesFile, char *imageDirectory, int *numImages, ImageList **srt)

@@ -61,6 +61,12 @@ typedef struct
   double cutOff;
   int dropNVectors;
 
+/*START: Changed by Zeeshan: for LPP*/
+  int uselpp;
+  int k_lpp;
+  int t_lpp;
+/*END: Changed by Zeeshan: for LPP*/ 
+
   int argc;
   char **argv;
 }
@@ -99,6 +105,13 @@ void usage(const char* name)
   printf("          CLASSES         Retains as many eigenvectors as there LDA Classes: use only with LDA.\n");
   printf("                          Ignores cutOff value and uses number of classes instead\n");
   printf("     -cutOff <percent>:   Percentage of eigen vectors to retain (see cutOffMode).\n        DEFAULT = (See cutoff mode)\n");
+
+/*START: Changed by Zeeshan: for LPP*/
+  printf("    -lpp:    		   enable lpp training. (Must not use LDA when ON)\n        DEFAULT = PCA Only\n");
+  printf("    -k <int>:    	   neighbourhood count for LPP.\n        DEFAULT = 5\n");
+  printf("    -t <double>:    	   value of \"t\" for weight map.\n      DEFAULT = 5.0\n");
+/*END: Changed by Zeeshan: for LPP*/
+ 
   printf ("    -quiet:                Turn off all messages.\n"
 	  "        DEFAULT = messages on\n");
   printf ("    -debuglevel <int>:     Level of debug information to display"
@@ -134,6 +147,12 @@ process_command (int argc, char **argv, Arguments * args)
   args->cutOff          = DEFAULT_CUTOFF_PERCENT_SIMPLE;
   args->dropNVectors    = 0;
 
+/*START: Changed by Zeeshan: for LPP*/
+  args->uselpp          = 0;
+  args->k_lpp          	= 5;
+  args->t_lpp          	= 5;
+/*END: Changed by Zeeshan: for LPP*/
+
   debuglevel = 0;
 
   /******* Read command line arguments *******/
@@ -168,6 +187,12 @@ process_command (int argc, char **argv, Arguments * args)
       { args->cutOffMode = CUTOFF_STRETCH; }
     else if (readOptionMatch(argc, argv, &i, "-cutOffMode", "CLASSES"))
       { args->cutOffMode = CUTOFF_CLASSES; }
+
+/*START: Changed by Zeeshan: for LPP*/
+    else if (readOption (argc, argv, &i, "-lpp" ))                     { args->uselpp = 1; }
+    else if (readOptionInt (argc, argv, &i, "-k", &(args->k_lpp) ))    {}
+    else if (readOptionInt (argc, argv, &i, "-t", &(args->t_lpp) ))    {}
+/*END: Changed by Zeeshan: for LPP*/
 
     else if (readOptionDouble (argc, argv, &i, "-cutOff", &(args->cutOff)))
       {
@@ -399,12 +424,19 @@ main (int argc, char *argv[])
 
   MESSAGE("Training intrapersonal subspace");
 
-  subspaceTrain (&intraSubspace, intraImages, NULL, args.nIntrapersonal, args.dropNVectors, args.cutOffMode, args.cutOff, 0, 0);
+  subspaceTrain (&intraSubspace, intraImages, NULL, args.nIntrapersonal, args.dropNVectors, args.cutOffMode, args.cutOff, 0, 0
+/*START Changed by Zeeshan: For LPP*/
+ ,args.uselpp, args.k_lpp , (double)args.t_lpp
+/*END Changed by Zeeshan: For LPP*/
+);
 
   MESSAGE("Training extrapersonal subspace");
 
-  subspaceTrain (&extraSubspace, extraImages, NULL, args.nExtrapersonal, args.dropNVectors, args.cutOffMode, args.cutOff, 0, 0);
-
+  subspaceTrain (&extraSubspace, extraImages, NULL, args.nExtrapersonal, args.dropNVectors, args.cutOffMode, args.cutOff, 0, 0
+/*START Changed by Zeeshan: For LPP*/
+ ,args.uselpp, args.k_lpp , (double)args.t_lpp
+/*END Changed by Zeeshan: For LPP*/
+);
   MESSAGE("Saving intrapersonal training file");
 
   sprintf (filename, "%s.intra", args.trainingFilename);

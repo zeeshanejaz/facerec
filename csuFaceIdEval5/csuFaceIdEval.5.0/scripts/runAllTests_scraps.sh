@@ -16,4 +16,5 @@ run() {
 run scripts/runPreprocessing_scraps.sh
 run scripts/runPCA_scraps.sh
 run scripts/runLDA_scraps.sh
+run scripts/runLPP_scraps.sh
 run scripts/runBayesian_scraps.sh

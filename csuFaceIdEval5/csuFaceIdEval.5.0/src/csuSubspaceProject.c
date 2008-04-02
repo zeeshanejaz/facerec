@@ -571,7 +571,7 @@ int main(int argc, char *argv[]) {
     MESSAGE(VERSION);
     process_command(argc, argv, &args);
 
-    readSubspace (&subspace, args.trainingFile, quiet);
+    readSubspace (&subspace, args.trainingFile, 0);
 
     SAVE_MATRIX(subspace.values);
     MESSAGE1ARG("Reading image data from directory %s and projecting onto the new basis.", args.imageDirectory);

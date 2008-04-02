@@ -214,7 +214,7 @@ void eigentrain(Matrix *mean, Matrix *eigen_vals,
     DEBUG(1, "Verifying eigenbasis");
     if (debuglevel >= 3)
         basis_verify(images, *eigen_base);
-
+	
     /* The eigenvectors for the smaller covariance (snap shot) are not needed */
     freeMatrix(eigenvectors);
 }

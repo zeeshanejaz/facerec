@@ -61,6 +61,11 @@ typedef struct {
   int writeTextBasis;
   int writeTextValues;
   int writeTextInterm;
+/*START: Changed by Zeeshan: for LPP*/
+  int uselpp;
+  int k_lpp;
+  int t_lpp;
+/*END: Changed by Zeeshan: for LPP*/ 
   int argc;
   char **argv;
 }
@@ -91,6 +96,11 @@ void usage(const char* prog) {
   printf("         CLASSES         Retains as many eigenvectors as there LDA Classes: use only with LDA.\n");
   printf("                         Ignores cutOff value and uses number of classes instead\n");
   printf("    -cutOff <percent>:   Percentage of eigen vectors to retain (see cutOffMode).\n        DEFAULT = (See cutoff mode)\n");
+/*START: Changed by Zeeshan: for LPP*/
+  printf("    -lpp:    		   enable lpp training. (Must not use LDA when ON)\n        DEFAULT = PCA Only\n");
+  printf("    -k <int>:    	   neighbourhood count for LPP.\n        DEFAULT = 5\n");
+  printf("    -t <double>:    	   value of \"t\" for weight map.\n      DEFAULT = 5.0\n");
+/*END: Changed by Zeeshan: for LPP*/
   printf("    -writeTextBasis:     Causes the program to print the basis vectors to text files.\n        DEFAULT = No\n");
   printf("    -writeTextValues:    Causes the program to print the basis values to text files.\n        DEFAULT = No\n");
   printf("    -writeTextInterm:    Causes the program to print intermediate matricies.\n        DEFAULT = No\n");
@@ -133,6 +143,11 @@ void process_command(int argc, char** argv, Arguments* args) {
   args->writeTextBasis  = 0;
   args->writeTextValues = 0;
   args->writeTextInterm = 0;
+/*START: Changed by Zeeshan: for LPP*/
+  args->uselpp          = 0;
+  args->k_lpp          	= 3;
+  args->t_lpp          	= 5;
+/*END: Changed by Zeeshan: for LPP*/
   debuglevel = 0;
 
   for (i = 1;i < argc;i++) {
@@ -169,6 +184,13 @@ void process_command(int argc, char** argv, Arguments* args) {
       }   
 
     else if (readOption (argc, argv, &i, "-lda" ))                     { args->uselda = 1; }
+
+/*START: Changed by Zeeshan: for LPP*/
+    else if (readOption (argc, argv, &i, "-lpp" ))                     { args->uselpp = 1; }
+    else if (readOptionInt (argc, argv, &i, "-k", &(args->k_lpp) ))    {}
+    else if (readOptionInt (argc, argv, &i, "-t", &(args->t_lpp) ))    {}
+/*END: Changed by Zeeshan: for LPP*/
+
     else if (readOption (argc, argv, &i, "-writeTextBasis" ))          { args->writeTextBasis = 1; }
     else if (readOption (argc, argv, &i, "-writeTextValues" ))         { args->writeTextValues = 1; }
     else if (readOption (argc, argv, &i, "-writeTextInterm" ))         { args->writeTextInterm = 1; }
@@ -259,7 +281,11 @@ main(int argc, char *argv[])
   images = readImages(args.imageList, args.imageDirectory, &args.vecLength,
 		      &numImages, &numSubjects, &srt);
   
-  subspaceTrain (&subspace, images, srt, numSubjects, args.dropNVectors, args.cutOffMode, args.cutOff, args.uselda, args.writeTextInterm);
+  subspaceTrain (&subspace, images, srt, numSubjects, args.dropNVectors, args.cutOffMode, args.cutOff, args.uselda, args.writeTextInterm
+/*START Changed by Zeeshan: For LPP*/
+ ,args.uselpp, args.k_lpp , (double)args.t_lpp
+/*END Changed by Zeeshan: For LPP*/
+);
 
   /* Write out text files for basis and values */
   if (args.writeTextBasis)
