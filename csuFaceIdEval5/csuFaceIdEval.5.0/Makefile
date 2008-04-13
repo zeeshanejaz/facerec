@@ -44,11 +44,11 @@ vpath %.o $(OBJ_DIR)
 FILES_COMMON        = csuCommonMatrix csuCommonFile csuCommonUtil csuCommonSubspace \
                       csuCommonCommandLine csuCommonImage csuEBGMUtil csuEBGMSimilarity
 
-# Alas, csuCommonSubspace.c now depends on csuSubspace[Eigen|Fisher|CVEigen]
-FILES_COMMON2       = $(FILES_COMMON) csuSubspaceEigen csuSubspaceFisher csuSubspaceCVEigen
+# Alas, csuCommonSubspace.c now depends on csuSubspace[Eigen|Fisher|Laplacian|CVEigen]
+FILES_COMMON2       = $(FILES_COMMON) csuSubspaceEigen csuSubspaceFisher csuSubspaceLaplacian csuSubspaceCVEigen
 
-
-FILES_TRAIN         = csuSubspaceEigen csuSubspaceFisher csuSubspaceTrain csuSubspaceCVEigen $(FILES_COMMON2)
+#Change by Zeeshan for LPP
+FILES_TRAIN         = csuSubspaceEigen csuSubspaceFisher csuSubspaceLaplacian csuSubspaceTrain csuSubspaceCVEigen $(FILES_COMMON2)
 FILES_PROJECT       = csuSubspaceProject $(FILES_COMMON2)
 FILES_PERMUTE       = csuAnalyzePermute $(FILES_COMMON2)
 FILES_RANKCURVE     = csuAnalyzeRankCurve $(FILES_COMMON2)
