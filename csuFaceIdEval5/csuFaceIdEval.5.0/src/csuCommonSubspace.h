@@ -110,5 +110,5 @@ Matrix get_mean_image (Matrix images);
 /* subspace training functions */
 void eigentrain (Matrix *mean, Matrix *eigen_vals, Matrix *eigen_base, Matrix images);
 void fisherTrain (Matrix imspca, ImageList *srt, Matrix *fisherBasis, Matrix *fisherValues, int writeTextInterm);
-
+void laplacianTrain (Subspace * s, Matrix imspca, Matrix * laplacianBasis, Matrix * laplacianValues, int writeTextInterm);
 #endif /* CSU_COMMON_SUBSPACE_INCLUDED */

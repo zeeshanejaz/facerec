@@ -33,6 +33,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 #include <csuCommonCommandLine.h>
 #include <csuCommonSubspace.h>
 
+
 #define CHECK_VALS
 
 #define STANDARD_IMAGE_DIRECTORY "./data/normSep2002sfi"

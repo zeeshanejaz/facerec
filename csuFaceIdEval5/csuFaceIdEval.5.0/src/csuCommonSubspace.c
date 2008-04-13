@@ -42,6 +42,7 @@ Changes in this file:
 */
 
 #include <csuCommon.h>
+//#include <csuSubspaceLaplacian.c>
 
 /* How many lines in the training file header have useful text */
 #define TRAINING_HEADER_ENTRIES 13	//Changed by Zeeshan: For LPP 
@@ -279,9 +280,9 @@ subspaceTrain (Subspace *s, Matrix images, ImageList *srt, int numSubjects, int 
       combinedBasis = multiplyMatrix (s->basis, laplacianBasis);
       basis_normalize (combinedBasis);
      
-// saveMatrixAscii("/root/Desktop/pca.mat", "PCA", s->basis, matlabFormat);
-// saveMatrixAscii("/root/Desktop/lpp.mat", "LPP", laplacianBasis, matlabFormat);
-// saveMatrixAscii("/root/Desktop/com.mat", "COM", combinedBasis, matlabFormat);
+ saveMatrixAscii("/root/Desktop/pca.mat", "PCA", s->basis, matlabFormat);
+ saveMatrixAscii("/root/Desktop/lpp.mat", "LPP", laplacianBasis, matlabFormat);
+ saveMatrixAscii("/root/Desktop/com.mat", "COM", combinedBasis, matlabFormat);
 
       MESSAGE2ARG ("PCA and LPP Combined. Combined projection expressed as %d by "
 		   "%d matrix.", combinedBasis->row_dim, combinedBasis->col_dim);

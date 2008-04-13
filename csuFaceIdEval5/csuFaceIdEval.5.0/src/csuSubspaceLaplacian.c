@@ -1,5 +1,5 @@
-#include "csuSubspaceLaplacian.h"
-void laplacianTrain (Subspace*s, Matrix imspca, Matrix * laplacianBasis, Matrix * laplacianValues, int writeTextInterm)
+#include <csuSubspaceLaplacian.h>
+void laplacianTrain (Subspace * s, Matrix imspca, Matrix * laplacianBasis, Matrix * laplacianValues, int writeTextInterm)
 {	
 	int i;
 	Matrix Data, Dist, L;
@@ -93,7 +93,7 @@
 	/* Numerical roundoff errors may lead to small negative values.
      	Strip those before saving the matrix. */
 
-	subtractMatrix(laplacianValues - 1);
+	subtractScalarFromMatrix(*laplacianValues, 1);
   	m = *laplacianValues;
 
 	for (i = 0; i < m->row_dim; i++)

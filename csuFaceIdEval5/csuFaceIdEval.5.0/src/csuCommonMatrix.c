@@ -23,6 +23,16 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 */
 
+/*
+Changes Under License Permision By Zeeshan Ejaz Bhatti
+Center for Advanced Studies in Engineering, Islamabad, Pakistan.
+Implementation of Laplacianfaces Algorithm for Face Recognition
+November 2007...
+
+Changes in this file:
+	Added a new function to subtract a scalar value from a matrix
+*/
+
 #include <csuCommon.h>
 
 int alloc_matrix = 0;
@@ -373,6 +383,23 @@ Matrix weightedLeastSquares(Matrix A, Matrix b, Matrix W){
     }
     return a;
 }
+/*START:	Changed By Zeeshan For LPP*/
+
+/*Function for subtracting a scalar value from a matrix*/
+void subtractScalarFromMatrix (Matrix A, const int n) {
+    /** output A - n */
+    
+    int i, j;
+    DEBUG(10, "Subtracting Scalar from  Matrix");
+
+    for (i = 0; i < A->row_dim; i++) {
+        for (j = 0; j < A->col_dim; j++) {
+            ME(A, i, j) = ME(A, i, j) - n;
+        }
+    }
+}
+
+/*END:		Changed By Zeeshan For LPP*/
 
 Matrix subtractMatrix(const Matrix A, const Matrix B) {
     /** output A - B */

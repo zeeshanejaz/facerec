@@ -23,6 +23,16 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 */
 
+/*
+Changes Under License Permision By Zeeshan Ejaz Bhatti
+Center for Advanced Studies in Engineering, Islamabad, Pakistan.
+Implementation of Laplacianfaces Algorithm for Face Recognition
+November 2007...
+
+Changes in this file:
+	Added a new function to subtract a scalar value from a matrix
+*/
+
 #ifndef MATRIX_INCLUDED
 #define MATRIX_INCLUDED
 
@@ -75,6 +85,11 @@ Matrix multiplyMatrix (const Matrix A, const Matrix B);
 Matrix transposeMultiplyMatrixL (const Matrix A, const Matrix B);
 /* creates a new matrix that is the product of A and (B transpose) */
 Matrix transposeMultiplyMatrixR (const Matrix A, const Matrix B);
+
+/*START: Changed by Zeeshan for LPP*/
+/* A - n */
+void subtractScalarFromMatrix (Matrix A, const int n);
+/*END: Changed by Zeeshan for LPP*/
 
 /* A - B */
 Matrix subtractMatrix (const Matrix A, const Matrix B);
