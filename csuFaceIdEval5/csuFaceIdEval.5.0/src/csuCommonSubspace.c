@@ -79,6 +79,8 @@ subspaceTrain (Subspace *s, Matrix images, ImageList *srt, int numSubjects, int 
    * STEP ZERO: Make sure LDA and LPP are executed exclusively
    ********************************************************************/
   DEBUG_CHECK (!(s->useLDA && s->useLPP), "Either LDA or LPP should be executed.");
+  if (s->useLPP)
+  	
   /*END Changed by Zeeshan: For LPP*/
 
 
@@ -270,20 +272,15 @@ subspaceTrain (Subspace *s, Matrix images, ImageList *srt, int numSubjects, int 
       /* Need to project original images into PCA space */
 
       Matrix laplacianBasis, laplacianValues, combinedBasis;
-      Matrix imspca = transposeMultiplyMatrixL (s->basis, images);
+      Matrix imspca = transposeMultiplyMatrixL (s->basis, images);           
       
       MESSAGE("Computing Locality Preservation Projections for "
 	      "training images projected into PCA subspace.");
 
-      laplacianTrain (s, imspca, &laplacianBasis, &laplacianValues, writeTextInterm);
-
+      laplacianTrain (imspca, srt, &laplacianBasis, &laplacianValues, neighbourCount, writeTextInterm);
       combinedBasis = multiplyMatrix (s->basis, laplacianBasis);
       basis_normalize (combinedBasis);
-     
- saveMatrixAscii("/root/Desktop/pca.mat", "PCA", s->basis, matlabFormat);
- saveMatrixAscii("/root/Desktop/lpp.mat", "LPP", laplacianBasis, matlabFormat);
- saveMatrixAscii("/root/Desktop/com.mat", "COM", combinedBasis, matlabFormat);
-
+   
       MESSAGE2ARG ("PCA and LPP Combined. Combined projection expressed as %d by "
 		   "%d matrix.", combinedBasis->row_dim, combinedBasis->col_dim);
 

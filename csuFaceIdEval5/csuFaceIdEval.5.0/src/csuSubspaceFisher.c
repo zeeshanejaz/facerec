@@ -222,7 +222,7 @@ void fisherTrain(Matrix imspca, ImageList *srt, Matrix *fisherBasis, Matrix *fis
 
 
     MESSAGE("Computing eigenspace decomposition of within class scatter matrix.");
-    cvJacobiEigens_64d(Mw->data, Rw->data, Ev->data, Mw->row_dim, 0.0);
+    cvJacobiEigens_64d(Mw->data, Rw->data, Ev->data, Mw->row_dim, 0.0, 1);
 
     MESSAGE("Computing the inverse scale matrix derived from eigenvalues and transformed scatter matrix.");
     for (i = 0; i < Ev->row_dim; i++)
@@ -242,7 +242,7 @@ void fisherTrain(Matrix imspca, ImageList *srt, Matrix *fisherBasis, Matrix *fis
     } /* output textfiles of intermediate matrices */
 
     MESSAGE("Computing eigenspace of transformed between class scatter matrix.");
-    cvJacobiEigens_64d(N->data, Evecs->data, (*fisherValues)->data, N->row_dim, 0.0);
+    cvJacobiEigens_64d(N->data, Evecs->data, (*fisherValues)->data, N->row_dim, 0.0, 1);
     DEBUG(3, "FINSISHED");
 
     Tmp = multiplyMatrix(Siw, Evecs);

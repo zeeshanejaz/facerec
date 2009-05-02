@@ -100,7 +100,7 @@ Matrix readAndProjectImages (Subspace *s, char *imageNamesFile, char *imageDirec
 
 /* eigensolvers found in csuSubspaceCVEigen */
 int  cvJacobiEigens_32f ( float* A, float* V, float* E, int n, float eps );
-int  cvJacobiEigens_64d ( double* A, double* V, double* E, int n, double eps );
+int  cvJacobiEigens_64d ( double* A, double* V, double* E, int n, double eps, int desc );
 
 /* basis manipulation */
 void basis_normalize (Matrix eigenvectors);
@@ -110,5 +110,6 @@ Matrix get_mean_image (Matrix images);
 /* subspace training functions */
 void eigentrain (Matrix *mean, Matrix *eigen_vals, Matrix *eigen_base, Matrix images);
 void fisherTrain (Matrix imspca, ImageList *srt, Matrix *fisherBasis, Matrix *fisherValues, int writeTextInterm);
-void laplacianTrain (Subspace * s, Matrix imspca, Matrix * laplacianBasis, Matrix * laplacianValues, int writeTextInterm);
+//void laplacianTrain (Subspace * s, Matrix imspca, Matrix * laplacianBasis, Matrix * laplacianValues, int writeTextInterm);
+void laplacianTrain (Matrix imspca,  ImageList *srt, Matrix * laplacianBasis, Matrix * laplacianValues, int K, int writeTextInterm);
 #endif /* CSU_COMMON_SUBSPACE_INCLUDED */

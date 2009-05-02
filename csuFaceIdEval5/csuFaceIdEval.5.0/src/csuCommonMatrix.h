@@ -136,6 +136,9 @@ FTYPE matrixSumOfSquares (Matrix mat);
 void printMatrix(const char* label, Matrix m);
 
 /*START: Changed by Zeeshan: for LPP*/
+
+void initializeMatrix(Matrix X, int value);
+
 Matrix choleskyDecomposition (Matrix B);
 /*used by cholesky decomposition, computes sum 
 	upto a specified row and specified column*/

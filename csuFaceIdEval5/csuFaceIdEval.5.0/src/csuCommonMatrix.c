@@ -84,6 +84,13 @@ Matrix makeZeroMatrix(int row_dim, int col_dim) {
 }
 
 
+void initializeMatrix(Matrix X, int value)
+{
+	int i, j;
+	for(i = 0; i < X->row_dim; i++)
+		for(j = 0; j < X->row_dim; j++)
+			ME(X, i, j) = value;
+}
 
 void freeMatrix(Matrix A) {
     /** frees the area allocated to a matrix */

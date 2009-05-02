@@ -1,7 +1,7 @@
 /**
-File: csuSubspaceProject.c                                                     
-Authors: J. Ross Beveridge, David Bolme, Kai She                            
-Date: May 24, 2002                                                       
+File: csuSubspaceProject.c
+Authors: J. Ross Beveridge, David Bolme, Kai She
+Date: May 24, 2002
 */
 
 /*
@@ -69,7 +69,7 @@ Arguments;
 
 /* ----------------------------------------------------------------------------------- */
 /* Remind the user the usage of running this program.
-   The command of running the program should be: run and the index of the training sets. 
+   The command of running the program should be: run and the index of the training sets.
    All the other sets except the training sets will go to testing sets automatically.
    INPUT:  prog is the excutable program name.
 */
@@ -169,12 +169,12 @@ void process_command(int argc, char** argv, Arguments* args) {
  New distance measure functions. These functions take a single matrix of
  column vectors, each column representing a different image after projection
  into subspace. They also take the column indices of the two images to be
- compared. 
- 
+ compared.
+
  All of these functions return "distances" in the sense that smaller is better.
  So, for example, covariance and correlation are flipped and shifted so that
  zero is the best score between two images.
- 
+
  The last measures also take the variance estimates for the subspace dimension,
  in other words the eigenvalues from the subspace decomposition. These are used
  to normalize measures by variance along the dimensions.
@@ -203,11 +203,11 @@ FTYPE distanceEuclidean(const Matrix ims, int i, int j) {
 
 
 /* This is the standard covariance definition, it is the cosine
- of the angle between the two vectors. When the vectors are 
- identical, it is 1.0, when they are orthogonal, it is zero. 
- 
+ of the angle between the two vectors. When the vectors are
+ identical, it is 1.0, when they are orthogonal, it is zero.
+
  However, in order produce a distance, this function returns
- one minus the covariance. 
+ one minus the covariance.
 */
 
 FTYPE distanceCovariance(const Matrix ims, int i, int j) {
@@ -297,7 +297,7 @@ FTYPE distanceMahCosine(Matrix ims, int i, int j, Matrix values) {
     FTYPE scale_i = 0.0;
     FTYPE scale_j = 0.0;
     FTYPE sum = 0.0;
-    
+
     if(first_call){
         first_call = 0;
         optVals = duplicateMatrix(values);
@@ -313,7 +313,7 @@ FTYPE distanceMahCosine(Matrix ims, int i, int j, Matrix values) {
         ME(vj,k,0) = ME(ims,k,j)*ME(optVals,k,0);
         sum_j += ME(vj,k,0)*ME(vj,k,0);
     }
-    
+
     scale_i = 1.0/sqrt(sum_i);
     scale_j = 1.0/sqrt(sum_j);
 
@@ -391,7 +391,7 @@ FTYPE distanceMahL1(const Matrix ims, int i, int j, const Matrix values) {
             ME(optVals,k,0) = 1.0/sqrt(ME(values, k, 0));
         }
     }
-    
+
     for (k = 0; k < ims->row_dim; k++) {
         sum += ABS(ME(ims, k, i) - ME(ims, k, j)) * ME(optVals,k,0);
     }
@@ -517,6 +517,7 @@ Matrix computeDistances(const Matrix ims, const Matrix values, int numImages, ch
         exit(1);
     }
 
+
     return distances;
 }
 
@@ -540,18 +541,18 @@ void writeDistancesForImage(char* distDirectory, char* filename, const Matrix di
 
 /* ===========================================================================
  MAIN
- 
+
  The arguments are processed and then the subspace and related information is
  read from the training file written by csuSubspaceTrain.  The subspace basis
- is read into a matrix. If the basis vectors are for a PCA subspace, then the 
- basis vectors are tested for orthonormality. While this should not be 
- necessary, it is a prudent check to see that nothing has gone wrong either 
+ is read into a matrix. If the basis vectors are for a PCA subspace, then the
+ basis vectors are tested for orthonormality. While this should not be
+ necessary, it is a prudent check to see that nothing has gone wrong either
  in the training phase or in the transcription of the subspace basis from the
- training code to the testing code. 
- 
- Once the training information is read, then the images specified in the 
- imageNamesFile are read into the images matrix. This matrix is then mean 
- centered using the mean, or centroid, associated with the training data. 
+ training code to the testing code.
+
+ Once the training information is read, then the images specified in the
+ imageNamesFile are read into the images matrix. This matrix is then mean
+ centered using the mean, or centroid, associated with the training data.
  Next, the images are projected into subspace and the distances between all
  pairs of images are computed. Finally, these distances are written to files,
  one per image.
@@ -574,9 +575,11 @@ int main(int argc, char *argv[]) {
     readSubspace (&subspace, args.trainingFile, 0);
 
     SAVE_MATRIX(subspace.values);
+    
     MESSAGE1ARG("Reading image data from directory %s and projecting onto the new basis.", args.imageDirectory);
     subspims = readAndProjectImages(&subspace, args.imageNamesFile, args.imageDirectory, &numImages, &srt);
 
+    
     for (ddn = args.distList; ddn != NULL; ddn = ddn->next) {
         MESSAGE1ARG("Computing distances with distance measure %s.", ddn->distName);
         distances = computeDistances(subspims, subspace.values, numImages, ddn->distName);

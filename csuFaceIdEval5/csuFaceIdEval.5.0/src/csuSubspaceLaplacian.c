@@ -1,99 +1,77 @@
 #include <csuSubspaceLaplacian.h>
-void laplacianTrain (Subspace * s, Matrix imspca, Matrix * laplacianBasis, Matrix * laplacianValues, int writeTextInterm)
+void laplacianTrain (Matrix imspca, ImageList *srt, Matrix * laplacianBasis, Matrix * laplacianValues, int K, int writeTextInterm)
 {	
 	int i;
 	Matrix Data, Dist, L;
-	Matrix D, DPrime1, B;
+	Matrix D, DPrime1, B, BInv;
 	Matrix W, LPrime1, A;
-	Matrix LCHOL, LCHOLInv, LCHOLInv_x_A;
-	Matrix laplacianImages;
-	Matrix meanValues, m;
+	Matrix laplacianImages, m;
 
 	//we will use Data as input matrix
 	Data = imspca;
 
 	//computing the distances between image vectors
 	Dist = ComputeDistanceMatrix(Data);
-
+	
 	//Computing neighbourhood weight map	
-	W = findWMatrix(Dist, s->neighbourCount, s->t);
+	W = findWMatrix(Dist, K);
+	MakeSymmetric(W);
+	
+	//Apply class info	
+	//applyClassInfo(W, srt);
 
 	//computing sum of rows into diagonal matrix	
 	D = findDMatrix(W);
 	
-	L = findLMatrix(W, D);
+	//L = W - D
+	L = findLMatrix(W, D);	
 
 	//B = Data * D * Data'
 	DPrime1 = multiplyMatrix(Data, D);
 	B = transposeMultiplyMatrixR(DPrime1, Data);
-	MakeSymmetric(B);
+	MakeSymmetric(B);	
 
 	//A = Data * L * Data'
 	//Minimization eigen problem is solved using maximum eigen solution
 	//use W instead of L, see seciton below to see why
-	LPrime1 = multiplyMatrix(Data, W);
+	LPrime1 = multiplyMatrix(Data, L);
 	A = transposeMultiplyMatrixR(LPrime1, Data);
-	MakeSymmetric(A);
+	MakeSymmetric(A);	
 	
 /*
 	We need to solve the generalized eigen value problem
-	(Data * L * Data') * V = neta * (Data * D * Data') * V
-	(Data * (W-D) * Data') * V = neta * (Data * D * Data') * V
-	(Data * W * Data') * V - (Data * D * Data') * V = lembda * (Data * D * Data') * V
-	(Data * W * Data') * V = neta * (Data * D * Data') * V + (Data * D * Data') * V
-	(Data * W * Data') * V = (neta + 1) * (Data * D * Data') * V
+	(Data * L * Data') * V = lembda * (Data * D * Data') * V
 
-	here we put
-	lembda = neta + 1
-
-	(Data * W * Data') * V = lembda * (Data * D * Data') * V
-
-	REQUEST FOR COMMENT
-	if we ADD 1 to the eigenvalue for maximization problem,
-	it gives us the minimum value solutions????????????????
-
-	Substituting Symbols
-		(Data * L * Data') = A
-		(Data * D * Data') = B
-	
-	The problem becomes
+	which is basically the generalized eigen vector problem
 	A * V = lemba * B * V
 	
-	Since B is a positive definitive matrix,
-	We can perform cholesky decomposition
-	B = l * l'
-
+	Since B is a positive definitive matrix, its inverse can be computed
 	this makes our problem as	
-	A * V = lemba * l * l' * V
-	(l^-1 * A * l'^-1) * V = lemba * V
+	(B^-1) * (A) * V = lemba * V
 	
 	substitute symbol	
-		(l^-1 * A * l'^-1) = C
+		(B^-1) * (A) = C
 	
 	the problem becomes simple eigen value problem
 	C * V = lemba * V
 */
 
-	//Perform cholesky decomposition over positive definitive matrix B
-	LCHOL = choleskyDecomposition(B);
-
 	//Taking its inverse
-	LCHOLInv = invertRREF(LCHOL);
+	BInv = invertRREF(B);
 	
 	//Computing laplacianImages
-	LCHOLInv_x_A = multiplyMatrix(LCHOLInv, A);
-	laplacianImages = transposeMultiplyMatrixR(LCHOLInv_x_A, LCHOLInv);
+	laplacianImages = multiplyMatrix(BInv, A);
+	(*laplacianBasis) = makeMatrix(laplacianImages->row_dim, laplacianImages->col_dim);
+	(*laplacianValues) = makeMatrix(laplacianImages->row_dim, 1);
+	//MakeSymmetric(laplacianImages);	
 
-	printf("Computing laplacianfaces.\n");
-	
-	eigentrain (&meanValues, laplacianValues, laplacianBasis, laplacianImages);
-
+	printf("Computing laplacianfaces.\n");	
+        cvJacobiEigens_64d(laplacianImages->data, (*laplacianBasis)->data, (*laplacianValues)->data, laplacianImages->col_dim, 0.0, 0);
+   	    	
 	printf("Finished computing laplacianspace.\n");
 
 	/* Numerical roundoff errors may lead to small negative values.
-     	Strip those before saving the matrix. */
-
-	subtractScalarFromMatrix(*laplacianValues, 1);
+     	Strip those before saving the matrix. */	
   	m = *laplacianValues;
 
 	for (i = 0; i < m->row_dim; i++)
@@ -106,12 +84,6 @@
 	      	}
 	}
 
-	/* output textfiles of intermediate matrices */
-	if (writeTextInterm)
-	{ 
-	//	SAVE_MATRIX(*laplacianBasis);
-	//	SAVE_MATRIX(*laplacianValues);
-	} 
 	/*********************************************************************/
 
 	//release memory
@@ -123,11 +95,8 @@
 	freeMatrix(A);
 	freeMatrix(DPrime1);
 	freeMatrix(LPrime1);
-	freeMatrix(LCHOL);
-	freeMatrix(LCHOLInv);
-	freeMatrix(LCHOLInv_x_A);
+	freeMatrix(BInv);
 	freeMatrix(laplacianImages);
-	freeMatrix(meanValues);
 
 }
 
@@ -147,7 +116,7 @@ Matrix findDMatrix(Matrix Dist)
 	for (i = 0 ; i < D->row_dim; i++)
 	{
 		Sum = 0;
-		for (j = 0 ; j < D->row_dim; j++)
+		for (j = 0 ; j < D->col_dim; j++)
 		{
 			ME(D, i, j) = 0;
 			Sum = Sum + ME(Dist, i, j);
@@ -159,40 +128,57 @@ Matrix findDMatrix(Matrix Dist)
 	return D;
 }
 
-Matrix findWMatrix(Matrix Dist, int neighbourCount, double t)
-{
+Matrix findWMatrix(Matrix Dist, int K)
+{	int i, j;
 	Matrix W;
+	FTYPE weight, t;
 
-	/*Compute connected graph of data points*/
-	W = ComputeConnectivityGraph(Dist, neighbourCount, t);
-	
-	return W;
-}	
+	W = makeMatrix (Dist->row_dim, Dist->col_dim);
 
-Matrix ComputeConnectivityGraph(Matrix Dist, int neighbourCount, double t)
-{	int i, j, *neighbours;
-	Matrix C;
-	FTYPE weight;
-
-	C = makeMatrix (Dist->row_dim, Dist->col_dim);
-
+	FTYPE avgKthDistance = 0.0;
 	for(i = 0; i < Dist->row_dim; i++)
-		for(j = 0; j < Dist->col_dim; j++)
-			ME(C, i, j) = 0;
+	{
+		//take weighted average to avoid overflow
+		avgKthDistance = (avgKthDistance) + GetKthNeighboursDistance(Dist, i, K);
+	}
+	
+	avgKthDistance = ((FTYPE)(avgKthDistance) / (FTYPE)(Dist->row_dim));
+
+	//2*Sigma^2
+	t = 2 * avgKthDistance * avgKthDistance;
 	
 	for(i = 0; i < Dist->row_dim; i++)
 	{
-		neighbours = GetKNeighbours(Dist, i, neighbourCount);
-	
-		for(j = 0; j < neighbourCount; j++)
+		for(j = 0; j < Dist->col_dim; j++)
 		{
-			weight = exp( (-1 * ME(Dist, i, neighbours[j]))  /  (2 * pow(t,2))  );
-			ME(C, i, neighbours[j]) = weight;
+			weight = exp(-1 * ME(Dist, i, j)  /  t  );
+			ME(W, i, j) = weight;
+			ME(W, j, i) = weight;
 		}
 	}
 	
-	MakeSymmetric(C);
-	return C; 		
+	MakeSymmetric(W);
+	return W;
+}
+
+void applyClassInfo(Matrix W, ImageList* srt)
+{
+	int i, j;
+	ImageList *subject, *rep1, *rep2;
+
+	for (subject = srt; subject; subject = subject->next_subject) 
+	{		
+		for (rep1 = subject; rep1; rep1 = rep1->next_replicate) 
+		{
+			i = rep1->imageIndex;	
+			for (rep2 = subject; rep2; rep2 = rep2->next_replicate) 
+			{
+				j = rep2->imageIndex;
+				ME(W, i, j) = 1.0;		
+				ME(W, j, i) = 1.0;
+			}
+		}
+	}	
 }
 
 FTYPE max (FTYPE A, FTYPE B)
@@ -216,37 +202,36 @@ void MakeSymmetric(Matrix X)
 
 int elementComparator (const void *a, const void *b)
 {
-  const dbPair *p1 = (dbPair *)a;
-  const dbPair *p2 = (dbPair *)b;
+  	const dbPair *p1 = (dbPair *)a;
+  	const dbPair *p2 = (dbPair *)b;
 
-  if (p1->key < p2->key)
-    return -1;
-  if (p1->key > p2->key)
-    return 1;
-  return 0;
+  	if (p1->key < p2->key)
+    		return -1;
+
+  	if (p1->key > p2->key)
+    		return 1;
+  	
+	return 0;
 }
 
-int* GetKNeighbours(Matrix Dist, int item, int K)
+FTYPE GetKthNeighboursDistance(Matrix Dist, int item, int K)
 {
-  int *indices, i;
-  dbPair *toSort = (dbPair*) malloc (Dist->col_dim * sizeof (dbPair));
+  	int i;
+  	dbPair *toSort = (dbPair*) malloc (Dist->col_dim * sizeof (dbPair));
 
-  for(i = 0; i < Dist->col_dim; i++)
-    {
-      toSort[i].key   = ME(Dist, item, i);
-      toSort[i].index = i;
-    }
+  	for(i = 0; i < Dist->col_dim; i++)
+    	{
+      		toSort[i].key   = ME(Dist, item, i);
+      		toSort[i].index = i;
+    	}
 
-  qsort (toSort, Dist->col_dim, sizeof (dbPair), elementComparator);
-  indices = (int*) malloc (Dist->col_dim * sizeof (int));
-
-  for(i = 0; i < K; i++) 
-  {
-    indices[i] = toSort[i].index;
-  } 
-
-  free (toSort);
-  return indices;
+  	qsort (toSort, Dist->col_dim, sizeof (dbPair), elementComparator);
+  	
+  	FTYPE kthDistance = ME(Dist, item, toSort[K].index);
+  	
+  	free (toSort);
+	
+  	return sqrt(kthDistance);
 }
 
 
@@ -269,13 +254,13 @@ Matrix ComputeDistanceMatrix(Matrix data)
 
 FTYPE distEuclidean(const Matrix ims, int i, int j)
 {
-    int k;
-    FTYPE sum = 0.0;
-    for (k = 0; k < ims->row_dim; k++) 
+    	int k;
+    	FTYPE sum = 0.0;
+   	for (k = 0; k < ims->row_dim; k++) 
 	{
-        sum += (  (ME(ims, k, i) - ME(ims, k, j)) 
+        	sum += (  (ME(ims, k, i) - ME(ims, k, j)) 
 				* (ME(ims, k, i) - ME(ims, k, j)) );
-    }
+    	}
 	
 	return sum;
 }

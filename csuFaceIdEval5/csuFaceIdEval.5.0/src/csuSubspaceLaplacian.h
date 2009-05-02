@@ -7,18 +7,17 @@
  * This structure is used internally
  */
 typedef struct {
-  double key;
+  FTYPE key;
   long index;
 } dbPair;
 
-void laplacianTrain (Subspace*s, Matrix imspca, Matrix * laplacianBasis, Matrix * laplacianValues, int writeTextInterm);
-
+//void laplacianTrain (Subspace*s, Matrix imspca, Matrix * laplacianBasis, Matrix * laplacianValues, int writeTextInterm);
+void laplacianTrain (Matrix imspca,  ImageList *srt, Matrix * laplacianBasis, Matrix * laplacianValues, int K, int writeTextInterm);
 Matrix findLMatrix(Matrix W, Matrix D);
 Matrix findDMatrix(Matrix Dist);
-Matrix findWMatrix(Matrix Dist, int neighbourCount, double t);
+Matrix findWMatrix(Matrix Dist, int K);
+void applyClassInfo(Matrix W, ImageList* srt);
 void MakeSymmetric(Matrix X);
-Matrix ComputeConnectivityGraph(Matrix Dist, int neighbourCount, double t);
-int* GetKNeighbours(Matrix Dist, int item, int K);
-int* GetEpsNeighbours(Matrix Dist, int item, double Eps);
+FTYPE GetKthNeighboursDistance(Matrix Dist, int item, int K);
 Matrix ComputeDistanceMatrix(Matrix data);
 FTYPE distEuclidean(const Matrix ims, int i, int j);

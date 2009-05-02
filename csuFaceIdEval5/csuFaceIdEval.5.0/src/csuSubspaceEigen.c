@@ -186,8 +186,11 @@ void eigentrain(Matrix *mean, Matrix *eigen_vals,
     eigenvectors = makeMatrix(M->row_dim, M->col_dim);
     *eigen_vals = makeMatrix(M->row_dim, 1);
 
+
     MESSAGE("Computing snap shot eigen vectors using the double precision cv eigensolver.");
-    cvJacobiEigens_64d(M->data, eigenvectors->data, (*eigen_vals)->data, images->col_dim, p);
+		
+    cvJacobiEigens_64d(M->data, eigenvectors->data, (*eigen_vals)->data, images->col_dim, p, 1);
+		
     freeMatrix(M);
 
     DEBUG(1, "Verifying the eigen vectors");

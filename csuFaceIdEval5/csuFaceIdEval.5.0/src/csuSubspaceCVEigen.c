@@ -176,7 +176,8 @@ int cvJacobiEigens_64d( double* A,
                     double* V,
                     double* E,
                     int n,
-                    double eps ) {
+                    double eps,
+		    int desc) {
     int i, j, k, p, q, ind;
     double *A1 = A, *V1 = V, *A2 = A, *V2 = V;
     double Amax = 0.0, anorm = 0.0, ax, deps;
@@ -285,8 +286,14 @@ int cvJacobiEigens_64d( double* A,
         double Em = fabs(E[i]);
         for (j = i + 1; j < n; j++) {
             double Ej = fabs(E[j]);
-            m = ( Em < Ej ) ? j : m;
-            Em = ( Em < Ej ) ? Ej : Em;
+		if(desc){
+            	m = ( Em < Ej ) ? j : m;
+            	Em = ( Em < Ej ) ? Ej : Em;
+		}
+		else{
+            	m = ( Em > Ej ) ? j : m;
+            	Em = ( Em > Ej ) ? Ej : Em;	
+		}
         }
         if ( m != i ) {
             int l;
