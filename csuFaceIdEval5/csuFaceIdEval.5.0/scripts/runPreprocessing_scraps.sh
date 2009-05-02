@@ -16,13 +16,13 @@ run() {
 PATH=$PATH:bin/`arch`
 export PATH
 
-FERET_PGM_SOURCE="data/csuScrapShots/source/pgm"
-FERET_SFI_DIR="data/csuScrapShots/normSep2002sfi"
-FERET_NRM_DIR="data/csuScrapShots/normSep2002nrm"
-FERET_PGM_DIR="data/csuScrapShots/normSep2002pgm"
+SCRAPS_PGM_SOURCE="data/csuScrapShots/source/pgm"
+SCRAPS_SFI_DIR="data/csuScrapShots/normSep2002sfi"
+SCRAPS_NRM_DIR="data/csuScrapShots/normSep2002nrm"
+SCRAPS_PGM_DIR="data/csuScrapShots/normSep2002pgm"
 EYE_COORDS="imagelists/coords.scraps"
 
-mkdir -p $FERET_SFI_DIR $FERET_NRM_DIR $FERET_PGM_DIR
+mkdir -p $SCRAPS_SFI_DIR $SCRAPS_NRM_DIR $SCRAPS_PGM_DIR
 
 echo "Running Preprocessing on scrapshots images. Using CSU Defaults for Optional Settings"
-run csuPreprocessNormalize $EYE_COORDS $FERET_PGM_SOURCE -sfi  $FERET_SFI_DIR -nrm $FERET_NRM_DIR -pgm $FERET_PGM_DIR
+run csuPreprocessNormalize $EYE_COORDS $SCRAPS_PGM_SOURCE -sfi  $SCRAPS_SFI_DIR -nrm $SCRAPS_NRM_DIR -pgm $SCRAPS_PGM_DIR

@@ -14,7 +14,7 @@ run mkdir -p train/feret
 
 # Running feret LPP training.
 
-run csuSubspaceTrain -lpp -t 2 -k 4 -imDir data/FERET/normSep2002sfi imagelistsferet_training.srt train/feret/feretLPP.train
+run csuSubspaceTrain -lpp -t 20000 -k 5 -imDir data/FERET/normSep2002sfi imagelists/feret_training.srt train/feret/feretLPP.train -writeTextInterm
 
 # Clearing out old distances and/or creating new distances directory
 
@@ -23,5 +23,5 @@ run mkdir -p distances/feret/LPP_Euclidean
 
 # Projecting face images onto LPP basis and computing distances
 
-run csuSubspaceProject -imDir data/FERET/normSep2002sfi train/feret/feretLPP.train iimagelists/all.srt distances/feret/LPP_Euclidean Euclidean
+run csuSubspaceProject -imDir data/FERET/normSep2002sfi train/feret/feretLPP.train imagelists/all.srt distances/feret/LPP_Euclidean Euclidean
 run echo 'Indicator file used by the scripts to know whether the data in this directory is valid' > distances/feret/lppDataExists.txt
