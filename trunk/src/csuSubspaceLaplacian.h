@@ -13,5 +13,6 @@ void applyClassInfo(Matrix W, ImageList* srt);
 void MakeSymmetric(Matrix X);
 FTYPE GetKthNeighboursDistance(Matrix Dist, int item, int K);
 Matrix ComputeDistanceMatrix(Matrix data, Matrix values);
-
+
+
 

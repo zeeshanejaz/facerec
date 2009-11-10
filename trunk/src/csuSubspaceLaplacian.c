@@ -1,5 +1,6 @@
 #include <csuSubspaceLaplacian.h>
-void laplacianTrain (Matrix imspca, ImageList *srt, Matrix * laplacianBasis, Matrix * laplacianValues,
+
+void laplacianTrain (Matrix imspca, ImageList *srt, Matrix * laplacianBasis, Matrix * laplacianValues,
 int K, int useAdaptiveK, int lppKeepNVectors, Matrix * pcaValues, char* distName, int writeTextInterm)
 {	
 	int i, n;
@@ -210,7 +211,8 @@ Matrix findDMatrix(Matrix Dist)
 // For Taj
 
 Matrix findWMatrix(Matrix Dist, int K, Matrix kMat)
-{	int i, j;
+{
+	int i, j;
 	Matrix W;
 	FTYPE weight;
 
