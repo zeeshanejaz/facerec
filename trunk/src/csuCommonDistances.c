@@ -433,36 +433,42 @@ Matrix computeDistances(const Matrix ims, const Matrix values, int numImages, in
 
     if (strcmp(distName, "Euclidean") == 0) {
         for (i = 0; i < numImages; i++) {
+            writeProgress("Computing distances for Euclidean", i,numImages);
             for (j = 0; j < numImages; j++) {
                 ME(distances, i, j) = distanceEuclidean(ims, i, j);
             }
         }
     } else if ((strcmp(distName, "Cityblock") == 0) || (strcmp(distName, "CityBlock") == 0)) {
         for (i = 0; i < numImages; i++) {
+            writeProgress("Computing distances for Cityblock", i,numImages);
             for (j = 0; j < numImages; j++) {
                 ME(distances, i, j) = distanceCityBlock(ims, i, j);
             }
         }
     } else if (strcmp(distName, "Covariance") == 0) {
         for (i = 0; i < numImages; i++) {
+            writeProgress("Computing distances for Covariance", i,numImages);
             for (j = 0; j < numImages; j++) {
                 ME(distances, i, j) = distanceCovariance(ims, i, j);
             }
         }//Added for LPP and ICA
     } else if ((strcmp(distName, "uzi") == 0) || (strcmp(distName, "UZI") == 0)) {
         for (i = 0; i < numImages; i++) {
+            writeProgress("Computing distances for UZI", i,numImages);
             for (j = 0; j < numImages; j++) {
                 ME(distances, i, j) = distanceUZI(ims, i, j, K);
             }
         }
     } else if (strcmp(distName, "Correlation") == 0) {
         for (i = 0; i < numImages; i++) {
+            writeProgress("Computing distances for Correlation", i,numImages);
             for (j = 0; j < numImages; j++) {
                 ME(distances, i, j) = distanceCorrelation(ims, i, j);
             }
         }
     } else if (strcmp(distName, "YamborAngle") == 0) {
         for (i = 0; i < numImages; i++) {
+            writeProgress("Computing distances for YamborAngle", i,numImages);
             for (j = 0; j < numImages; j++) {
                 ME(distances, i, j) = distanceYamborAngle(ims, i, j, values);
             }
@@ -504,6 +510,7 @@ Matrix computeDistances(const Matrix ims, const Matrix values, int numImages, in
         }
     } else if ((strcmp(distName, "ldaSoft") == 0) || (strcmp(distName, "LDASoft") == 0)) {
         for (i = 0; i < numImages; i++) {
+            writeProgress("Computing distances for LDASoft", i,numImages);
             for (j = 0; j < numImages; j++) {
                 ME(distances, i, j) = distanceLDASoft(ims, i, j, values);
             }
