@@ -1,0 +1,105 @@
+This directory contains extra files specific to the EBGM
+algorithm for a more compete description of terms used in this
+README see David Bolme's thesis (expected release: June 2003) 
+or the CSU Face Identification Users Guide.
+  
+
+*************** Wavelet Description Files **************
+The following files contain wavelet descriptions:
+
+GaborMaskBio.wavelet: Biologically motivated wavelets.
+
+GaborMaskBolme.wavelet: Wavelets used for the CSU version of 
+    the EBGM algorithm
+
+GaborMaskNestares.wavelet: Alternative wavelets set that are 
+    much faster than the other alternatives shown here.
+
+GaborMaskWiskott.wavelet: Parameters adopted from the Bochum/USC 
+    papers.
+
+The first integer in the file is the number of wavelets to use
+per jet.  Each line of the file contains the wavelet parameters 
+for each mask.  These are: wavelength orientation, phase, 
+aspect ratio, Gaussian size, and mask size.  Mask size is the 
+pixel mask. It needs to be an odd number that will cover most of
+the wavelet.
+
+
+*************** Manually Selected Landmark Locations ***************
+The ManualLandmarkLocations directory contains files that contain 
+the manually selected landmark points for 150 images.  This data is
+used to create the bunch graph for the EBGM algorithm.
+
+The files have two sections landmarks and graph edges.  The first 
+integer is the number of landmarks, followed by a list of the landmarks
+and their locations. Each line contains three data elements:
+<LANDMARK_LABEL> <X_COORDINATE> <Y_COORDINATE>
+
+After the landmarks, the graph edges are listed. The first integer is 
+the number of edges, followed by pairs of vertices. For example,
+"3 17" tells the algorithm to create and edge from vertex 3 to vertex
+17.  The vertex index starts at zero so 0 corresponds to LEye.
+
+*************** Other Data Structures Not In This Directory ************** 
+When the EBGM algorithm is run it first locates landmarks in the rest of 
+the FERET imagery (csuEBGMGraphFit).  This data is stored in files exactly 
+like the ones described in "Manually Selected Landmark Locations". There 
+is one file for every Feret image.
+
+The next step creates a face graph for every image (csuEBGMFaceGraph).  The
+most accurate way to describe the format of these files is to refer the reader
+to the function "saveFaceGraph" in "csuEBGMUtil.c". This function is from version
+5.0.  For other versions, read the code to make sure this has not changed.
+
+void saveFaceGraph(char *filename, FaceGraph fg){
+    int i, j;
+    FILE* file = fopen(filename,"wb");
+    assert(file);
+    /* Write out the size */
+    writeint(file, fg->geosize);  /* This is the total number of landmarks */
+    writeint(file, fg->totalsize); /* This is the total number of extracted jets, i.e. landmarks + edges */
+    writeint(file, fg->params != NULL); /* This indicates that the wavelet parameters are stored in the file these parameters are needed to compute some similarity measures, specifically kx and ky */
+    if(fg->params) {
+        writeint (file, fg->params->length);  /* This is the number of wavelets masks */
+        for(i = 0; i < fg->params->length; i++){
+            /* list of wavelet parameters */
+            writereal(file, fg->params->wavelength[i]); 
+            writereal(file, fg->params->angle[i]);
+            writereal(file, fg->params->phase[i]);
+            writereal(file, fg->params->aspect[i]);
+            writereal(file, fg->params->radius[i]);
+            writeint (file, fg->params->size[i]);
+            writereal(file, fg->params->kx[i]);
+            writereal(file, fg->params->ky[i]);
+        }
+    }
+
+    for(i = 0; i < fg->totalsize; i++){
+        /* write out jet i */
+        writeint(file, fg->jets[i]->length); /* Write out the number of elements in each jet */
+        writereal(file, fg->jets[i]->x); /* the x location the jet was extracted from. */
+        writereal(file, fg->jets[i]->y); /* the y location the jet was extracted from. */
+        for(j = 0; j < fg->jets[i]->length; j++){
+            writereal(file, fg->jets[i]->realPart[j]); /* The real and imaginary parts of the jets */
+            writereal(file, fg->jets[i]->imagPart[j]);
+            writereal(file, fg->jets[i]->mag[j]);      /* The transformation in to polar magnitude and phase components of real and imaginary */
+            writereal(file, fg->jets[i]->ang[j]);
+        }
+    }
+    
+    fclose(file);
+}
+
+
+************************ Other Files *********************
+
+LocalizationExperiment.spec: This is the experiment specification used for
+    the localization experiments in Chapter 3 of the Bolme thesis.  It is used
+    with csuEBGMLocalization.
+    
+BunchGraphConfig: These are the model images used to create the different
+    bunch graphs for the Bunch Graph experiments in chapter 6 of the Bolme
+    Thesis.
+
+
