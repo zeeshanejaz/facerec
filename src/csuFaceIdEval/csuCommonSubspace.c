@@ -44,13 +44,16 @@ Changes in this file:
 #include <csuCommon.h>
 
 /* How many lines in the training file header have useful text */
-#define TRAINING_HEADER_ENTRIES 15	//Changed by Zeeshan: For LPP 
+#define TRAINING_HEADER_ENTRIES 20	//Changed by Zeeshan: For LPP 
 
 void
 subspaceTrain (Subspace *s, Matrix images, ImageList *srt, int numSubjects, int dropNVectors, CutOffMode cutOffMode, double cutOff, int useLDA, int writeTextInterm
    /*START Changed by Zeeshan: For LPP*/
    ,int useLPP, int neighbourCount, int useAdaptiveK, int lppKeepNVectors, char* lppDistance
    /*END Changed by Zeeshan: For LPP*/
+   /*START 	Changed by Zeeshan: For ICA*/
+  ,int useICA, int arch, double learningRate, int blockSize, int iterations
+   /*END 	Changed by Zeeshan: For ICA*/
 )
 {
   int i;
@@ -75,14 +78,24 @@ subspaceTrain (Subspace *s, Matrix images, ImageList *srt, int numSubjects, int 
   s->lppDistance    = strdup(lppDistance);
   s->lppKeepNVectors= lppKeepNVectors;
   s->useAdaptiveK   = useAdaptiveK;
+  /*END Changed by Zeeshan: For LPP*/
 
+  /*START Changed by Zeeshan: For ICA*/
+  s->useICA 	    = useICA;
+  s->arch	    = arch;
+  s->ica2Basis 	    = NULL;
+  s->learningRate   = learningRate;
+  s->blockSize 	    = blockSize;
+  s->iterations     = iterations;
+  /*END Changed by Zeeshan: For ICA*/
 
+  /*START Changed by Zeeshan: For ICA & LPP*/
   /*********************************************************************
    * STEP ZERO: Make sure LDA and LPP are executed exclusively
    ********************************************************************/
-  DEBUG_CHECK (!(s->useLDA && s->useLPP), "Either LDA or LPP should be executed.");
-  	
-  /*END Changed by Zeeshan: For LPP*/
+  DEBUG_CHECK (!(s->useLDA && s->useLPP) && !(s->useLDA && s->useICA) && !(s->useICA && s->useLPP), 
+	"Either LDA, LPP or ICA should be executed.");
+  /*END Changed by Zeeshan: For ICA & LPP*/
 
 
   /*********************************************************************
@@ -308,6 +321,40 @@ subspaceTrain (Subspace *s, Matrix images, ImageList *srt, int numSubjects, int 
    
     }
   /*END Changed by Zeeshan: For LPP*/
+
+
+  /*START Changed by Zeeshan: For ICA*/
+  /*********************************************************************
+   * STEP FIVE: Do the ICA if specified
+   ********************************************************************/
+  if (s->useICA)
+    {
+      /* Need to project original images into PCA space */
+      Matrix independentBasis;
+      Matrix imspca = transposeMultiplyMatrixL (s->basis, images);           
+      
+      MESSAGE("Computing independent components from the principle components.");
+
+      independentTrain(s->basis, imspca, &independentBasis, s->arch, s->blockSize, s->learningRate, s->iterations);
+
+      if (s->arch == 1)
+      {
+	Matrix combinedBasis;
+      	combinedBasis = multiplyMatrix (s->basis, independentBasis);
+      	s->basis  = combinedBasis;
+	s->ica2Basis = NULL;
+	
+	MESSAGE2ARG ("PCA and ICA Combined. Combined projection expressed as %d by "
+		   "%d matrix.", combinedBasis->row_dim, combinedBasis->col_dim);	
+      }
+      else if (s->arch == 2)
+      {
+	s->ica2Basis = independentBasis;
+  	MESSAGE2ARG ("PCA and ICA kept separate. ICA projection expressed as %d by "
+		   "%d matrix.", independentBasis->row_dim, independentBasis->col_dim);	
+      }
+    }
+    /*END Changed by Zeeshan: For ICA*/
 }
 
 /**
@@ -388,7 +435,13 @@ writeSubspace (Subspace *s, char *training_filename, char *imageList, int argc, 
   fprintf (file, "LPP_VECTORS = %d\n", s->lppKeepNVectors);
   fprintf (file, "ADAPTIVE_K = %d\n", s->useAdaptiveK);
 
-  for (i = 16; i < 256; i++){
+  fprintf (file, "USE_ICA = %s\n", s->useICA ? "YES" : "NO" );
+  fprintf (file, "BLOCKSIZE = %d\n", s->blockSize);
+  fprintf (file, "LEARNING_RATE = %e\n", s->learningRate);
+  fprintf (file, "ITERATIONS = %d\n", s->iterations);
+  fprintf (file, "ARCHITECTURE = %d\n", s->arch);
+
+  for (i = 21; i < 256; i++){
     fprintf (file, "\n");
   }
 
@@ -419,6 +472,22 @@ writeSubspace (Subspace *s, char *training_filename, char *imageList, int argc, 
       writeDouble (file, ME(s->basis, j, i));
     }
   }
+
+/*START: 	Changed by Zeeshan: for ICA*/
+  /* write out the number of rows in ica2 basis */
+  writeInt (file, s->ica2Basis->row_dim);
+
+  /* write out the number of cols in ica2 basis */
+  writeInt (file, s->ica2Basis->col_dim);
+ 
+  /* write out the ica 2 basis */
+  for (i = 0; i < s->ica2Basis->col_dim; i++) {
+    for (j = 0; j < s->ica2Basis->row_dim; j++) {
+      writeDouble (file, ME(s->ica2Basis, j, i));
+    }
+  }
+/*END: 		Changed by Zeeshan: for ICA*/
+
   fclose (file);
 }
 
@@ -437,6 +506,7 @@ readSubspace (Subspace *s, const char* trainingFile, int quiet)
     int i, j, headerSize, rowDim, colDim;
     char junk[FILE_LINE_LENGTH], text[FILE_LINE_LENGTH];
     char** header;
+    float ftemp;
     FILE* file;
 
     headerSize = 255;
@@ -487,6 +557,21 @@ readSubspace (Subspace *s, const char* trainingFile, int quiet)
     sscanf(header[14], "%s%s%d", junk, junk, &s->useAdaptiveK);
 /*END: Changed by Zeeshan: for LPP*/
 
+/*START: 	Changed by Zeeshan: for ICA*/
+    sscanf(header[15], "%s%*s%s", junk, text);
+
+    if (strcmp(text, "NO") == 0)
+      s->useICA = 0;
+    else
+      s->useICA = 1;
+
+	sscanf(header[16], "%s%s%d", junk, junk, &s->blockSize);
+	sscanf(header[17], "%s%s%e", junk, junk, &ftemp);
+	s->learningRate = (double)ftemp;
+	sscanf(header[18], "%s%s%d", junk, junk, &s->iterations);
+	sscanf(header[19], "%s%s%d", junk, junk, &s->arch);
+/*END: 		Changed by Zeeshan: for ICA*/
+
 
     readInt (file,&rowDim);
     s->numPixels = rowDim;
@@ -510,6 +595,17 @@ readSubspace (Subspace *s, const char* trainingFile, int quiet)
             readDouble (file, &ME(s->basis, j, i));
         }
     }
+
+/*START: 	Changed by Zeeshan: for ICA*/
+    readInt (file,&rowDim);
+    readInt (file,&colDim);
+    s->ica2Basis = makeMatrix (rowDim, colDim);
+    for (i = 0; i < (s->ica2Basis)->col_dim; i++) {
+        for (j = 0; j < (s->ica2Basis)->row_dim; j++) {
+            readDouble (file, &ME(s->ica2Basis, j, i));
+        }
+    }
+/*END: 		Changed by Zeeshan: for ICA*/
 
     fclose(file);
 }
@@ -543,10 +639,38 @@ centerThenProjectImages (Subspace *s, Matrix images)
 {
     Matrix subspims;
 
+/*START: 	Changed by Zeeshan: for ICA*/
+    assert(!s->useICA);
+/*END: 		Changed by Zeeshan: for ICA*/
+	
     mean_subtract_images (images, s->mean);
     subspims = transposeMultiplyMatrixL (s->basis, images);
     return subspims;
 }
+
+/*START: 	Changed by Zeeshan: for ICA*/
+Matrix
+centerThenProjectImagesICA (Subspace *s, Matrix images)
+{
+    Matrix eigpims, subspims;
+
+    assert(s->useICA);
+
+    mean_subtract_images (images, s->mean);
+
+    eigpims = transposeMultiplyMatrixL (images, s->basis);
+
+    //in ICA1, s->basis contains the combined basis
+    if(s->arch == 1)
+	return eigpims;
+
+    mean_subtract_images (eigpims, s->mean);
+
+    subspims = transposeMultiplyMatrixL (eigpims, s->ica2Basis);
+
+    return subspims;
+}
+/*END: 		Changed by Zeeshan: for ICA*/
 
 /*
  This function reads images in to a vector.  That vector is then mean subtracted

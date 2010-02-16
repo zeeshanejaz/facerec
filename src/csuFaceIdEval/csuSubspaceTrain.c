@@ -68,6 +68,15 @@ typedef struct {
   int lppKeepNVectors;
   char* dist_lpp;
 /*END: 		Changed by Zeeshan: for LPP*/ 
+
+/*START:	Changed by Zeeshan: For ICA*/
+  int useICA;
+  int arch;
+  double learningRate;
+  int blockSize;
+  int iterations;
+/*END:		Changed by Zeeshan: For ICA*/
+
   int argc;
   char **argv;
 }
@@ -101,12 +110,21 @@ void usage(const char* prog) {
   printf("                         Epects cutOff value btween 0 and number of available columns\n");
   printf("    -cutOff <percent>:   Percentage of eigen vectors to retain (see cutOffMode).\n        DEFAULT = (See cutoff mode)\n");
 /*START: 	Changed by Zeeshan: for LPP*/
-  printf("    -lpp:    		   enable lpp training. (Must not use LDA when ON)\n        DEFAULT = PCA Only\n");
+  printf("    -lpp:    		   enable lpp training. (Must not use LDA or ICA when ON)\n        DEFAULT = PCA Only\n");
   printf("    -k <int>:    	   neighbourhood count for LPP.\n        DEFAULT = 5\n");
   printf("    -useAdaptiveK:       enable adptive K.\n        DEFAULT = FALSE\n");
   printf("    -lppKeepNVectors <int>: number of vectors to drop from the end of the laplacian subspace.\n        DEFAULT = 0\n");
   printf("    -lppDist <char*>:    	   Distance measure for weight map.\n      DEFAULT = MahCosine\n");
 /*END: 		Changed by Zeeshan: for LPP*/
+
+/*START: 	Changed by Zeeshan: for ICA*/
+  printf("    -ica:    		   enable ica training. (Must not use LDA or LPP when ON)\n        DEFAULT = PCA Only\n");
+  printf("    -icaArch <int>:      architechture of ICA to use.\n        DEFAULT = 1\n");
+  printf("    -lBlocks <int>: 	   size of blocks during learning.\n        DEFAULT = 50\n");
+  printf("    -lItrs <int>:        number of iterations for learning.\n      DEFAULT = 1000\n");
+  printf("    -lRate <float>:      the learning rate for each iteration.\n      DEFAULT = 0.0002\n");
+/*END: 		Changed by Zeeshan: for ICA*/
+
   printf("    -writeTextBasis:     Causes the program to print the basis vectors to text files.\n        DEFAULT = No\n");
   printf("    -writeTextValues:    Causes the program to print the basis values to text files.\n        DEFAULT = No\n");
   printf("    -writeTextInterm:    Causes the program to print intermediate matricies.\n        DEFAULT = No\n");
@@ -158,6 +176,14 @@ void process_command(int argc, char** argv, Arguments* args) {
   args->lppKeepNVectors = 0;
 /*END: 		Changed by Zeeshan: for LPP*/
 
+/*START:	Changed by Zeeshan: For ICA*/
+  args->useICA		= 0;
+  args->arch		= 1;
+  args->learningRate	= 0.0002;
+  args->blockSize	= 50;
+  args->iterations	= 1000;
+/*END:		Changed by Zeeshan: For ICA*/
+
   debuglevel = 0;
 
   for (i = 1;i < argc;i++) {
@@ -199,11 +225,19 @@ void process_command(int argc, char** argv, Arguments* args) {
 
 /*START: Changed by Zeeshan: for LPP*/
     else if (readOption (argc, argv, &i, "-lpp" ))                     { args->uselpp = 1; }
-    else if (readOptionInt (argc, argv, &i, "-k", &(args->k_lpp) )) ;
+    else if (readOptionInt (argc, argv, &i, "-icaArch", &(args->arch) )) ;
     else if (readOption (argc, argv, &i, "-useAdaptiveK" ))            { args->useAdaptiveK = 1; }
     else if (readOptionInt (argc, argv, &i, "-lppKeepNVectors", &(args->lppKeepNVectors) )) ;
     else if (readOptionString (argc, argv, &i, "-lppDist", &(args->dist_lpp) )) ;
 /*END: Changed by Zeeshan: for LPP*/
+
+/*START: Changed by Zeeshan: for ICA*/
+    else if (readOption (argc, argv, &i, "-ica" ))                     { args->useICA = 1; }
+    else if (readOptionInt (argc, argv, &i, "-icaArch", &(args->arch) )) ;
+    else if (readOptionInt (argc, argv, &i, "-lBlocks", &(args->blockSize) )) ;
+    else if (readOptionInt (argc, argv, &i, "-lItrs", &(args->iterations) )) ;
+    else if (readOptionDouble (argc, argv, &i, "-lRate", &(args->learningRate) )) ;
+/*END: Changed by Zeeshan: for ICA*/
 
     else if (readOption (argc, argv, &i, "-writeTextBasis" ))          { args->writeTextBasis = 1; }
     else if (readOption (argc, argv, &i, "-writeTextValues" ))         { args->writeTextValues = 1; }
@@ -300,6 +334,9 @@ main(int argc, char *argv[])
 /*START: 	Changed by Zeeshan: For LPP*/
  ,args.uselpp, args.k_lpp, args.useAdaptiveK, args.lppKeepNVectors, (char*)args.dist_lpp
 /*END: 		Changed by Zeeshan: For LPP*/
+/*START: 	Changed by Zeeshan: For ICA*/
+  ,args.useICA, args.arch, args.learningRate, args.blockSize, args.iterations
+/*END: 		Changed by Zeeshan: For ICA*/
 );
 
   /* Write out text files for basis and values */

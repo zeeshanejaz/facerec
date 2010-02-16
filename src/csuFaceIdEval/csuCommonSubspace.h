@@ -81,12 +81,24 @@ typedef struct
   int lppKeepNVectors;
   char* lppDistance;
   /*END 	Changed by Zeeshan: For LPP*/
+
+  /*START 	Changed by Zeeshan: For ICA*/
+  int useICA;
+  int arch;
+  Matrix ica2Basis; // ICA2 requires separate basis
+  double learningRate;
+  int blockSize;
+  int iterations;
+  /*END 	Changed by Zeeshan: For ICA*/
 } Subspace;
 
 void subspaceTrain (Subspace *s, Matrix images, ImageList *srt, int numSubjects, int dropNVectors, CutOffMode cutOffMode, double cutOff, int useLDA, int writeTextInterm
   /*START 	Changed by Zeeshan: For LPP*/
   ,int useLPP, int neighbourCount, int useAdaptiveK, int lppKeepNVectors, char* lppDistance
   /*END 	Changed by Zeeshan: For LPP*/
+  /*START 	Changed by Zeeshan: For ICA*/
+  ,int useICA, int arch, double learningRate, int blockSize, int iterations
+  /*END 	Changed by Zeeshan: For ICA*/
 );
 
 void writeSubspace (Subspace *s, char *training_filename, char *imageList, int argc, char**argv);
@@ -114,6 +126,9 @@ Matrix get_mean_image (Matrix images);
 void eigentrain (Matrix *mean, Matrix *eigen_vals, Matrix *eigen_base, Matrix images);
 void fisherTrain (Matrix imspca, ImageList *srt, Matrix *fisherBasis, Matrix *fisherValues, int writeTextInterm);
 
-void laplacianTrain (Matrix imspca,  ImageList *srt, Matrix * laplacianBasis, Matrix * laplacianValues,
-int K, int useAdaptiveK, int lppKeepNVectors, Matrix * pcaValues, char* distName, int writeTextInterm);
+/*START 	Changed by Zeeshan: For LPP & ICA*/
+void laplacianTrain (Matrix imspca,  ImageList *srt, Matrix * laplacianBasis,
+ Matrix * laplacianValues, int K, int useAdaptiveK, int lppKeepNVectors, Matrix * pcaValues, char* distName, int writeTextInterm);
+void independentTrain (Matrix pcaBasis, Matrix impca, Matrix * independentBasis, int architecture, int blockSize, double learningRate, int iterations);
+/*END 		Changed by Zeeshan: For LPP & ICA*/
 #endif /* CSU_COMMON_SUBSPACE_INCLUDED */
