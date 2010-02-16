@@ -1,9 +1,9 @@
 /*
- *  csuCommonSubspace.c
- *
- * Authors: Kai She, J. Ross Beveridge, David Bolme and Marcio Teixeira    
- *
- */
+*  csuCommonSubspace.c
+*
+* Authors: Kai She, J. Ross Beveridge, David Bolme and Marcio Teixeira    
+*
+*/
 
 /*
 Copyright (c) 2003 Colorado State University
@@ -37,8 +37,8 @@ Implementation of Laplacianfaces Algorithm for Face Recognition
 November 2007...
 
 Changes in this file:
-	Changed the struct Subspace for support LPP
-	Changed function prototype declaration	
+Changed the struct Subspace for support LPP
+Changed function prototype declaration	
 */
 
 #include <csuCommon.h>
@@ -48,353 +48,353 @@ Changes in this file:
 
 void
 subspaceTrain (Subspace *s, Matrix images, ImageList *srt, int numSubjects, int dropNVectors, CutOffMode cutOffMode, double cutOff, int useLDA, int writeTextInterm
-   /*START Changed by Zeeshan: For LPP*/
-   ,int useLPP, int neighbourCount, int useAdaptiveK, int lppKeepNVectors, char* lppDistance
-   /*END Changed by Zeeshan: For LPP*/
-   /*START 	Changed by Zeeshan: For ICA*/
-  ,int useICA, int arch, double learningRate, int blockSize, int iterations
-   /*END 	Changed by Zeeshan: For ICA*/
-)
+               /*START Changed by Zeeshan: For LPP*/
+               ,int useLPP, int neighbourCount, int useAdaptiveK, int lppKeepNVectors, char* lppDistance
+               /*END Changed by Zeeshan: For LPP*/
+               /*START 	Changed by Zeeshan: For ICA*/
+               ,int useICA, int arch, double learningRate, int blockSize, int iterations
+               /*END 	Changed by Zeeshan: For ICA*/
+               )
 {
-  int i;
-  Matrix m;
-  int n = 0;    /* The number of eigen vectors to keep */
-  double total_energy, energy;
-  Matrix tmp;
+    int i;
+    Matrix m;
+    int n = 0;    /* The number of eigen vectors to keep */
+    double total_energy, energy;
+    Matrix tmp;
 
-  /* Initialize structure */
+    /* Initialize structure */
 
-  s->useLDA         = useLDA;
-  s->cutOffMode     = cutOffMode;
-  s->cutOff         = cutOff;
-  s->dropNVectors   = dropNVectors;
+    s->useLDA         = useLDA;
+    s->cutOffMode     = cutOffMode;
+    s->cutOff         = cutOff;
+    s->dropNVectors   = dropNVectors;
 
-  s->numSubjects    = numSubjects;
-  s->numPixels      = images->row_dim;
+    s->numSubjects    = numSubjects;
+    s->numPixels      = images->row_dim;
 
-  /*START Changed by Zeeshan: For LPP*/
-  s->useLPP 	    = useLPP;
-  s->neighbourCount = neighbourCount;
-  s->lppDistance    = strdup(lppDistance);
-  s->lppKeepNVectors= lppKeepNVectors;
-  s->useAdaptiveK   = useAdaptiveK;
-  /*END Changed by Zeeshan: For LPP*/
+    /*START Changed by Zeeshan: For LPP*/
+    s->useLPP 	    = useLPP;
+    s->neighbourCount = neighbourCount;
+    s->lppDistance    = strdup(lppDistance);
+    s->lppKeepNVectors= lppKeepNVectors;
+    s->useAdaptiveK   = useAdaptiveK;
+    /*END Changed by Zeeshan: For LPP*/
 
-  /*START Changed by Zeeshan: For ICA*/
-  s->useICA 	    = useICA;
-  s->arch	    = arch;
-  s->ica2Basis 	    = NULL;
-  s->learningRate   = learningRate;
-  s->blockSize 	    = blockSize;
-  s->iterations     = iterations;
-  /*END Changed by Zeeshan: For ICA*/
+    /*START Changed by Zeeshan: For ICA*/
+    s->useICA 	    = useICA;
+    s->arch	    = arch;
+    s->ica2Basis 	    = NULL;
+    s->learningRate   = learningRate;
+    s->blockSize 	    = blockSize;
+    s->iterations     = iterations;
+    /*END Changed by Zeeshan: For ICA*/
 
-  /*START Changed by Zeeshan: For ICA & LPP*/
-  /*********************************************************************
-   * STEP ZERO: Make sure LDA and LPP are executed exclusively
-   ********************************************************************/
-  DEBUG_CHECK (!(s->useLDA && s->useLPP) && !(s->useLDA && s->useICA) && !(s->useICA && s->useLPP), 
-	"Either LDA, LPP or ICA should be executed.");
-  /*END Changed by Zeeshan: For ICA & LPP*/
+    /*START Changed by Zeeshan: For ICA & LPP*/
+    /*********************************************************************
+    * STEP ZERO: Make sure LDA and LPP are executed exclusively
+    ********************************************************************/
+    DEBUG_CHECK (!(s->useLDA && s->useLPP) && !(s->useLDA && s->useICA) && !(s->useICA && s->useLPP), 
+        "Either LDA, LPP or ICA should be executed.");
+    /*END Changed by Zeeshan: For ICA & LPP*/
 
 
-  /*********************************************************************
-   * STEP ONE: Calculate the eigenbasis
-   ********************************************************************/
+    /*********************************************************************
+    * STEP ONE: Calculate the eigenbasis
+    ********************************************************************/
 
-  /* Compute the Eigenvalues and Eigenvectors for the covariance matrix
-     derived from the images data matrix. The image data is "centered", meaning
-     the mean image is subtracted from all images before PCA is performed.
-     This centering is done in place, so after this call images are centered. */
+    /* Compute the Eigenvalues and Eigenvectors for the covariance matrix
+    derived from the images data matrix. The image data is "centered", meaning
+    the mean image is subtracted from all images before PCA is performed.
+    This centering is done in place, so after this call images are centered. */
 
-  MESSAGE("Computing the PCA eigenspace.");
+    MESSAGE("Computing the PCA eigenspace.");
 
-  eigentrain (&s->mean, &s->values, &s->basis, images);
+    eigentrain (&s->mean, &s->values, &s->basis, images);
 
-  MESSAGE("Finished computing eigenspace.");
+    MESSAGE("Finished computing eigenspace.");
 
-  /* Numerical roundoff errors may lead to small negative values.
-     Strip those before saving the matrix. */
+    /* Numerical roundoff errors may lead to small negative values.
+    Strip those before saving the matrix. */
 
-  m = s->values;
-  for (i = 0; i < m->row_dim; i++)
+    m = s->values;
+    for (i = 0; i < m->row_dim; i++)
     {
-      if (ME(m,i,0) < 0) {
-	if (ME(m,i,0) < -1e-10)
-	  printf("WARNING: Large negative eigenvalue found %f. Truncating to zero.\n", ME(m,i,0));
-	ME(m,i,0) = 0;
-      }
-    }
-  
-  /*********************************************************************
-   * STEP TWO: Drop eigenvectors from the front or truncate them from
-   * the back
-   ********************************************************************/
-
-  /* 
-     The following is used to filter the vectors that are retained after PCA
-     training.  The function first optionally removes the vectors from the matrix
-     based on the argument -dropNVectors. This argument is always intrepreted in
-     terms of absolute numbers, i.e. a value of 1 means drop the first vector, a
-     value of 3 means drop the first three. The function then drops vectors from the
-     tail based on -cutOffMode and -cutOff arguments. Here, the mode controls how the
-     cutoff is performed. The possible modes are:
-     
-     NONE:    Keep all remaining eigenvectors.
-     SIMPLE:  Keep a percentage where the percentage is specified by cutOff.
-     ENERGY:  Keep the fewest vectors are such that the sum of energy for them just
-     exceeds cutOff times the total energy. 
-     STRETCH: Keep all eigenvectors that have eigenvalues greater than a percentage 
-     of the largest, where the percentage is specied by cutOff. 
-     CLASSES: Keep as many eigenvectors as there are LDA classes.
-     
-     For both Energy and Stretch, if eigen values/vectors are dropped from the front, 
-     these are not included in the determination of the total energy or the max
-     eigen value. 
-  */
-
-  /* Drop the first vectors  */
-    
-  DEBUG_CHECK (s->dropNVectors < (s->basis)->col_dim, "Number of vectors to drop must be less than the number of the eigen vectors");
-
-  /* transpose eigenValues for use in this function */
-    
-  tmp = transposeMatrix (s->values);
-  freeMatrix (s->values);
-  s->values = tmp;
-    
-  if (s->dropNVectors && (s->dropNVectors < (s->values)->col_dim))
-    {
-      tmp = matrixCols (s->basis, s->dropNVectors, (s->basis)->col_dim-1);
-      freeMatrix (s->basis);
-      s->basis = tmp;
-
-      tmp = matrixCols (s->values, s->dropNVectors, (s->values)->col_dim-1);
-      freeMatrix (s->values);
-      s->values = tmp;
+        if (ME(m,i,0) < 0) {
+            if (ME(m,i,0) < -1e-10)
+                printf("WARNING: Large negative eigenvalue found %f. Truncating to zero.\n", ME(m,i,0));
+            ME(m,i,0) = 0;
+        }
     }
 
-  /* transpose the eigenValues back to the original order. */
- 
-  tmp = transposeMatrix (s->values);
-  freeMatrix (s->values);
-  s->values = tmp;
-    
-  DEBUG_CHECK((s->values)->row_dim - s->dropNVectors > 0, "Too many eigen vectors droped from front. Can not proceed.");
+    /*********************************************************************
+    * STEP TWO: Drop eigenvectors from the front or truncate them from
+    * the back
+    ********************************************************************/
 
-  switch (s->cutOffMode)
+    /* 
+    The following is used to filter the vectors that are retained after PCA
+    training.  The function first optionally removes the vectors from the matrix
+    based on the argument -dropNVectors. This argument is always intrepreted in
+    terms of absolute numbers, i.e. a value of 1 means drop the first vector, a
+    value of 3 means drop the first three. The function then drops vectors from the
+    tail based on -cutOffMode and -cutOff arguments. Here, the mode controls how the
+    cutoff is performed. The possible modes are:
+
+    NONE:    Keep all remaining eigenvectors.
+    SIMPLE:  Keep a percentage where the percentage is specified by cutOff.
+    ENERGY:  Keep the fewest vectors are such that the sum of energy for them just
+    exceeds cutOff times the total energy. 
+    STRETCH: Keep all eigenvectors that have eigenvalues greater than a percentage 
+    of the largest, where the percentage is specied by cutOff. 
+    CLASSES: Keep as many eigenvectors as there are LDA classes.
+
+    For both Energy and Stretch, if eigen values/vectors are dropped from the front, 
+    these are not included in the determination of the total energy or the max
+    eigen value. 
+    */
+
+    /* Drop the first vectors  */
+
+    DEBUG_CHECK (s->dropNVectors < (s->basis)->col_dim, "Number of vectors to drop must be less than the number of the eigen vectors");
+
+    /* transpose eigenValues for use in this function */
+
+    tmp = transposeMatrix (s->values);
+    freeMatrix (s->values);
+    s->values = tmp;
+
+    if (s->dropNVectors && (s->dropNVectors < (s->values)->col_dim))
+    {
+        tmp = matrixCols (s->basis, s->dropNVectors, (s->basis)->col_dim-1);
+        freeMatrix (s->basis);
+        s->basis = tmp;
+
+        tmp = matrixCols (s->values, s->dropNVectors, (s->values)->col_dim-1);
+        freeMatrix (s->values);
+        s->values = tmp;
+    }
+
+    /* transpose the eigenValues back to the original order. */
+
+    tmp = transposeMatrix (s->values);
+    freeMatrix (s->values);
+    s->values = tmp;
+
+    DEBUG_CHECK((s->values)->row_dim - s->dropNVectors > 0, "Too many eigen vectors droped from front. Can not proceed.");
+
+    switch (s->cutOffMode)
     {
     case CUTOFF_NONE:
-      n = (s->basis)->col_dim;
-      break;
+        n = (s->basis)->col_dim;
+        break;
 
     case CUTOFF_SIMPLE:
-      n = (int)((s->basis)->col_dim * s->cutOff / 100.0);
-      break;
+        n = (int)((s->basis)->col_dim * s->cutOff / 100.0);
+        break;
 
     case CUTOFF_ENERGY:
-      /* compute total energy - this will not include vectors/values dropped from front. */
-      total_energy = 0;
-      for (i = 0; i < (s->values)->row_dim; i++) {
-	total_energy += ME(s->values, i, 0);
-      }
+        /* compute total energy - this will not include vectors/values dropped from front. */
+        total_energy = 0;
+        for (i = 0; i < (s->values)->row_dim; i++) {
+            total_energy += ME(s->values, i, 0);
+        }
 
-      /* compute cutoff point */
-      i = 0;
-      energy = 0;
-      while ((i < (s->values)->row_dim) && (energy < total_energy * s->cutOff / 100.0)) {
-	energy += ME(s->values, i, 0);
-	i++;
-      }
-      n = i;
-      break;
+        /* compute cutoff point */
+        i = 0;
+        energy = 0;
+        while ((i < (s->values)->row_dim) && (energy < total_energy * s->cutOff / 100.0)) {
+            energy += ME(s->values, i, 0);
+            i++;
+        }
+        n = i;
+        break;
 
     case CUTOFF_STRETCH:
-      i = 1;
-      while ((i < (s->values)->row_dim) &&
-	     (100.0*(ME(s->values, i, 0) / ME(s->values, s->dropNVectors, 0)) > cutOff )) {
-	i++;
-      }
-      n = i;
-      break;
+        i = 1;
+        while ((i < (s->values)->row_dim) &&
+            (100.0*(ME(s->values, i, 0) / ME(s->values, s->dropNVectors, 0)) > cutOff )) {
+                i++;
+        }
+        n = i;
+        break;
 
     case CUTOFF_CLASSES:
-      n = s->numSubjects;
-      break;
+        n = s->numSubjects;
+        break;
 
     case CUTOFF_DROPVEC:
-      n = (int)((s->basis)->col_dim - s->cutOff);
-      break;
+        n = (int)((s->basis)->col_dim - s->cutOff);
+        break;
 
     default:
-      n = 0;
-      DEBUG_CHECK (0, "ERROR: Unkown cutoff type");
-      break;
+        n = 0;
+        DEBUG_CHECK (0, "ERROR: Unkown cutoff type");
+        break;
     };
 
-  /* Never set the dimensionality of the PCA subspace below the number of
-     LDA classes when LDA is being used. Doing so creates a horrible problem
-     for LDA: too fee dimensions */
-    
-  if (s->useLDA && (n < s->numSubjects))
-    n = s->numSubjects;
-  
-  DEBUG_CHECK (n <= (s->basis)->col_dim, "Tried to expand, not contract, PCA space.");
-  
-  MESSAGE1ARG ("Retaining %d eigen vectors.",n);
+    /* Never set the dimensionality of the PCA subspace below the number of
+    LDA classes when LDA is being used. Doing so creates a horrible problem
+    for LDA: too fee dimensions */
 
-  tmp = matrixCols ( s->basis, 0 , n-1);
-  freeMatrix (s->basis);
-  s->basis = tmp;
+    if (s->useLDA && (n < s->numSubjects))
+        n = s->numSubjects;
 
-  DEBUG_INT (1, "Number of eigen vectors kept.", n);
+    DEBUG_CHECK (n <= (s->basis)->col_dim, "Tried to expand, not contract, PCA space.");
 
-  DEBUG_CHECK ((s->basis)->col_dim > 0, "All basis vectors deleted after cutoff "
-	       "and vector drop was processed.");
+    MESSAGE1ARG ("Retaining %d eigen vectors.",n);
 
-  MESSAGE2ARG("Truncating PCA Space. Subspace projection expressed "
-	      "as %d by %d matrix.", s->basis->row_dim, s->basis->col_dim);
+    tmp = matrixCols ( s->basis, 0 , n-1);
+    freeMatrix (s->basis);
+    s->basis = tmp;
 
-  /*********************************************************************
-   * STEP THREE: Do the LDA if specified
-   ********************************************************************/
+    DEBUG_INT (1, "Number of eigen vectors kept.", n);
 
-  if (s->useLDA)
+    DEBUG_CHECK ((s->basis)->col_dim > 0, "All basis vectors deleted after cutoff "
+        "and vector drop was processed.");
+
+    MESSAGE2ARG("Truncating PCA Space. Subspace projection expressed "
+        "as %d by %d matrix.", s->basis->row_dim, s->basis->col_dim);
+
+    /*********************************************************************
+    * STEP THREE: Do the LDA if specified
+    ********************************************************************/
+
+    if (s->useLDA)
     {
-      /* Need to project original images into PCA space */
+        /* Need to project original images into PCA space */
 
-      Matrix fisherBasis, fisherValues, combinedBasis;
-      Matrix imspca = transposeMultiplyMatrixL (s->basis, images);
-      
-      MESSAGE("Computing Fisher Linear Discriminants for "
-	      "training images projected into PCA subspace.");
+        Matrix fisherBasis, fisherValues, combinedBasis;
+        Matrix imspca = transposeMultiplyMatrixL (s->basis, images);
 
-      fisherTrain (imspca, srt, &fisherBasis, &fisherValues, writeTextInterm);
+        MESSAGE("Computing Fisher Linear Discriminants for "
+            "training images projected into PCA subspace.");
 
-      combinedBasis = multiplyMatrix (s->basis, fisherBasis);
-      basis_normalize (combinedBasis);
+        fisherTrain (imspca, srt, &fisherBasis, &fisherValues, writeTextInterm);
 
-      MESSAGE2ARG ("PCA and LDA Combined. Combined projection expressed as %d by "
-		   "%d matrix.", combinedBasis->row_dim, combinedBasis->col_dim);
+        combinedBasis = multiplyMatrix (s->basis, fisherBasis);
+        basis_normalize (combinedBasis);
 
-      s->values = fisherValues;
-      s->basis  = combinedBasis;
+        MESSAGE2ARG ("PCA and LDA Combined. Combined projection expressed as %d by "
+            "%d matrix.", combinedBasis->row_dim, combinedBasis->col_dim);
+
+        s->values = fisherValues;
+        s->basis  = combinedBasis;
     }
 
-  /*START Changed by Zeeshan: For LPP*/
-  /*********************************************************************
-   * STEP FOUR: Do the LPP if specified
-   ********************************************************************/
-  if (s->useLPP)
+    /*START Changed by Zeeshan: For LPP*/
+    /*********************************************************************
+    * STEP FOUR: Do the LPP if specified
+    ********************************************************************/
+    if (s->useLPP)
     {
-      /* Need to project original images into PCA space */
+        /* Need to project original images into PCA space */
 
-      Matrix laplacianBasis, laplacianValues, combinedBasis;
-      Matrix imspca = transposeMultiplyMatrixL (s->basis, images);           
-      
-      MESSAGE("Computing Locality Preservation Projections for "
-	      "training images projected into PCA subspace.");
+        Matrix laplacianBasis, laplacianValues, combinedBasis;
+        Matrix imspca = transposeMultiplyMatrixL (s->basis, images);           
 
-      laplacianTrain (imspca, srt, &laplacianBasis, &laplacianValues, neighbourCount, 
-      useAdaptiveK, lppKeepNVectors, &s->values, lppDistance, writeTextInterm);
+        MESSAGE("Computing Locality Preservation Projections for "
+            "training images projected into PCA subspace.");
 
-      combinedBasis = multiplyMatrix (s->basis, laplacianBasis);
-      basis_normalize (combinedBasis);
-   
-      MESSAGE2ARG ("PCA and LPP Combined. Combined projection expressed as %d by "
-		   "%d matrix.", combinedBasis->row_dim, combinedBasis->col_dim);
+        laplacianTrain (imspca, srt, &laplacianBasis, &laplacianValues, neighbourCount, 
+            useAdaptiveK, lppKeepNVectors, &s->values, lppDistance, writeTextInterm);
 
-      s->values = calculateStandardDeviation (laplacianBasis);//OPTION4
-      //s->values = laplacianValues;//OPTION2
-      s->basis  = combinedBasis;
+        combinedBasis = multiplyMatrix (s->basis, laplacianBasis);
+        basis_normalize (combinedBasis);
 
-	for (i = 0; i < s->values->row_dim; i++)
-	{
-		if (ME(s->values, i, 0) <= 0.001)
-		{
-			if (ME(s->values, i, 0) < -1e-10)
-		  		printf("WARNING: Large negative value found %f. Truncating to zero.\n", ME(s->values, i, 0));
-			ME(s->values, i, 0) = 0.001;
-	      	}
-	}
+        MESSAGE2ARG ("PCA and LPP Combined. Combined projection expressed as %d by "
+            "%d matrix.", combinedBasis->row_dim, combinedBasis->col_dim);
 
-   
+        s->values = calculateStandardDeviation (laplacianBasis);//OPTION4
+        //s->values = laplacianValues;//OPTION2
+        s->basis  = combinedBasis;
+
+        for (i = 0; i < s->values->row_dim; i++)
+        {
+            if (ME(s->values, i, 0) <= 0.001)
+            {
+                if (ME(s->values, i, 0) < -1e-10)
+                    printf("WARNING: Large negative value found %f. Truncating to zero.\n", ME(s->values, i, 0));
+                ME(s->values, i, 0) = 0.001;
+            }
+        }
+
+
     }
-  /*END Changed by Zeeshan: For LPP*/
+    /*END Changed by Zeeshan: For LPP*/
 
 
-  /*START Changed by Zeeshan: For ICA*/
-  /*********************************************************************
-   * STEP FIVE: Do the ICA if specified
-   ********************************************************************/
-  if (s->useICA)
+    /*START Changed by Zeeshan: For ICA*/
+    /*********************************************************************
+    * STEP FIVE: Do the ICA if specified
+    ********************************************************************/
+    if (s->useICA)
     {
-      /* Need to project original images into PCA space */
-      Matrix independentBasis;
-      Matrix imspca = transposeMultiplyMatrixL (s->basis, images);           
-      
-      MESSAGE("Computing independent components from the principle components.");
+        /* Need to project original images into PCA space */
+        Matrix independentBasis;
+        Matrix imspca = transposeMultiplyMatrixL (s->basis, images);           
 
-      independentTrain(s->basis, imspca, &independentBasis, s->arch, s->blockSize, s->learningRate, s->iterations);
+        MESSAGE("Computing independent components from the principle components.");
 
-      if (s->arch == 1)
-      {
-	Matrix combinedBasis;
-      	combinedBasis = multiplyMatrix (s->basis, independentBasis);
-      	s->basis  = combinedBasis;
-	s->ica2Basis = NULL;
-	
-	MESSAGE2ARG ("PCA and ICA Combined. Combined projection expressed as %d by "
-		   "%d matrix.", combinedBasis->row_dim, combinedBasis->col_dim);	
-      }
-      else if (s->arch == 2)
-      {
-	s->ica2Basis = independentBasis;
-  	MESSAGE2ARG ("PCA and ICA kept separate. ICA projection expressed as %d by "
-		   "%d matrix.", independentBasis->row_dim, independentBasis->col_dim);	
-      }
+        independentTrain(s->basis, imspca, &independentBasis, s->arch, s->blockSize, s->learningRate, s->iterations);
+
+        if (s->arch == 1)
+        {
+            Matrix combinedBasis;
+            combinedBasis = multiplyMatrix (s->basis, independentBasis);
+            s->basis  = combinedBasis;
+            s->ica2Basis = NULL;
+
+            MESSAGE2ARG ("PCA and ICA Combined. Combined projection expressed as %d by "
+                "%d matrix.", combinedBasis->row_dim, combinedBasis->col_dim);	
+        }
+        else if (s->arch == 2)
+        {
+            s->ica2Basis = independentBasis;
+            MESSAGE2ARG ("PCA and ICA kept separate. ICA projection expressed as %d by "
+                "%d matrix.", independentBasis->row_dim, independentBasis->col_dim);	
+        }
     }
     /*END Changed by Zeeshan: For ICA*/
 }
 
 /**
-   writeSubspace
- 
-   Writes out a training discription file that includes important
-   parameters and command line options and all eigenvectors and eigenvalues
- 
-   format:
-   text: 256 lines reserved
-   line1: TRAINING_COMMAND = commandline
-   line2: DATE = <training date>
-   line3: FILE_LIST = <file contianing the list of images used for training>
-   line4: VECTOR_LENGTH = <number of values in each file>
-   line5: USE_LDA = <true if lda was turned on>
-   line6: PCA_CUTOFF = <Percentage of eigenvectors retianed>
-   line7: BASIS_VALUE_COUNT = <number of eigen values>
-   line8: BASIS_VECTOR_COUNT = <number of eigen vectors>
-   line9: DROPPED_FROM_FRONT = <zero or more dropped from front>
+writeSubspace
+
+Writes out a training discription file that includes important
+parameters and command line options and all eigenvectors and eigenvalues
+
+format:
+text: 256 lines reserved
+line1: TRAINING_COMMAND = commandline
+line2: DATE = <training date>
+line3: FILE_LIST = <file contianing the list of images used for training>
+line4: VECTOR_LENGTH = <number of values in each file>
+line5: USE_LDA = <true if lda was turned on>
+line6: PCA_CUTOFF = <Percentage of eigenvectors retianed>
+line7: BASIS_VALUE_COUNT = <number of eigen values>
+line8: BASIS_VECTOR_COUNT = <number of eigen vectors>
+line9: DROPPED_FROM_FRONT = <zero or more dropped from front>
 
 *END Changed by Zeeshan: For LPP*
-   line10: USE_LPP = <true if lpp was turned on>
-   line11: NEIGHBOURS = <no. k-neighbours for LPP>
-   Line12: T = <the value for T for weight computation>
-   line13 -> line256: RESERVED
+line10: USE_LPP = <true if lpp was turned on>
+line11: NEIGHBOURS = <no. k-neighbours for LPP>
+Line12: T = <the value for T for weight computation>
+line13 -> line256: RESERVED
 *END Changed by Zeeshan: For LPP* 
 
-   If the additional entries are added to the header, increment the variable
-   TRAINING_HEADER_ENTRIES
+If the additional entries are added to the header, increment the variable
+TRAINING_HEADER_ENTRIES
 */
 
 void
 writeSubspace (Subspace *s, char *training_filename, char *imageList, int argc, char**argv)
 {
-  int i, j;
-  FILE* file;
-  char *cutOffModeStr;
-  time_t ttt = time(0);
+    int i, j;
+    FILE* file;
+    char *cutOffModeStr;
+    time_t ttt = time(0);
 
-  switch (s->cutOffMode)
+    switch (s->cutOffMode)
     {
     case CUTOFF_NONE:    cutOffModeStr = "NONE";    break;
     case CUTOFF_SIMPLE:  cutOffModeStr = "SIMPLE";  break;
@@ -403,101 +403,104 @@ writeSubspace (Subspace *s, char *training_filename, char *imageList, int argc, 
     case CUTOFF_DROPVEC: cutOffModeStr = "DROPVEC"; break;
     default:             cutOffModeStr = "UNKNOWN"; break;
     }
-  
-  MESSAGE1ARG ("Saving trianing information to file %s", training_filename);
 
-  file = fopen (training_filename, "wb");
-  if (!file) {
-    printf ("Error: could not open file <%s>\n", training_filename);
-    exit (1);
-  }
-  
-  fprintf (file, "TRAINING_COMMAND =");
-  
-  for (i = 0; i < argc; i++)
-    fprintf (file, " %s", argv[i]);
+    MESSAGE1ARG ("Saving trianing information to file %s", training_filename);
 
-  fprintf (file, "\n");
-  fprintf (file, "DATE          = %s", ctime(&ttt));
-  fprintf (file, "FILE_LIST     = %s\n", imageList);
-  fprintf (file, "VECTOR_LENGTH = %d\n", s->basis->row_dim); /* numPixels */
-  fprintf (file, "USE_LDA       = %s\n", s->useLDA ? "YES" : "NO" );
+    file = fopen (training_filename, "wb");
+    if (!file) {
+        printf ("Error: could not open file <%s>\n", training_filename);
+        exit (1);
+    }
 
-  fprintf (file, "CUTOFF_MODE   = %s\n", cutOffModeStr);
-  fprintf (file, "CUTOFF_PERCENTAGE  = %f\n", s->cutOff);
-  fprintf (file, "BASIS_VALUE_COUNT  = %d\n", s->values->row_dim);   /* basisDim */
-  fprintf (file, "BASIS_VECTOR_COUNT = %d\n", s->basis->col_dim);
-  fprintf (file, "DROPPED_FROM_FRONT = %d\n", s->dropNVectors);
+    fprintf (file, "TRAINING_COMMAND =");
 
-  fprintf (file, "USE_LPP = %s\n", s->useLPP ? "YES" : "NO" );
-  fprintf (file, "NEIGHBOURS = %d\n", s->neighbourCount);
-  fprintf (file, "LPP_DIST = %s\n", s->lppDistance);
-  fprintf (file, "LPP_VECTORS = %d\n", s->lppKeepNVectors);
-  fprintf (file, "ADAPTIVE_K = %d\n", s->useAdaptiveK);
+    for (i = 0; i < argc; i++)
+        fprintf (file, " %s", argv[i]);
 
-  fprintf (file, "USE_ICA = %s\n", s->useICA ? "YES" : "NO" );
-  fprintf (file, "BLOCKSIZE = %d\n", s->blockSize);
-  fprintf (file, "LEARNING_RATE = %e\n", s->learningRate);
-  fprintf (file, "ITERATIONS = %d\n", s->iterations);
-  fprintf (file, "ARCHITECTURE = %d\n", s->arch);
-
-  for (i = 21; i < 256; i++){
     fprintf (file, "\n");
-  }
+    fprintf (file, "DATE          = %s", ctime(&ttt));
+    fprintf (file, "FILE_LIST     = %s\n", imageList);
+    fprintf (file, "VECTOR_LENGTH = %d\n", s->basis->row_dim); /* numPixels */
+    fprintf (file, "USE_LDA       = %s\n", s->useLDA ? "YES" : "NO" );
 
-/**/
-  
-  /* write out the pixel count */
-  writeInt (file, s->mean->row_dim);
+    fprintf (file, "CUTOFF_MODE   = %s\n", cutOffModeStr);
+    fprintf (file, "CUTOFF_PERCENTAGE  = %f\n", s->cutOff);
+    fprintf (file, "BASIS_VALUE_COUNT  = %d\n", s->values->row_dim);   /* basisDim */
+    fprintf (file, "BASIS_VECTOR_COUNT = %d\n", s->basis->col_dim);
+    fprintf (file, "DROPPED_FROM_FRONT = %d\n", s->dropNVectors);
 
-  /* write out the mean vector */
-  for (i = 0; i < s->mean->row_dim; i++) {
-    writeDouble (file, ME(s->mean,i,0));
-  }
+    fprintf (file, "USE_LPP = %s\n", s->useLPP ? "YES" : "NO" );
+    fprintf (file, "NEIGHBOURS = %d\n", s->neighbourCount);
+    fprintf (file, "LPP_DIST = %s\n", s->lppDistance);
+    fprintf (file, "LPP_VECTORS = %d\n", s->lppKeepNVectors);
+    fprintf (file, "ADAPTIVE_K = %d\n", s->useAdaptiveK);
 
-  /* write out the number of eigen values */
-  writeInt (file, s->values->row_dim);
-  
-  /* write out the eigen values */
-  for (i = 0; i < s->values->row_dim; i++) {
-    writeDouble (file, ME(s->values,i,0));
-  }
+    fprintf (file, "USE_ICA = %s\n", s->useICA ? "YES" : "NO" );
+    fprintf (file, "BLOCKSIZE = %d\n", s->blockSize);
+    fprintf (file, "LEARNING_RATE = %e\n", s->learningRate);
+    fprintf (file, "ITERATIONS = %d\n", s->iterations);
+    fprintf (file, "ARCHITECTURE = %d\n", s->arch);
 
-  /* write out the number of basis vectors */
-  writeInt (file,s->basis->col_dim);
-  
-  /* write out the eigen basis.  the size is "pixelcount"X"number of vectors"*/
-  for (i = 0; i < s->basis->col_dim; i++) {
-    for (j = 0; j < s->basis->row_dim; j++) {
-      writeDouble (file, ME(s->basis, j, i));
+    for (i = 21; i < 256; i++){
+        fprintf (file, "\n");
     }
-  }
 
-/*START: 	Changed by Zeeshan: for ICA*/
-  /* write out the number of rows in ica2 basis */
-  writeInt (file, s->ica2Basis->row_dim);
+    /**/
 
-  /* write out the number of cols in ica2 basis */
-  writeInt (file, s->ica2Basis->col_dim);
- 
-  /* write out the ica 2 basis */
-  for (i = 0; i < s->ica2Basis->col_dim; i++) {
-    for (j = 0; j < s->ica2Basis->row_dim; j++) {
-      writeDouble (file, ME(s->ica2Basis, j, i));
+    /* write out the pixel count */
+    writeInt (file, s->mean->row_dim);
+
+    /* write out the mean vector */
+    for (i = 0; i < s->mean->row_dim; i++) {
+        writeDouble (file, ME(s->mean,i,0));
     }
-  }
-/*END: 		Changed by Zeeshan: for ICA*/
 
-  fclose (file);
+    /* write out the number of eigen values */
+    writeInt (file, s->values->row_dim);
+
+    /* write out the eigen values */
+    for (i = 0; i < s->values->row_dim; i++) {
+        writeDouble (file, ME(s->values,i,0));
+    }
+
+    /* write out the number of basis vectors */
+    writeInt (file,s->basis->col_dim);
+
+    /* write out the eigen basis.  the size is "pixelcount"X"number of vectors"*/
+    for (i = 0; i < s->basis->col_dim; i++) {
+        for (j = 0; j < s->basis->row_dim; j++) {
+            writeDouble (file, ME(s->basis, j, i));
+        }
+    }
+
+    if(s->useICA)
+    {
+        /*START: 	Changed by Zeeshan: for ICA*/
+        /* write out the number of rows in ica2 basis */
+        writeInt (file, s->ica2Basis->row_dim);
+
+        /* write out the number of cols in ica2 basis */
+        writeInt (file, s->ica2Basis->col_dim);
+
+        /* write out the ica 2 basis */
+        for (i = 0; i < s->ica2Basis->col_dim; i++) {
+            for (j = 0; j < s->ica2Basis->row_dim; j++) {
+                writeDouble (file, ME(s->ica2Basis, j, i));
+            }
+        }
+    }
+    /*END: 		Changed by Zeeshan: for ICA*/
+
+    fclose (file);
 }
 
 /* The contents of the training file are described in csuSupbspaceTrain.c above
- the definition of writeTrainingFile.  This companion function reads one of these
- files and creates the subspace basis vectors and eigenvalues. In the case of PCA+LDA,
- the eigenvalues are for the transformed, or second, of the two symmetric eigenvector
- problems solved. The variable TRAINING_HEADER_ENTRIES defined at the top of this file
- is used to control how many header lines are printed to standard out. It needs to be 
- adjusted if new entries are added to the header. 
+the definition of writeTrainingFile.  This companion function reads one of these
+files and creates the subspace basis vectors and eigenvalues. In the case of PCA+LDA,
+the eigenvalues are for the transformed, or second, of the two symmetric eigenvector
+problems solved. The variable TRAINING_HEADER_ENTRIES defined at the top of this file
+is used to control how many header lines are printed to standard out. It needs to be 
+adjusted if new entries are added to the header. 
 */
 
 void
@@ -535,42 +538,42 @@ readSubspace (Subspace *s, const char* trainingFile, int quiet)
 
     sscanf(header[7], "%s%s%d", junk, junk, &s->basisDim);
     sscanf(header[4], "%s%*s%s", junk, text);
-    
+
     if (strcmp(text, "NO") == 0)
-      s->useLDA = 0;
+        s->useLDA = 0;
     else
-      s->useLDA = 1;
+        s->useLDA = 1;
 
 
-/*START: Changed by Zeeshan: for LPP*/
+    /*START: Changed by Zeeshan: for LPP*/
     sscanf(header[10], "%s%*s%s", junk, text);
 
     if (strcmp(text, "NO") == 0)
-      s->useLPP = 0;
+        s->useLPP = 0;
     else
-      s->useLPP = 1;
+        s->useLPP = 1;
 
     sscanf(header[11], "%s%s%d", junk, junk, &s->neighbourCount);
     sscanf(header[12], "%s%*s%s", junk, text);
     s->lppDistance = strdup(text);
     sscanf(header[13], "%s%s%d", junk, junk, &s->lppKeepNVectors);
     sscanf(header[14], "%s%s%d", junk, junk, &s->useAdaptiveK);
-/*END: Changed by Zeeshan: for LPP*/
+    /*END: Changed by Zeeshan: for LPP*/
 
-/*START: 	Changed by Zeeshan: for ICA*/
+    /*START: 	Changed by Zeeshan: for ICA*/
     sscanf(header[15], "%s%*s%s", junk, text);
 
     if (strcmp(text, "NO") == 0)
-      s->useICA = 0;
+        s->useICA = 0;
     else
-      s->useICA = 1;
+        s->useICA = 1;
 
-	sscanf(header[16], "%s%s%d", junk, junk, &s->blockSize);
-	sscanf(header[17], "%s%s%e", junk, junk, &ftemp);
-	s->learningRate = (double)ftemp;
-	sscanf(header[18], "%s%s%d", junk, junk, &s->iterations);
-	sscanf(header[19], "%s%s%d", junk, junk, &s->arch);
-/*END: 		Changed by Zeeshan: for ICA*/
+    sscanf(header[16], "%s%s%d", junk, junk, &s->blockSize);
+    sscanf(header[17], "%s%s%e", junk, junk, &ftemp);
+    s->learningRate = (double)ftemp;
+    sscanf(header[18], "%s%s%d", junk, junk, &s->iterations);
+    sscanf(header[19], "%s%s%d", junk, junk, &s->arch);
+    /*END: 		Changed by Zeeshan: for ICA*/
 
 
     readInt (file,&rowDim);
@@ -596,42 +599,44 @@ readSubspace (Subspace *s, const char* trainingFile, int quiet)
         }
     }
 
-/*START: 	Changed by Zeeshan: for ICA*/
-    readInt (file,&rowDim);
-    readInt (file,&colDim);
-    s->ica2Basis = makeMatrix (rowDim, colDim);
-    for (i = 0; i < (s->ica2Basis)->col_dim; i++) {
-        for (j = 0; j < (s->ica2Basis)->row_dim; j++) {
-            readDouble (file, &ME(s->ica2Basis, j, i));
+    if(s->useICA)
+    {
+        /*START: 	Changed by Zeeshan: for ICA*/
+        readInt (file,&rowDim);
+        readInt (file,&colDim);
+        s->ica2Basis = makeMatrix (rowDim, colDim);
+        for (i = 0; i < (s->ica2Basis)->col_dim; i++) {
+            for (j = 0; j < (s->ica2Basis)->row_dim; j++) {
+                readDouble (file, &ME(s->ica2Basis, j, i));
+            }
         }
+        /*END: 		Changed by Zeeshan: for ICA*/
     }
-/*END: 		Changed by Zeeshan: for ICA*/
-
     fclose(file);
 }
 
 void
 validateBasisIsOrthonormal (Matrix basis, int printlevel)
 {
-  int i, j;
-  double tolerance = 0.000001;
-  Matrix test = transposeMultiplyMatrixL(basis, basis);
+    int i, j;
+    double tolerance = 0.000001;
+    Matrix test = transposeMultiplyMatrixL(basis, basis);
 
-  for (i = 0; i < test->row_dim; i++) {
-    for (j = 0; j < test->col_dim; j++) {
-      if (i == j) {
-	if (ABS(ME(test, i, j) - 1.0) > tolerance) {
-	  fprintf(stderr, "WARNING: Subspace basis failed orthonormality check at (%d, %d) value: %f\n", i, j, ME(test, i, j));
-	}
-      } else {
-	if (ABS(ME(test, i, j)) > tolerance) {
-	  fprintf(stderr, "WARNING: Subspace basis failed orthonormality check at (%d, %d) value: %f\n", i, j, ME(test, i, j));
-	}
-      }
+    for (i = 0; i < test->row_dim; i++) {
+        for (j = 0; j < test->col_dim; j++) {
+            if (i == j) {
+                if (ABS(ME(test, i, j) - 1.0) > tolerance) {
+                    fprintf(stderr, "WARNING: Subspace basis failed orthonormality check at (%d, %d) value: %f\n", i, j, ME(test, i, j));
+                }
+            } else {
+                if (ABS(ME(test, i, j)) > tolerance) {
+                    fprintf(stderr, "WARNING: Subspace basis failed orthonormality check at (%d, %d) value: %f\n", i, j, ME(test, i, j));
+                }
+            }
+        }
     }
-  }
-  if (printlevel > 0)
-    printf("\nSubspace Basis Passed Orthonormality Check");
+    if (printlevel > 0)
+        printf("\nSubspace Basis Passed Orthonormality Check");
 }
 
 Matrix
@@ -639,10 +644,10 @@ centerThenProjectImages (Subspace *s, Matrix images)
 {
     Matrix subspims;
 
-/*START: 	Changed by Zeeshan: for ICA*/
+    /*START: 	Changed by Zeeshan: for ICA*/
     assert(!s->useICA);
-/*END: 		Changed by Zeeshan: for ICA*/
-	
+    /*END: 		Changed by Zeeshan: for ICA*/
+
     mean_subtract_images (images, s->mean);
     subspims = transposeMultiplyMatrixL (s->basis, images);
     return subspims;
@@ -662,7 +667,7 @@ centerThenProjectImagesICA (Subspace *s, Matrix images)
 
     //in ICA1, s->basis contains the combined basis
     if(s->arch == 1)
-	return eigpims;
+        return eigpims;
 
     mean_subtract_images (eigpims, s->mean);
 
@@ -673,62 +678,62 @@ centerThenProjectImagesICA (Subspace *s, Matrix images)
 /*END: 		Changed by Zeeshan: for ICA*/
 
 /*
- This function reads images in to a vector.  That vector is then mean subtracted
- and then projected onto an optimal basis (PCA, LDA or LPP). Returned is a matrix
- that contains the images after they have been projected onto the subspace.
- */
+This function reads images in to a vector.  That vector is then mean subtracted
+and then projected onto an optimal basis (PCA, LDA or LPP). Returned is a matrix
+that contains the images after they have been projected onto the subspace.
+*/
 Matrix
 readAndProjectImages (Subspace *s, char *imageNamesFile, char *imageDirectory, int *numImages, ImageList **srt)
 {
-  int i, j;
-  Matrix images, vector, smallVector;
-  char name[FILE_LINE_LENGTH];
-  ImageList *subject, *replicate;
+    int i, j;
+    Matrix images, vector, smallVector;
+    char name[FILE_LINE_LENGTH];
+    ImageList *subject, *replicate;
 
-  DEBUG(1, "Reading training file names from file");
+    DEBUG(1, "Reading training file names from file");
 
-  *srt = getImageNames(imageNamesFile, numImages);
+    *srt = getImageNames(imageNamesFile, numImages);
 
-  DEBUG_CHECK(*srt, "Error: header no imagenames found in file image list file");
+    DEBUG_CHECK(*srt, "Error: header no imagenames found in file image list file");
 
-  /* Automatically determine number of pixels in images    */
-  sprintf(name, "%s/%s", imageDirectory, (*srt)->filename);
-  DEBUG(1, "Autodetecting number of pixels, i.e. vector length based on the size of image 0.");
-  DEBUG_CHECK (autoFileLength(name) == s->numPixels, "Images sizes do not match subspace basis vector size");
-  DEBUG_INT(1, "Vector length", s->numPixels);
-  DEBUG_CHECK(s->numPixels > 0, "Error positive value required for a Vector Length");
+    /* Automatically determine number of pixels in images    */
+    sprintf(name, "%s/%s", imageDirectory, (*srt)->filename);
+    DEBUG(1, "Autodetecting number of pixels, i.e. vector length based on the size of image 0.");
+    DEBUG_CHECK (autoFileLength(name) == s->numPixels, "Images sizes do not match subspace basis vector size");
+    DEBUG_INT(1, "Vector length", s->numPixels);
+    DEBUG_CHECK(s->numPixels > 0, "Error positive value required for a Vector Length");
 
-  /*Images stored in the columns of a matrix */
-  DEBUG(1, "Allocating image matrix");
+    /*Images stored in the columns of a matrix */
+    DEBUG(1, "Allocating image matrix");
 
-  images = makeMatrix(s->basis->col_dim, *numImages);
-  vector = makeMatrix(s->numPixels, 1);
+    images = makeMatrix(s->basis->col_dim, *numImages);
+    vector = makeMatrix(s->numPixels, 1);
 
-  i = 0;
-  for (subject = *srt; subject; subject = subject->next_subject) {
-    for (replicate = subject; replicate; replicate = replicate->next_replicate) {
-      if (debuglevel > 0)
-        printf("%s ", replicate->filename);
-      sprintf(name, "%s/%s", imageDirectory, replicate->filename);
-      replicate->imageIndex = i;
-      readFile(name, 0, vector);
-      
-      writeProgress("Reading images", i,*numImages);
+    i = 0;
+    for (subject = *srt; subject; subject = subject->next_subject) {
+        for (replicate = subject; replicate; replicate = replicate->next_replicate) {
+            if (debuglevel > 0)
+                printf("%s ", replicate->filename);
+            sprintf(name, "%s/%s", imageDirectory, replicate->filename);
+            replicate->imageIndex = i;
+            readFile(name, 0, vector);
 
-      smallVector = centerThenProjectImages(s, vector);
+            writeProgress("Reading images", i,*numImages);
 
-      /* Copy the smaller vector into the image matrix*/
-      for (j = 0; j < smallVector->row_dim; j++) {
-	ME(images, j, i) = ME(smallVector, j, 0);
-      }
-      freeMatrix(smallVector);
-      i++;  /* increament the image index */
+            smallVector = centerThenProjectImages(s, vector);
+
+            /* Copy the smaller vector into the image matrix*/
+            for (j = 0; j < smallVector->row_dim; j++) {
+                ME(images, j, i) = ME(smallVector, j, 0);
+            }
+            freeMatrix(smallVector);
+            i++;  /* increament the image index */
+        }
+        if (debuglevel > 0)
+            printf("\n");
     }
-    if (debuglevel > 0)
-      printf("\n");
-  }
-    
-  return images;
+
+    return images;
 }
 
 /* basis_normalize
@@ -745,17 +750,17 @@ basis_normalize(Matrix eigenvectors)
     int i, j;
     double sumsqr, inv_len;
     for (i = 0; i < eigenvectors->col_dim; i++)
-      {
+    {
         sumsqr = 0.0;
         for (j = 0; j < eigenvectors->row_dim; j++)
-	  sumsqr += ME(eigenvectors, j, i) * ME(eigenvectors, j, i);
+            sumsqr += ME(eigenvectors, j, i) * ME(eigenvectors, j, i);
         if (sumsqr != 0)
-	  inv_len = 1.0 / sqrt(sumsqr);
+            inv_len = 1.0 / sqrt(sumsqr);
         else
-	  inv_len = 0;
+            inv_len = 0;
         for (j = 0; j < eigenvectors->row_dim; j++)
-	  ME(eigenvectors, j, i) *= inv_len;
-      }
+            ME(eigenvectors, j, i) *= inv_len;
+    }
 }
 
 
@@ -768,12 +773,12 @@ in matrix images
 void
 mean_subtract_images (Matrix images, Matrix mean)
 {
-  int i, j;
-  for (i = 0; i < images->row_dim; i++) {
-    for (j = 0; j < images->col_dim; j++) {
-      ME(images, i, j) -= ME(mean, i, 0);
+    int i, j;
+    for (i = 0; i < images->row_dim; i++) {
+        for (j = 0; j < images->col_dim; j++) {
+            ME(images, i, j) -= ME(mean, i, 0);
+        }
     }
-  }
 }
 
 /* get_mean_image
@@ -783,19 +788,19 @@ all of the images in the matrix.
 */
 Matrix
 get_mean_image (Matrix images)
-{
-  int i, j;
-  Matrix mean = makeMatrix(images->row_dim, 1);
+{ 
+    int i, j;
+    Matrix mean = makeMatrix(images->row_dim, 1);
 
-  for (i = 0; i < images->row_dim; i++)
+    for (i = 0; i < images->row_dim; i++)
     {
-      ME(mean, i, 0) = 0.0;
-      for (j = 0; j < images->col_dim; j++)
-	ME(mean, i, 0) += ME(images, i, j);
-      ME(mean, i, 0) = ME(mean, i, 0) / images->col_dim;
+        ME(mean, i, 0) = 0.0;
+        for (j = 0; j < images->col_dim; j++)
+            ME(mean, i, 0) += ME(images, i, j);
+        ME(mean, i, 0) = ME(mean, i, 0) / images->col_dim;
     }
 
-  return mean;
+    return mean;
 }
 
 
