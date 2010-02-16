@@ -1,10 +1,10 @@
 /*
- *  csuUtilities.h
- *  GaborGUI
- *
- *  Created by David  Bolme on Sun Jun 09 2002.
- *
- */
+*  csuUtilities.h
+*  GaborGUI
+*
+*  Created by David  Bolme on Sun Jun 09 2002.
+*
+*/
 
 /*
 Copyright (c) 2003 Colorado State University
@@ -40,10 +40,10 @@ OTHER DEALINGS IN THE SOFTWARE.
 #include <math.h>
 #include <float.h>
 /*
- *  This file was created to contian simple commonly used macros
- *  and functions so that they don't have to be rewritten at every
- *  use.
- */ 
+*  This file was created to contian simple commonly used macros
+*  and functions so that they don't have to be rewritten at every
+*  use.
+*/ 
 
 /******************************************************************************
 *                           GLOBAL VARIABLES AND CONSTANTS                    *
@@ -77,19 +77,19 @@ OTHER DEALINGS IN THE SOFTWARE.
 #define FINITE(n) if(!finite(n)) printf("ERROR: Not Finite - %10s:%5f <%10s,%10s,%3d>\n",#n,n,__FILE__,__FUNCTION__,__LINE__);
 
 #define PI          3.141592654
-    /* Random number between 0 and 1 */
+/* Random number between 0 and 1 */
 #define RANDOM   (fabs(((double)rand())/RAND_MAX))
 
 /* This function computes the area under the standard normal curve
-   from -infinity to a.  This can be used to compute statistical
-   significance of a test.  This basically is used like a z curve
-   lookup table.
+from -infinity to a.  This can be used to compute statistical
+significance of a test.  This basically is used like a z curve
+lookup table.
 */
 extern "C" double probNormal(double a);
 
 /*
- Shuffle returns an array with integers between 0 and size-1 where their
- order is randomized but there are no duplicates */
+Shuffle returns an array with integers between 0 and size-1 where their
+order is randomized but there are no duplicates */
 extern "C" int* shuffle(int size);
 
 /*************** Commonly used utility macros ****************/
@@ -99,26 +99,26 @@ extern "C" int* shuffle(int size);
 #define ALLOCATE( type , number ) ( (type*)csu_allocate(#type, sizeof(type),(number), __FILE__, __LINE__) )
 extern "C" void* csu_allocate(const char*, int sof, int num, const char* file, int line);
 
-    /* Number of elements in an array */
+/* Number of elements in an array */
 #define NELEM(v) (sizeof(v)/sizeof(v[0]))
 
 /*************** Commonly used string macros *****************/
 /*#define STRING_TO_DOUBLE(s, d) {                               \
-    char* test;                                                \
-    (d) = strtod((s),&test);                                   \
-    if(test == (s)){                                           \
-        printf("Error converting string to double: %s",(s));   \
-        exit(1);                                               \
-    }                                                         \
+char* test;                                                \
+(d) = strtod((s),&test);                                   \
+if(test == (s)){                                           \
+printf("Error converting string to double: %s",(s));   \
+exit(1);                                               \
+}                                                         \
 }*/
 
 /*#define STRING_TO_INT(s, i) {                                 \
-    char* test;                                               \
-    (i) = strtod((s),&test);                                  \
-    if(test == (s)){                                          \
-        printf("Error converting string to int: %s",(s));     \
-        exit(1);                                              \
-    }                                                         \
+char* test;                                               \
+(i) = strtod((s),&test);                                  \
+if(test == (s)){                                          \
+printf("Error converting string to int: %s",(s));     \
+exit(1);                                              \
+}                                                         \
 }*/
 
 /******************************************************************************
@@ -126,20 +126,20 @@ extern "C" void* csu_allocate(const char*, int sof, int num, const char* file, i
 ******************************************************************************/
 
 typedef int (*TokenizerDataSourceProc) (char *buff, size_t nChars,
-					void **arg);
+                                        void **arg);
 
 typedef struct
 {
-  int state;
-  char in_buff[512];
-  char *i_ptr;
-  char word_buff[100];
-  char *w_ptr;
-  int endOfLine;
-  int endOfFile;
-  int availChars;
-  TokenizerDataSourceProc dataSource;
-  void *dataSrcArg;
+    int state;
+    char in_buff[512];
+    char *i_ptr;
+    char word_buff[100];
+    char *w_ptr;
+    int endOfLine;
+    int endOfFile;
+    int availChars;
+    TokenizerDataSourceProc dataSource;
+    void *dataSrcArg;
 }
 Tokenizer;
 
@@ -153,7 +153,7 @@ extern "C" int tokenizerEndOfLine (Tokenizer * tok);
 extern "C" void tokenizerTestSuite (Tokenizer * tok);
 
 /* The following two functions aren't to be used directly. They are used
- * as the "source" parameter to "tokenizerInit" */
+* as the "source" parameter to "tokenizerInit" */
 
 extern "C" int tokenizerStreamReader (char *buff, size_t nChars, void **arg);
 extern "C" int tokenizerStringReader (char *buff, size_t nChars, void **arg);
@@ -201,95 +201,95 @@ extern "C" int debuglevel;
 extern "C" int quiet;
 
 #define MESSAGE( message ) \
-    { \
-        time_t tttt = time(0); \
-        if(quiet == 0 || debuglevel != 0) printf(message); \
-        if(quiet == 0 || debuglevel != 0) printf("\n"); \
-        if(debuglevel > 0) printf("    [%s]<%s():line %u> %s\n", __FILE__ , __FUNCTION__ , __LINE__, ctime(&tttt)); \
-        fflush(stdout); \
-    }
+{ \
+    time_t tttt = time(0); \
+    if(quiet == 0 || debuglevel != 0) printf(message); \
+    if(quiet == 0 || debuglevel != 0) printf("\n"); \
+    if(debuglevel > 0) printf("    [%s]<%s():line %u> %s\n", __FILE__ , __FUNCTION__ , __LINE__, ctime(&tttt)); \
+    fflush(stdout); \
+}
 
 #define MESSAGE1ARG( message, arg1 ) \
-    { \
-        time_t tttt = time(0); \
-        if(quiet == 0 || debuglevel != 0) printf(message, arg1); \
-        if(quiet == 0 || debuglevel != 0) printf("\n"); \
-        if(debuglevel > 0) printf("    [%s]<%s():line %u> %s\n", __FILE__ , __FUNCTION__ , __LINE__, ctime(&tttt)); \
-        fflush(stdout); \
-    }
+{ \
+    time_t tttt = time(0); \
+    if(quiet == 0 || debuglevel != 0) printf(message, arg1); \
+    if(quiet == 0 || debuglevel != 0) printf("\n"); \
+    if(debuglevel > 0) printf("    [%s]<%s():line %u> %s\n", __FILE__ , __FUNCTION__ , __LINE__, ctime(&tttt)); \
+    fflush(stdout); \
+}
 
 #define MESSAGE2ARG( message, arg1, arg2 ) \
-    { \
-        time_t tttt = time(0); \
-        if(quiet == 0 || debuglevel != 0) printf(message, arg1, arg2); \
-        if(quiet == 0 || debuglevel != 0) printf("\n"); \
-        if(debuglevel > 0) printf("    [%s]<%s():line %u> %s\n", __FILE__ , __FUNCTION__ , __LINE__, ctime(&tttt)); \
-        fflush(stdout); \
-    }
+{ \
+    time_t tttt = time(0); \
+    if(quiet == 0 || debuglevel != 0) printf(message, arg1, arg2); \
+    if(quiet == 0 || debuglevel != 0) printf("\n"); \
+    if(debuglevel > 0) printf("    [%s]<%s():line %u> %s\n", __FILE__ , __FUNCTION__ , __LINE__, ctime(&tttt)); \
+    fflush(stdout); \
+}
 
 
 #define DEBUG( level , message ) \
     if( level == -1 || level <= debuglevel ){ \
-        time_t tttt = time(0); \
-        printf( "**DEBUG %d** \"%s\"\n             at [%s]<%s():line %u>\n             %s\n", level, message , __FILE__ , __FUNCTION__ , __LINE__, ctime(&tttt)); \
-        fflush(stdout); \
+    time_t tttt = time(0); \
+    printf( "**DEBUG %d** \"%s\"\n             at [%s]<%s():line %u>\n             %s\n", level, message , __FILE__ , __FUNCTION__ , __LINE__, ctime(&tttt)); \
+    fflush(stdout); \
     }
 
 #define DEBUG_FLOAT( level , message , value) \
     if( level == -1 || level <= debuglevel ){\
-        time_t tttt = time(0); \
-        printf( "**DEBUG %d** \"%s\" %s=%f\n             at [%s]<%s():line %u>\n             %s\n", level, message, #value , value , __FILE__ , __FUNCTION__ , __LINE__, ctime(&tttt)); \
-        fflush(stdout);\
+    time_t tttt = time(0); \
+    printf( "**DEBUG %d** \"%s\" %s=%f\n             at [%s]<%s():line %u>\n             %s\n", level, message, #value , value , __FILE__ , __FUNCTION__ , __LINE__, ctime(&tttt)); \
+    fflush(stdout);\
     }
 
 #define DEBUG_DOUBLE( level , message , value) \
     if( level == -1 || level <= debuglevel ){\
-        time_t tttt = time(0); \
-        printf( "**DEBUG %d** \"%s\" %s=%f\n             at [%s]<%s():line %u>\n             %s\n", level, message, #value , value , __FILE__ , __FUNCTION__ , __LINE__, ctime(&tttt)); \
-        fflush(stdout); \
+    time_t tttt = time(0); \
+    printf( "**DEBUG %d** \"%s\" %s=%f\n             at [%s]<%s():line %u>\n             %s\n", level, message, #value , value , __FILE__ , __FUNCTION__ , __LINE__, ctime(&tttt)); \
+    fflush(stdout); \
     }
 
 #define DEBUG_INT( level , message , value) \
     if( level == -1 || level <= debuglevel ){\
-        time_t tttt = time(0); \
-        printf( "**DEBUG %d** \"%s\" %s=%d\n             at [%s]<%s():line %u>\n             %s\n", level, message, #value , value , __FILE__ , __FUNCTION__ , __LINE__, ctime(&tttt));\
-        fflush(stdout); \
+    time_t tttt = time(0); \
+    printf( "**DEBUG %d** \"%s\" %s=%d\n             at [%s]<%s():line %u>\n             %s\n", level, message, #value , value , __FILE__ , __FUNCTION__ , __LINE__, ctime(&tttt));\
+    fflush(stdout); \
     }
 
 #define DEBUG_STRING( level , message , value) \
     if( level == -1 || level <= debuglevel ){\
-        time_t tttt = time(0); \
-        printf( "**DEBUG %d** \"%s\" %s=\"%s\"\n             at [%s]<%s():line %u>\n             %s\n", level, message , #value,value , __FILE__ , __FUNCTION__ , __LINE__, ctime(&tttt));\
-        fflush(stdout);\
+    time_t tttt = time(0); \
+    printf( "**DEBUG %d** \"%s\" %s=\"%s\"\n             at [%s]<%s():line %u>\n             %s\n", level, message , #value,value , __FILE__ , __FUNCTION__ , __LINE__, ctime(&tttt));\
+    fflush(stdout);\
     }
 
 #define DEBUG_CHECK( condition , message) \
-if( !(condition) ){\
+    if( !(condition) ){\
     time_t tttt = time(0); \
-        printf( "**DEBUG CHECK** Failed check (%s) \"%s\"\n             at [%s]<%s():line %u>\n             %s\n", #condition, message , __FILE__ , __FUNCTION__ , __LINE__, ctime(&tttt));\
-            fflush(stdout); \
-                exit(1);\
-}
+    printf( "**DEBUG CHECK** Failed check (%s) \"%s\"\n             at [%s]<%s():line %u>\n             %s\n", #condition, message , __FILE__ , __FUNCTION__ , __LINE__, ctime(&tttt));\
+    fflush(stdout); \
+    exit(1);\
+    }
 
 #define DEBUG_CHECK_1ARG( condition , message, arg) \
-if( !(condition) ){\
+    if( !(condition) ){\
     time_t tttt = time(0); \
-        printf( "**DEBUG CHECK** Failed check (%s) \"",#condition);\
-            printf( message, arg);\
-                printf("\"\n             at [%s]<%s():line %u>\n             %s\n", __FILE__ , __FUNCTION__ , __LINE__, ctime(&tttt));\
-                    fflush(stdout); \
-                        exit(1);\
-}
+    printf( "**DEBUG CHECK** Failed check (%s) \"",#condition);\
+    printf( message, arg);\
+    printf("\"\n             at [%s]<%s():line %u>\n             %s\n", __FILE__ , __FUNCTION__ , __LINE__, ctime(&tttt));\
+    fflush(stdout); \
+    exit(1);\
+    }
 
 #define DEBUG_CHECK_2ARG( condition , message, arg1, arg2 ) \
-if( !(condition) ){\
+    if( !(condition) ){\
     time_t tttt = time(0); \
     printf( "**DEBUG CHECK** Failed check (%s) \"",#condition);\
     printf( message, arg1, arg2);\
     printf("\"\n             at [%s]<%s():line %u>\n             %s\n", __FILE__ , __FUNCTION__ , __LINE__, ctime(&tttt));\
     fflush(stdout); \
     exit(1);\
-}
+    }
 
 #define NOT_IMPLEMENTED  DEBUG_CHECK(0,"This function has not yet been implemented");
 

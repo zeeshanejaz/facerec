@@ -77,10 +77,10 @@ extern "C" Image convolveImage(const Image im, const Image mask);
 extern "C" double convolvePoint(PIX_TYPE x, PIX_TYPE y, int c, const Image im, const Image mask);
 
 extern "C" void contrastImage(Image im, double scalar);
-    /* Multiplies everyvalue in im by scalar */
+/* Multiplies everyvalue in im by scalar */
 
 extern "C" void brightnessImage(Image im, double scalar);
-    /* Adds scalar to every value in im */
+/* Adds scalar to every value in im */
 
 extern "C" void ZeroMeanUnitLength(Image im);
 /* scales the pixel so that they have zero mean and the image is unit length*/
@@ -109,9 +109,9 @@ extern "C" void accumulateImages(Image i1, const Image i2);
 extern "C" void gaussianBlur(Image im, double sigma);
 
 /* Add gausian noise to the image. s is the standard
- * deviation relative to the total image range returns the actual standard deviation
- * of the applied noise
- */
+* deviation relative to the total image range returns the actual standard deviation
+* of the applied noise
+*/
 extern "C" double gaussianNoise(Image im, double s);
 
 /* Performs a histogram equalization function.  Output values are in the range 0 to 1 */

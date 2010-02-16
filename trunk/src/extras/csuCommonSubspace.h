@@ -1,9 +1,9 @@
 /*
- *  csuCommonSubspace.h
- *
- *  Created by Marcio L. Teixeira on Tue Jun 19 2002.
- *
- */
+*  csuCommonSubspace.h
+*
+*  Created by Marcio L. Teixeira on Tue Jun 19 2002.
+*
+*/
 
 /*
 Copyright (c) 2003 Colorado State University
@@ -43,12 +43,12 @@ November 2007...
 #include <csuCommon.h>
 
 typedef enum {
-  CUTOFF_NONE    = 0,
-  CUTOFF_SIMPLE  = 1,
-  CUTOFF_ENERGY  = 2,
-  CUTOFF_STRETCH = 3,
-  CUTOFF_CLASSES = 4,
-  CUTOFF_DROPVEC = 5
+    CUTOFF_NONE    = 0,
+    CUTOFF_SIMPLE  = 1,
+    CUTOFF_ENERGY  = 2,
+    CUTOFF_STRETCH = 3,
+    CUTOFF_CLASSES = 4,
+    CUTOFF_DROPVEC = 5
 } CutOffMode;
 
 #define DEFAULT_CUTOFF_PERCENT_SIMPLE  60.0
@@ -57,33 +57,33 @@ typedef enum {
 
 typedef struct
 {
-  int numSubjects;
-  int numPixels;
-  int basisDim;
+    int numSubjects;
+    int numPixels;
+    int basisDim;
 
-  Matrix values;
-  Matrix basis;
-  Matrix mean;
+    Matrix values;
+    Matrix basis;
+    Matrix mean;
 
-  int useLDA;
-  CutOffMode cutOffMode;
-  double cutOff;
-  int dropNVectors;
+    int useLDA;
+    CutOffMode cutOffMode;
+    double cutOff;
+    int dropNVectors;
 
-  /*START 	Changed by Zeeshan*/
-  int useLPP;
-  int neighbourCount;
-  int useAdaptiveK;
-  int lppKeepNVectors;
-  char* lppDistance;
-  /*END 	Changed by Zeeshan*/
+    /*START 	Changed by Zeeshan*/
+    int useLPP;
+    int neighbourCount;
+    int useAdaptiveK;
+    int lppKeepNVectors;
+    char* lppDistance;
+    /*END 	Changed by Zeeshan*/
 } Subspace;
 
 extern "C" void subspaceTrain (Subspace *s, Matrix images, ImageList *srt, int numSubjects, int dropNVectors, CutOffMode cutOffMode, double cutOff, int useLDA, int writeTextInterm
-  /*START 	Changed by Zeeshan*/
-  ,int useLPP, int neighbourCount, int useAdaptiveK, int lppKeepNVectors, char* lppDistance
-  /*END 	Changed by Zeeshan*/
-);
+                               /*START 	Changed by Zeeshan*/
+                               ,int useLPP, int neighbourCount, int useAdaptiveK, int lppKeepNVectors, char* lppDistance
+                               /*END 	Changed by Zeeshan*/
+                               );
 
 extern "C" void writeSubspace (Subspace *s, char *training_filename, char *imageList, int argc, char**argv);
 extern "C" void readSubspace (Subspace *s, const char* trainingFile, int quiet);
@@ -114,5 +114,5 @@ extern "C" void eigentrain (Matrix *mean, Matrix *eigen_vals, Matrix *eigen_base
 extern "C" void fisherTrain (Matrix imspca, ImageList *srt, Matrix *fisherBasis, Matrix *fisherValues, int writeTextInterm);
 
 extern "C" void laplacianTrain (Matrix imspca,  ImageList *srt, Matrix * laplacianBasis, Matrix * laplacianValues,
-            int K, int useAdaptiveK, int lppKeepNVectors, Matrix * pcaValues, char* distName, int writeTextInterm);
+                                int K, int useAdaptiveK, int lppKeepNVectors, Matrix * pcaValues, char* distName, int writeTextInterm);
 #endif /* CSU_COMMON_SUBSPACE_INCLUDED */

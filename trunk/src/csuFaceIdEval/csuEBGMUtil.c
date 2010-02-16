@@ -33,13 +33,13 @@ OTHER DEALINGS IN THE SOFTWARE.
 #include <csuEBGMUtil.h>
 
 /*
- *  GaborJets.c
- *  csuEvalFaceRec
- *
- *  Created by David Bolme on Sat Jul 06 2002.
- *  Copyright (c) 2001 __MyCompanyName__. All rights reserved.
- *
- */
+*  GaborJets.c
+*  csuEvalFaceRec
+*
+*  Created by David Bolme on Sat Jul 06 2002.
+*  Copyright (c) 2001 __MyCompanyName__. All rights reserved.
+*
+*/
 
 
 /* Allocate memory for the gabor jet */
@@ -100,7 +100,7 @@ void computePolar(GaborJet jet){
             }
         }
         else{
-	        if(jet->imagPart[i] >= 0){
+            if(jet->imagPart[i] >= 0){
                 jet->ang[i] = PI/2;
             }
             else{
@@ -211,7 +211,7 @@ JetMasks makeJetMasks(int size){
 }
 
 /* This function frees space that was used to hold on to gabor
- * masks */
+* masks */
 void freeJetMasks(JetMasks masks){
     int n;
 
@@ -225,7 +225,7 @@ void freeJetMasks(JetMasks masks){
 
 
 /*
-    This function creates an image to be used as a convolution mask with a gabor kernel
+This function creates an image to be used as a convolution mask with a gabor kernel
 */
 double WiskottDCFree = 0.0;
 
@@ -300,11 +300,11 @@ JetMasks readMasksFile(const char* filename){
 
 
 /* This function reads in a discription of a graph and loads it into
- * a graph discription structure.  The file format is asci were the
- * first token is the number of vericies followed by verticy labels
- * and guess x, y coordinates.  This is followed by the number of edges
- * and the indexes of the vericies that they connect.
- */
+* a graph discription structure.  The file format is asci were the
+* first token is the number of vericies followed by verticy labels
+* and guess x, y coordinates.  This is followed by the number of edges
+* and the indexes of the vericies that they connect.
+*/
 GraphDiscription readGraphDiscription(const char* filename){
     FILE* file;
     int i;
@@ -324,7 +324,7 @@ GraphDiscription readGraphDiscription(const char* filename){
     for(i = 0; i < gd->numVert; i++){
         gd->vertLabels[i] = ALLOCATE(char,LABELMAX);
         DEBUG_CHECK_2ARG(fscanf(file, "%s %lf %lf",  gd->vertLabels[i], &(gd->verts[i].x), &(gd->verts[i].y)) == 3,
-                         "Error Parsing vertex %d in file: %s", i, filename);
+            "Error Parsing vertex %d in file: %s", i, filename);
         gd->bunch[i] = makeJetBunch();
 
     }
@@ -336,7 +336,7 @@ GraphDiscription readGraphDiscription(const char* filename){
     gd->edges = ALLOCATE(Edge,gd->numEdge);
     for(i = 0; i < gd->numEdge; i++){
         DEBUG_CHECK_2ARG(fscanf(file, "%d %d",&(gd->edges[i].vert1), &(gd->edges[i].vert2)) == 2,
-                         "Error Parsing vertex %d in file: %s", i, filename);
+            "Error Parsing vertex %d in file: %s", i, filename);
     }
     fclose(file);
 
@@ -344,11 +344,11 @@ GraphDiscription readGraphDiscription(const char* filename){
 }
 
 /* This function reads in a discription of a graph and loads it into
- * a graph discription structure.  The file format is asci were the
- * first token is the number of vericies followed by verticy labels
- * and guess x, y coordinates.  This is followed by the number of edges
- * and the indexes of the vericies that they connect.
- */
+* a graph discription structure.  The file format is asci were the
+* first token is the number of vericies followed by verticy labels
+* and guess x, y coordinates.  This is followed by the number of edges
+* and the indexes of the vericies that they connect.
+*/
 void saveGraphDiscription(const char* filename, GraphDiscription gd){
     FILE* file;
     int i;
@@ -402,8 +402,8 @@ Image makeComplexImage(const Image jetImage){
         for(y = 0; y < complexImage->height; y++){
             for(c = 0; c < complexImage->channels; c++){
                 IE(complexImage,x,y,c) =
-                sqrt(SQR(IE(jetImage,x,y,c*2))+
-                     SQR(IE(jetImage,x,y,c*2+1)));
+                    sqrt(SQR(IE(jetImage,x,y,c*2))+
+                    SQR(IE(jetImage,x,y,c*2+1)));
             }
         }
     }
@@ -483,7 +483,7 @@ FaceGraph makeFaceGraph( int geosize, int totalsize ){
     for(i = 0; i < totalsize; i++){
         fg->jets[i] = NULL;
     }
-    
+
     alloc_faceGraph++;
     return fg;
 }
@@ -603,7 +603,7 @@ void saveFaceGraph(char *filename, FaceGraph fg){
             writereal(file, fg->jets[i]->ang[j]);
         }
     }
-    
+
     fclose(file);
 }
 

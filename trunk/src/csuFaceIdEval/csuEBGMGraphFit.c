@@ -51,8 +51,8 @@ typedef struct {
 }
 Arguments;
 /*
- * Process the command line and initialize the variables
- */
+* Process the command line and initialize the variables
+*/
 
 void usage( const char* name){
     printf("usage: %s [OPITIONS] modelImages.srt novelImage.srt wavelet_file image_dir model_graph_dir displace_estimator outputDir\n\n", name);
@@ -107,8 +107,8 @@ void processCommand(int argc, char** argv, Arguments* args) {
         else if (readOptionInt (argc, argv, &i, "-bunchSize", &args->bunchSize)) {}
         /* other flags */
         else if (readOption    (argc, argv, &i, "-quiet")) { quiet = 1; }
-         else if (readOption    (argc, argv, &i, "-dcfree")) { WiskottDCFree = 1.0; }
-       else if (readOptionInt (argc, argv, &i, "-debuglevel", &debuglevel)) {}
+        else if (readOption    (argc, argv, &i, "-dcfree")) { WiskottDCFree = 1.0; }
+        else if (readOptionInt (argc, argv, &i, "-debuglevel", &debuglevel)) {}
 
         /* check if the current argument is an unparsed option */
         else if (checkBadOption(argc,argv,&i)) {}
@@ -186,7 +186,7 @@ GraphDiscription extractModelJets(ImageList* modelImages, char* imageDir, char* 
             }
 
             /* extract jets */
-                printf("Extracting jets from model image #%03d.  <%s>  |", count, replicate->filename); fflush(stdout);
+            printf("Extracting jets from model image #%03d.  <%s>  |", count, replicate->filename); fflush(stdout);
             for(i = 0; i < gd->numVert; i++){
                 printf("#"); fflush(stdout);
                 addJetToBunch( mj->bunch[i],
@@ -293,7 +293,7 @@ void guessVertexLocation(int vert, int maxvert, GraphDiscription graphTemplate, 
 
     if(vert < 6){
         /* Little basis for an estimate so just return guess
-           -- assume these are eye coordiantates. */
+        -- assume these are eye coordiantates. */
         graphTemplate->verts[vert].x = bunchGraph->verts[vert].x;
         graphTemplate->verts[vert].y = bunchGraph->verts[vert].y;
         return;
@@ -314,7 +314,7 @@ void guessVertexLocation(int vert, int maxvert, GraphDiscription graphTemplate, 
             tw += w;
         }
     }
-    
+
     /* compute the final vert location */
     graphTemplate->verts[vert].x = locx/tw;
     graphTemplate->verts[vert].y = locy/tw;
@@ -342,7 +342,7 @@ void LocatePoint( double *x, double *y, JetBunch bunch, Image novel, JetMasks ma
 
     /* Compute the new x and y */
     dispEst( bunch->jets[best], njet, &dx, &dy);
-    
+
     *x += dx;
     *y += dy;
 

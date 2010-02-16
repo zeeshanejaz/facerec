@@ -140,12 +140,12 @@ int main(int argc, char** argv){
     FaceGraph graph;
     int i;
     int imagenum = 0, numImage;
-    
+
     processCommand(argc,argv, &args);
 
     masks = readMasksFile(args.masksFile);
     imagenames = getImageNames(args.imageFile, &numImage);
-    
+
     for(subject = imagenames; subject != NULL; subject = subject->next_subject){
         for(replicate = subject; replicate != NULL; replicate = replicate->next_replicate){
             imagenum++;

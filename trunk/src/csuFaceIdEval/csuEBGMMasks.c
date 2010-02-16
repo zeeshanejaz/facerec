@@ -40,11 +40,11 @@ typedef struct {
 Arguments;
 
 /*
- * usage
- *
- * Display a standard usage parameters or help if there is a problem with the
- * command line.
- */
+* usage
+*
+* Display a standard usage parameters or help if there is a problem with the
+* command line.
+*/
 void usage(const char* name){
     printf("Usage: %s mask_file outputdir\n",name);
     exit(1);

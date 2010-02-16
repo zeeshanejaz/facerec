@@ -1,9 +1,9 @@
 /*
- *  csuCommonSubspace.h
- *
- *  Created by Marcio L. Teixeira on Tue Jun 19 2002.
- *
- */
+*  csuCommonSubspace.h
+*
+*  Created by Marcio L. Teixeira on Tue Jun 19 2002.
+*
+*/
 
 /*
 Copyright (c) 2003 Colorado State University
@@ -37,8 +37,8 @@ Implementation of Laplacianfaces Algorithm for Face Recognition
 November 2007...
 
 Changes in this file:
-	Changed the struct Subspace for support LPP
-	Changed function prototype declaration	
+Changed the struct Subspace for support LPP
+Changed function prototype declaration	
 */
 
 #ifndef CSU_COMMON_SUBSPACE_INCLUDED
@@ -47,12 +47,12 @@ Changes in this file:
 #include <csuCommon.h>
 
 typedef enum {
-  CUTOFF_NONE    = 0,
-  CUTOFF_SIMPLE  = 1,
-  CUTOFF_ENERGY  = 2,
-  CUTOFF_STRETCH = 3,
-  CUTOFF_CLASSES = 4,
-  CUTOFF_DROPVEC = 5
+    CUTOFF_NONE    = 0,
+    CUTOFF_SIMPLE  = 1,
+    CUTOFF_ENERGY  = 2,
+    CUTOFF_STRETCH = 3,
+    CUTOFF_CLASSES = 4,
+    CUTOFF_DROPVEC = 5
 } CutOffMode;
 
 #define DEFAULT_CUTOFF_PERCENT_SIMPLE  60.0
@@ -61,45 +61,45 @@ typedef enum {
 
 typedef struct
 {
-  int numSubjects;
-  int numPixels;
-  int basisDim;
+    int numSubjects;
+    int numPixels;
+    int basisDim;
 
-  Matrix values;
-  Matrix basis;
-  Matrix mean;
+    Matrix values;
+    Matrix basis;
+    Matrix mean;
 
-  int useLDA;
-  CutOffMode cutOffMode;
-  double cutOff;
-  int dropNVectors;
+    int useLDA;
+    CutOffMode cutOffMode;
+    double cutOff;
+    int dropNVectors;
 
-  /*START 	Changed by Zeeshan: For LPP*/
-  int useLPP;
-  int neighbourCount;
-  int useAdaptiveK;
-  int lppKeepNVectors;
-  char* lppDistance;
-  /*END 	Changed by Zeeshan: For LPP*/
+    /*START 	Changed by Zeeshan: For LPP*/
+    int useLPP;
+    int neighbourCount;
+    int useAdaptiveK;
+    int lppKeepNVectors;
+    char* lppDistance;
+    /*END 	Changed by Zeeshan: For LPP*/
 
-  /*START 	Changed by Zeeshan: For ICA*/
-  int useICA;
-  int arch;
-  Matrix ica2Basis; // ICA2 requires separate basis
-  double learningRate;
-  int blockSize;
-  int iterations;
-  /*END 	Changed by Zeeshan: For ICA*/
+    /*START 	Changed by Zeeshan: For ICA*/
+    int useICA;
+    int arch;
+    Matrix ica2Basis; // ICA2 requires separate basis
+    double learningRate;
+    int blockSize;
+    int iterations;
+    /*END 	Changed by Zeeshan: For ICA*/
 } Subspace;
 
 void subspaceTrain (Subspace *s, Matrix images, ImageList *srt, int numSubjects, int dropNVectors, CutOffMode cutOffMode, double cutOff, int useLDA, int writeTextInterm
-  /*START 	Changed by Zeeshan: For LPP*/
-  ,int useLPP, int neighbourCount, int useAdaptiveK, int lppKeepNVectors, char* lppDistance
-  /*END 	Changed by Zeeshan: For LPP*/
-  /*START 	Changed by Zeeshan: For ICA*/
-  ,int useICA, int arch, double learningRate, int blockSize, int iterations
-  /*END 	Changed by Zeeshan: For ICA*/
-);
+                    /*START 	Changed by Zeeshan: For LPP*/
+                    ,int useLPP, int neighbourCount, int useAdaptiveK, int lppKeepNVectors, char* lppDistance
+                    /*END 	Changed by Zeeshan: For LPP*/
+                    /*START 	Changed by Zeeshan: For ICA*/
+                    ,int useICA, int arch, double learningRate, int blockSize, int iterations
+                    /*END 	Changed by Zeeshan: For ICA*/
+                    );
 
 void writeSubspace (Subspace *s, char *training_filename, char *imageList, int argc, char**argv);
 void readSubspace (Subspace *s, const char* trainingFile, int quiet);
@@ -128,7 +128,7 @@ void fisherTrain (Matrix imspca, ImageList *srt, Matrix *fisherBasis, Matrix *fi
 
 /*START 	Changed by Zeeshan: For LPP & ICA*/
 void laplacianTrain (Matrix imspca,  ImageList *srt, Matrix * laplacianBasis,
- Matrix * laplacianValues, int K, int useAdaptiveK, int lppKeepNVectors, Matrix * pcaValues, char* distName, int writeTextInterm);
+                     Matrix * laplacianValues, int K, int useAdaptiveK, int lppKeepNVectors, Matrix * pcaValues, char* distName, int writeTextInterm);
 void independentTrain (Matrix pcaBasis, Matrix impca, Matrix * independentBasis, int architecture, int blockSize, double learningRate, int iterations);
 /*END 		Changed by Zeeshan: For LPP & ICA*/
 #endif /* CSU_COMMON_SUBSPACE_INCLUDED */

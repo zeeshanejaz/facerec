@@ -30,10 +30,10 @@ OTHER DEALINGS IN THE SOFTWARE.
 void usage(const char* name){
     printf("Usage: %s [-m] sfifiles\n\n",name);
     printf( "    This program converts sfi images to pgm format.\n\n"
-            "    If the first argument is -m then the program runs in multichannel mode\n"
-            "    In default mode the first channel of the sfi image is saved to a file.\n"
-            "    In multichannel mode every channel of the image is saved to its own pgm image.\n"
-            "    The pgm image will have a channel number appended to its file name \"*_XXX.pgm\".\n");
+        "    If the first argument is -m then the program runs in multichannel mode\n"
+        "    In default mode the first channel of the sfi image is saved to a file.\n"
+        "    In multichannel mode every channel of the image is saved to its own pgm image.\n"
+        "    The pgm image will have a channel number appended to its file name \"*_XXX.pgm\".\n");
     exit(1);
 }
 
@@ -68,7 +68,7 @@ int main(int argc, char** argv){
     for(;i < argc; i++){
         printf("Converting: %s\n",argv[i]);
         im = readRawImage(argv[i]);
-        
+
         removeExtention(argv[i]);
 
         if(multichannel){

@@ -30,7 +30,7 @@ Implementation of Laplacianfaces Algorithm for Face Recognition
 November 2007...
 
 Changes in this file:
-	Added a new function to subtract a scalar value from a matrix
+Added a new function to subtract a scalar value from a matrix
 */
 
 #include <csuCommon.h>
@@ -41,7 +41,7 @@ int alloc_matrix = 0;
 Matrix makeMatrix(int row_dim, int col_dim) {
     /** creates and allocates memory for a matrix */
     int i;
-    
+
     /* Allocate a matrix header */
     Matrix A = (Matrix)malloc(sizeof(matrix));
     assert(A);
@@ -87,15 +87,15 @@ Matrix makeZeroMatrix(int row_dim, int col_dim) {
 
 void initializeMatrix(Matrix X, int value)
 {
-	int i, j;
-	for(i = 0; i < X->row_dim; i++)
-		for(j = 0; j < X->row_dim; j++)
-			ME(X, i, j) = value;
+    int i, j;
+    for(i = 0; i < X->row_dim; i++)
+        for(j = 0; j < X->row_dim; j++)
+            ME(X, i, j) = value;
 }
 
 void freeMatrix(Matrix A) {
     /** frees the area allocated to a matrix */
-    
+
     /* keep track of the number of matricies allcoated */
     alloc_matrix--;
     DEBUG(10, "Freeing Matrix");
@@ -235,7 +235,7 @@ Matrix transposeMatrix(const Matrix A) {
 void rowSwap(Matrix m, int rSrc, int rDest){
     int col = 0;
     double tmp;
-    
+
     for(col = 0; col < m->col_dim; col++){
         tmp = ME(m,rSrc,col);
         ME(m,rSrc,col) = ME(m,rDest,col);
@@ -294,9 +294,9 @@ void matrixRREF(Matrix m){
 
         /* rescale the Pivot Row */
         rowMult( m, pivotRow,1.0/ME(m,pivotRow,pivotCol) );
-        
+
         /* This part of the algorithm is not as effecent as it could be,
-            but it works for now. */
+        but it works for now. */
         for(row = 0; row < m->row_dim; row++){
             if(row != pivotRow) {
                 rowMultAdd(m,pivotRow,row,-ME(m,row,pivotCol));
@@ -337,7 +337,7 @@ Matrix invertRREF(Matrix m){
     }
 
     freeMatrix(tmp);
-    
+
     if(prealloc != alloc_matrix - 1){
         printf("Error deallocating matricies <%s>: pre=%d post=%d",__FUNCTION__, prealloc, alloc_matrix);
         exit(1);
@@ -396,7 +396,7 @@ Matrix weightedLeastSquares(Matrix A, Matrix b, Matrix W){
 /*Function for subtracting a scalar value from a matrix*/
 void subtractScalarFromMatrix (Matrix A, const int n) {
     /** output A - n */
-    
+
     int i, j;
     DEBUG(10, "Subtracting Scalar from  Matrix");
 
@@ -466,7 +466,7 @@ Matrix matrixCols( const Matrix mat, int col1, int col2) {
     int i, j;
 
     DEBUG_CHECK(col1 <= col2 && col2 < mat->col_dim, "Poorly chosen columns for extract columns operation");
-    
+
     for (i = col1; i <= col2; i++) {
         for (j = 0; j < mat->row_dim; j++) {
             ME(cols, j, i - col1) = ME(mat, j, i);
@@ -481,7 +481,7 @@ Matrix matrixRows( const Matrix mat, int row1, int row2) {
     int i, j;
 
     DEBUG_CHECK(row1 <= row2 && row2 < mat->row_dim, "Poorly chosen rows for extract rows operation");
-    
+
     for (i = 0; i < mat->col_dim; i++) {
         for (j = row1; j <= row2; j++) {
             ME(rows, j - row1, i) = ME(mat, j, i);
@@ -493,40 +493,40 @@ Matrix matrixRows( const Matrix mat, int row1, int row2) {
 
 Matrix valueMatrix(int row_dim, int col_dim, double value)
 {
-	int i, j;
-	Matrix m = makeMatrix(row_dim, col_dim);
+    int i, j;
+    Matrix m = makeMatrix(row_dim, col_dim);
 
-    	for (i = 0; i < row_dim; i++) 
-	{
-	        for (j = 0; j < col_dim; j++) 
-		{
-            		ME(m, i, j) = value;
-        	}
-    	}
+    for (i = 0; i < row_dim; i++) 
+    {
+        for (j = 0; j < col_dim; j++) 
+        {
+            ME(m, i, j) = value;
+        }
+    }
 
     return m;	
 }
 
 Matrix rangeCheck(Matrix mat, int i, int j, const char* file_name,
                   const char* func_name, int line_num, const char* mat_name) {
-    if (i >= 0 && i < mat->row_dim && j >= 0 && j < mat->col_dim)
-        return mat;
+                      if (i >= 0 && i < mat->row_dim && j >= 0 && j < mat->col_dim)
+                          return mat;
 
-    printf("*********************  ERROR  *********************\n");
-    printf("Error: Matrix bounds out of range     \n");
-    printf("  in function: %s  Matrix: %s     \n", func_name, mat_name);
-    printf("        Index: (%d,%d)  Size: (%dX%d) \n", i, j, mat->row_dim, mat->col_dim);
-    printf("                     file: %s         \n", file_name);
-    printf("                     line: %d         \n", line_num );
-    printf("***************************************************\n");
+                      printf("*********************  ERROR  *********************\n");
+                      printf("Error: Matrix bounds out of range     \n");
+                      printf("  in function: %s  Matrix: %s     \n", func_name, mat_name);
+                      printf("        Index: (%d,%d)  Size: (%dX%d) \n", i, j, mat->row_dim, mat->col_dim);
+                      printf("                     file: %s         \n", file_name);
+                      printf("                     line: %d         \n", line_num );
+                      printf("***************************************************\n");
 
-    exit(1);
-    return mat;
+                      exit(1);
+                      return mat;
 }
 
 
 /*
-  This is useful for debugging. It prints a matrix to standard out
+This is useful for debugging. It prints a matrix to standard out
 */
 
 void printMatrix(const char* label, Matrix m) {
@@ -552,15 +552,15 @@ void saveMatrixAscii(const char *fname, const char* label, const Matrix m, Matri
     char filename[1024];
 
     DEBUG_CHECK (!(((mode & formatMask) == matlabFormat) && (mode & appendToFile)),
-		 "Writing multiple matrices to an ascii file not supported by Matlab");
+        "Writing multiple matrices to an ascii file not supported by Matlab");
 
     if (fname == NULL) {
-      if ((mode & formatMask) == octaveFormat) {
-	sprintf(filename, "%s.mat", label[0] == '*' ? label + 1 : label );
-      } else {
-	sprintf(filename, "%s.txt", label[0] == '*' ? label + 1 : label );
-      }
-      fname = filename;
+        if ((mode & formatMask) == octaveFormat) {
+            sprintf(filename, "%s.mat", label[0] == '*' ? label + 1 : label );
+        } else {
+            sprintf(filename, "%s.txt", label[0] == '*' ? label + 1 : label );
+        }
+        fname = filename;
     }
 
     matfile = fopen(fname, (mode & appendToFile) ? "a" : "w");
@@ -571,7 +571,7 @@ void saveMatrixAscii(const char *fname, const char* label, const Matrix m, Matri
     }
 
     /*  The following lines are incompatible with matlab but
-        neccessary for octave.  */
+    neccessary for octave.  */
 
     if ((mode & formatMask) == octaveFormat) { /* save to octave format */
         fprintf(matfile, "# name: %s\n", label[0] == '*' ? label + 1 : label);
@@ -593,34 +593,34 @@ void saveMatrixAscii(const char *fname, const char* label, const Matrix m, Matri
 }
 
 /* Return a matrix of random elements (from 0.0 to 1.0)
- */
+*/
 Matrix
 makeRandomMatrix (int row_dim, int col_dim)
 {
-  int i,j;
-  Matrix m = makeMatrix(row_dim,col_dim);
-  for (i = 0; i < m->row_dim; i++) {
-      for (j = 0; j < m->col_dim; j++) {
-	  ME(m,i,j) = RANDOM;
-      }
-  }
-  return m;
+    int i,j;
+    Matrix m = makeMatrix(row_dim,col_dim);
+    for (i = 0; i < m->row_dim; i++) {
+        for (j = 0; j < m->col_dim; j++) {
+            ME(m,i,j) = RANDOM;
+        }
+    }
+    return m;
 }
 
 /* Return the sum of the squares of the elements of a matrix.
- * The square-root of this quantity is the L2 norm of the matrix.
- */
+* The square-root of this quantity is the L2 norm of the matrix.
+*/
 double
 matrixSumOfSquares (Matrix m)
 {
-  double sumOfSquares = 0.0;
-  int i, j;
-  for (i = 0; i < m->row_dim; i++) {
-    for (j = 0; j < m->col_dim; j++) {
-      sumOfSquares += SQR(ME(m, i, j));
+    double sumOfSquares = 0.0;
+    int i, j;
+    for (i = 0; i < m->row_dim; i++) {
+        for (j = 0; j < m->col_dim; j++) {
+            sumOfSquares += SQR(ME(m, i, j));
+        }
     }
-  }
-  return sumOfSquares;
+    return sumOfSquares;
 }
 
 /*START: Changed by Zeeshan: for LPP*/
@@ -632,12 +632,12 @@ a given scalar value.
 */
 void multiplyMatrixScalar(Matrix M, double scale)
 {
- int i, j;
-  for (i = 0; i < M->col_dim; i++) {
-    for (j = 0; j < M->row_dim; j++) {
-      ME(M, j, i) *= scale;
-    }
-  }	
+    int i, j;
+    for (i = 0; i < M->col_dim; i++) {
+        for (j = 0; j < M->row_dim; j++) {
+            ME(M, j, i) *= scale;
+        }
+    }	
 }
 
 /* ReshapeMatrix 
@@ -646,32 +646,32 @@ This function reshapes a given matrix into a matrix of given rows and cols.
 */
 Matrix reshapeMatrix (Matrix M, int row, int col)
 {
-	int i, j, k, l;
-	Matrix E;
+    int i, j, k, l;
+    Matrix E;
 
-	assert((M->row_dim * M->col_dim) == (row * col));
+    assert((M->row_dim * M->col_dim) == (row * col));
 
-	printf("Reshaping Matrix.\n");
+    printf("Reshaping Matrix.\n");
 
-	E = makeMatrix(M->row_dim, M->col_dim);
-	k = 0; l = 0;
+    E = makeMatrix(M->row_dim, M->col_dim);
+    k = 0; l = 0;
 
-	for( i = 0; i < M->row_dim ; i++ )
-		for( j = 0 ; j < M->col_dim ; j++ )	
-		{
-			ME(E, i, j) = ME(M, k, l);
-			
-			l ++;
-			if(l >= M->col_dim)
-			{
-				l = 0;
-				k ++; 
-			} 
-		}
+    for( i = 0; i < M->row_dim ; i++ )
+        for( j = 0 ; j < M->col_dim ; j++ )	
+        {
+            ME(E, i, j) = ME(M, k, l);
 
-	printf("Finished Computing Reshaping Matrix.\n");
+            l ++;
+            if(l >= M->col_dim)
+            {
+                l = 0;
+                k ++; 
+            } 
+        }
 
-	return E;
+        printf("Finished Computing Reshaping Matrix.\n");
+
+        return E;
 }
 
 /* ACOSMatrix 
@@ -681,22 +681,22 @@ matrix.
 */
 Matrix ACOSMatrix (Matrix M)
 {
-	int i, j;
-	Matrix E;
+    int i, j;
+    Matrix E;
 
-	printf("Computing ACOS.\n");
+    printf("Computing ACOS.\n");
 
-	E = makeMatrix(M->row_dim, M->col_dim);
-	
-	for( i = 0 ; i < M->row_dim ; i++ )
-		for( j = 0 ; j < M->col_dim ; j++ )	
-		{
-			ME(E, i, j) = acos(ME(M, i, j));	
-		}
+    E = makeMatrix(M->row_dim, M->col_dim);
 
-	printf("Finished Computing ACOS.\n");
+    for( i = 0 ; i < M->row_dim ; i++ )
+        for( j = 0 ; j < M->col_dim ; j++ )	
+        {
+            ME(E, i, j) = acos(ME(M, i, j));	
+        }
 
-	return E;
+        printf("Finished Computing ACOS.\n");
+
+        return E;
 }
 
 /* sqrtElem 
@@ -706,22 +706,22 @@ matrix.
 */
 Matrix sqrtElem (Matrix M)
 {
-  	int i, j;
-	Matrix E;
+    int i, j;
+    Matrix E;
 
-	printf("Computing SQRTE.\n");
+    printf("Computing SQRTE.\n");
 
-	E = makeMatrix(M->row_dim, M->col_dim);
-	
-	for( i = 0 ; i < M->row_dim ; i++ )
-		for( j = 0 ; j < M->col_dim ; j++ )	
-		{
-			ME(E, i, j) = sqrt(ME(M, i, j));	
-		}
+    E = makeMatrix(M->row_dim, M->col_dim);
 
-	printf("Finished Computing SQRTE.\n");
+    for( i = 0 ; i < M->row_dim ; i++ )
+        for( j = 0 ; j < M->col_dim ; j++ )	
+        {
+            ME(E, i, j) = sqrt(ME(M, i, j));	
+        }
 
-	return E;
+        printf("Finished Computing SQRTE.\n");
+
+        return E;
 }
 
 
@@ -733,69 +733,69 @@ matrix.
 */
 Matrix sqrtMatrix (Matrix M)
 {
-  	int i;
-	Matrix E, D, Sq, Temp, Result;
+    int i;
+    Matrix E, D, Sq, Temp, Result;
 
-	printf("Computing SQRTM.\n");
+    printf("Computing SQRTM.\n");
 
-	E = makeMatrix(M->row_dim, M->col_dim);
-	D = makeMatrix(M->row_dim, 1);
-	
-        cvJacobiEigens_64d(M->data, E->data, D->data, M->col_dim, 0.0, -99);
-   	    	
-	Sq = makeMatrix(M->row_dim, M->col_dim);
+    E = makeMatrix(M->row_dim, M->col_dim);
+    D = makeMatrix(M->row_dim, 1);
 
-	for( i = 0 ; i < Sq->row_dim ; i++)
-	{
-		if(ME(D, i, 0) < 0.0)
-		{
-			ME(D, i, 0) *= -1;
-		}
+    cvJacobiEigens_64d(M->data, E->data, D->data, M->col_dim, 0.0, -99);
 
-		ME(Sq, i, i) = sqrt(ME(D, i, 0));	
-	}
+    Sq = makeMatrix(M->row_dim, M->col_dim);
 
-	Temp = transposeMultiplyMatrixR(Sq, E);
-	
-	Result = multiplyMatrix(E, Temp);
+    for( i = 0 ; i < Sq->row_dim ; i++)
+    {
+        if(ME(D, i, 0) < 0.0)
+        {
+            ME(D, i, 0) *= -1;
+        }
 
-	freeMatrix(E);	
-	freeMatrix(D);
-	freeMatrix(Sq);
-	freeMatrix(Temp);
-	
-	printf("Finished Computing SQRTM.\n");
+        ME(Sq, i, i) = sqrt(ME(D, i, 0));	
+    }
 
-	return Result;
+    Temp = transposeMultiplyMatrixR(Sq, E);
+
+    Result = multiplyMatrix(E, Temp);
+
+    freeMatrix(E);	
+    freeMatrix(D);
+    freeMatrix(Sq);
+    freeMatrix(Temp);
+
+    printf("Finished Computing SQRTM.\n");
+
+    return Result;
 }
 
 Matrix orderColumns(Matrix M, int order[])
 {
-	int i,j;
-	Matrix N = makeMatrix(M->row_dim, M->col_dim);
-	
-	for(i = 0; i < M->col_dim; i++)
-		for(j = 0; j < M->row_dim; j++)
-		{
-			ME(N, j, i) = ME(M, j, order[i]);
-		}
+    int i,j;
+    Matrix N = makeMatrix(M->row_dim, M->col_dim);
 
-	return N;
+    for(i = 0; i < M->col_dim; i++)
+        for(j = 0; j < M->row_dim; j++)
+        {
+            ME(N, j, i) = ME(M, j, order[i]);
+        }
+
+        return N;
 }
 
 
 Matrix orderRows(Matrix M, int order[])
 {
-	int i,j;
-	Matrix N = makeMatrix(M->row_dim, M->col_dim);
-	
-	for(i = 0; i < M->row_dim; i++)
-		for(j = 0; j < M->col_dim; j++)
-		{
-			ME(N, i, j) = ME(M, order[i], j);
-		}
+    int i,j;
+    Matrix N = makeMatrix(M->row_dim, M->col_dim);
 
-	return N;
+    for(i = 0; i < M->row_dim; i++)
+        for(j = 0; j < M->col_dim; j++)
+        {
+            ME(N, i, j) = ME(M, order[i], j);
+        }
+
+        return N;
 }
 
 
@@ -806,12 +806,12 @@ in that image
 */
 void each_mean_subtract_column (Matrix ims, Matrix mean)
 {
-  int i, j;
-  for (i = 0; i < ims->col_dim; i++) {
-    for (j = 0; j < ims->row_dim; j++) {
-      ME(ims, j, i) -= ME(mean, 0, i);
+    int i, j;
+    for (i = 0; i < ims->col_dim; i++) {
+        for (j = 0; j < ims->row_dim; j++) {
+            ME(ims, j, i) -= ME(mean, 0, i);
+        }
     }
-  }
 }
 
 /* get_mean_each_image
@@ -821,22 +821,22 @@ column of each  column in the matrix.
 */
 Matrix get_mean_each_column (Matrix ims)
 {
-  int i, j;
-  Matrix mean = makeMatrix(1, ims->col_dim);
+    int i, j;
+    Matrix mean = makeMatrix(1, ims->col_dim);
 
-  for (i = 0; i < ims->col_dim; i++)
+    for (i = 0; i < ims->col_dim; i++)
     {
-      ME(mean, 0, i) = 0.0;
+        ME(mean, 0, i) = 0.0;
 
-      for (j = 0; j < ims->row_dim; j++)
-	{
-		ME(mean, 0, i) = (ME(ims, j, i) + ME(mean, 0, i));
-	}
+        for (j = 0; j < ims->row_dim; j++)
+        {
+            ME(mean, 0, i) = (ME(ims, j, i) + ME(mean, 0, i));
+        }
 
-      ME(mean, 0, i) = ((double)ME(mean, 0, i)) / ((double)ims->row_dim);
+        ME(mean, 0, i) = ((double)ME(mean, 0, i)) / ((double)ims->row_dim);
     }
 
-  return mean;
+    return mean;
 }
 
 /* calculateStandardDeviation
@@ -845,24 +845,24 @@ Calculates the standard deviation of all elements in matrix
 */
 Matrix calculateStandardDeviation(Matrix ims)
 {
-	double Sum;
-	int i, j;
-	Matrix smean = calculateMean(ims);
-	Matrix stdev = makeMatrix(smean->row_dim, 1);
-	for (i = 0 ; i < ims->row_dim; i++)
-	{
-		Sum = 0;
-		for (j = 0 ; j < ims->col_dim; j++)
-		{		
-			Sum = Sum + ((ME(ims, i, j) - ME(smean, i, 0)) 
-					* (ME(ims, i, j) - ME(smean, i, 0)));
-		}
+    double Sum;
+    int i, j;
+    Matrix smean = calculateMean(ims);
+    Matrix stdev = makeMatrix(smean->row_dim, 1);
+    for (i = 0 ; i < ims->row_dim; i++)
+    {
+        Sum = 0;
+        for (j = 0 ; j < ims->col_dim; j++)
+        {		
+            Sum = Sum + ((ME(ims, i, j) - ME(smean, i, 0)) 
+                * (ME(ims, i, j) - ME(smean, i, 0)));
+        }
 
-		ME(stdev, i, 0) = (double) sqrt(((double)Sum) / ((double)ims->col_dim));		
-	}
+        ME(stdev, i, 0) = (double) sqrt(((double)Sum) / ((double)ims->col_dim));		
+    }
 
-	freeMatrix(smean);
-	return stdev;
+    freeMatrix(smean);
+    return stdev;
 }
 
 /* calculateMean
@@ -871,22 +871,22 @@ Calculates the mean of all elements of a matrix
 */
 Matrix calculateMean(Matrix ims)
 {
-	int i, j;
-	double Sum;
-	Matrix mean = makeMatrix(ims->row_dim, 1);
-		
-	for (i = 0 ; i < ims->row_dim; i++)
-	{
-		Sum = 0;
-		for (j = 0 ; j < ims->col_dim; j++)
-		{		
-			Sum = Sum + ME(ims, i, j);
-		}
-		
-		ME(mean, i, 0) = Sum / (double)ims->col_dim;
-	}
-	
-	return mean;
+    int i, j;
+    double Sum;
+    Matrix mean = makeMatrix(ims->row_dim, 1);
+
+    for (i = 0 ; i < ims->row_dim; i++)
+    {
+        Sum = 0;
+        for (j = 0 ; j < ims->col_dim; j++)
+        {		
+            Sum = Sum + ME(ims, i, j);
+        }
+
+        ME(mean, i, 0) = Sum / (double)ims->col_dim;
+    }
+
+    return mean;
 }
 
 /* computeCovariance
@@ -895,42 +895,42 @@ Computes the covairance of a matrix
 */
 Matrix computeCovariance(Matrix A)
 {
-	int i, j, k;
-	double sum;
+    int i, j, k;
+    double sum;
 
-	Matrix X, M, C;	
-	
-	C = makeMatrix(A->col_dim, A->col_dim);
-	X = duplicateMatrix(A);
+    Matrix X, M, C;	
 
-	//mean subtraction
-	M = get_mean_each_column(X);
-	each_mean_subtract_column(X, M); 
-	
-	for(i = 0; i < X->col_dim; i ++)
-	for(j = i; j < X->col_dim; j ++)
-	{
-		sum = 0;
-		for(k = 0; k < X->row_dim; k ++)
-		{
-			//printf("k = %d and SUM = %e \n", k, sum);
-			sum += (ME(X, k, i) * ME(X, k, j));
-			//getchar();
-		}
+    C = makeMatrix(A->col_dim, A->col_dim);
+    X = duplicateMatrix(A);
 
-		k = X->row_dim - 1;
+    //mean subtraction
+    M = get_mean_each_column(X);
+    each_mean_subtract_column(X, M); 
 
-		//printf("ME(X, %d, %d) = %e and  ME(X, %d, %d) = %e \n", k, i, ME(X, k, i), k, j, ME(X, k, j)); 
-		//printf("SUM = %e and X->row_dim = %d \n", sum, X->row_dim);
-		ME(C, i, j) = ((double)sum / (double)(X->row_dim - 1));
-		ME(C, j, i) = ME(C, i, j);
-		//printf("ME(C, %d, %d) = %e and ME(C, %d, %d) = %e \n", i, j, ME(C, i, j), j, i, ME(C, j, i));
-		//getchar();
-	}
-	
-	freeMatrix(X);
-	freeMatrix(M);
-	return C;	
+    for(i = 0; i < X->col_dim; i ++)
+        for(j = i; j < X->col_dim; j ++)
+        {
+            sum = 0;
+            for(k = 0; k < X->row_dim; k ++)
+            {
+                //printf("k = %d and SUM = %e \n", k, sum);
+                sum += (ME(X, k, i) * ME(X, k, j));
+                //getchar();
+            }
+
+            k = X->row_dim - 1;
+
+            //printf("ME(X, %d, %d) = %e and  ME(X, %d, %d) = %e \n", k, i, ME(X, k, i), k, j, ME(X, k, j)); 
+            //printf("SUM = %e and X->row_dim = %d \n", sum, X->row_dim);
+            ME(C, i, j) = ((double)sum / (double)(X->row_dim - 1));
+            ME(C, j, i) = ME(C, i, j);
+            //printf("ME(C, %d, %d) = %e and ME(C, %d, %d) = %e \n", i, j, ME(C, i, j), j, i, ME(C, j, i));
+            //getchar();
+        }
+
+        freeMatrix(X);
+        freeMatrix(M);
+        return C;	
 }
 
 /*B if is a positive definitive matrix, then
@@ -938,34 +938,34 @@ We can find B = LL' using cholesky decomposition
 returns L*/
 Matrix choleskyDecomposition (Matrix B)
 {
-	int i, j;
-	Matrix LP = makeZeroMatrix(B->row_dim, B->col_dim);
+    int i, j;
+    Matrix LP = makeZeroMatrix(B->row_dim, B->col_dim);
 
-	//iterate over lower matrix only
-	for( i = 0 ; i < B->row_dim ; i++ )
-		for( j = 0 ; j <= i ; j++ )
-		{
-			if(i == j)
-				ME(LP, i, j) = sqrt(ME(B, i, j) - computeDigonalSum(LP, i, i));
-			else
-				ME(LP, i, j) = (ME(B, i, j) - computeDigonalSum(LP, i, j) ) / ME(LP, j, j);
-		}
+    //iterate over lower matrix only
+    for( i = 0 ; i < B->row_dim ; i++ )
+        for( j = 0 ; j <= i ; j++ )
+        {
+            if(i == j)
+                ME(LP, i, j) = sqrt(ME(B, i, j) - computeDigonalSum(LP, i, i));
+            else
+                ME(LP, i, j) = (ME(B, i, j) - computeDigonalSum(LP, i, j) ) / ME(LP, j, j);
+        }
 
-	return LP;
+        return LP;
 }
 
 /*used by cholesky decomposition, computes sum 
-	upto a specified row and specified column*/
+upto a specified row and specified column*/
 double computeDigonalSum (Matrix LP, int i, int j)
 {
-	int k;
-	double Sum = 0;
-	
-	for(k = 0; k < j; k++)
-	{
-		Sum = Sum + (ME(LP, i, k) * ME(LP, j, k));
-	}
+    int k;
+    double Sum = 0;
 
-	return Sum;
+    for(k = 0; k < j; k++)
+    {
+        Sum = Sum + (ME(LP, i, k) * ME(LP, j, k));
+    }
+
+    return Sum;
 }
 /*END: Changed by Zeeshan: for LPP*/

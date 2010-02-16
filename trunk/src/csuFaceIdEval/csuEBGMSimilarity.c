@@ -43,7 +43,7 @@ double JetSimilarityMag(GaborJet j1, GaborJet j2){
     int i;
 
     assert(j1 && j2 && j1->length && j1->length==j2->length);
-    
+
     for(i = 0; i < j1->length; i++){
         j12 += j1->mag[i]*j2->mag[i];
         j11 += j1->mag[i]*j1->mag[i];
@@ -54,7 +54,7 @@ double JetSimilarityMag(GaborJet j1, GaborJet j2){
 }
 
 /* Compute a similarity score as above only with a term
-   added for the cos(Phase) */
+added for the cos(Phase) */
 double JetSimilarityPhase(GaborJet j1, GaborJet j2){
     double j12 = 0;
     double j11 = 0;
@@ -62,7 +62,7 @@ double JetSimilarityPhase(GaborJet j1, GaborJet j2){
     int i;
 
     assert(j1 && j2 && j1->length && j1->length==j2->length);
-    
+
     for(i = 0; i < j1->length; i++){
         j12 += j1->mag[i]*j2->mag[i]*cos(j1->ang[i] - j2->ang[i]);
         j11 += j1->mag[i]*j1->mag[i];
@@ -98,8 +98,8 @@ double SIM_DISPLACE(GaborJet j1, GaborJet  j2, double dx, double dy) {
     int i;                                                              
     for(i = 0; i < j1->length; i++){                                    
         j12 += j1->mag[i]*j2->mag[i]*                                   
-	       cos(j1->ang[i] - j2->ang[i] -                            
-	       (dx * j1->params->kx[2*i] + dy * j1->params->ky[2*i]));  
+            cos(j1->ang[i] - j2->ang[i] -                            
+            (dx * j1->params->kx[2*i] + dy * j1->params->ky[2*i]));  
         j11 += j1->mag[i]*j1->mag[i];                                   
         j22 += j2->mag[i]*j2->mag[i];                                   
     }                                                                   
@@ -108,9 +108,9 @@ double SIM_DISPLACE(GaborJet j1, GaborJet  j2, double dx, double dy) {
 
 
 /* Compute a similarity score as above only with phase
-   using an exaustive estimated displacement to correct
-   for phase  - similar to Auto Correlation (i.e. search
-   a displacemet grid for peaks) */
+using an exaustive estimated displacement to correct
+for phase  - similar to Auto Correlation (i.e. search
+a displacemet grid for peaks) */
 double JetSimilarityDEFixedLocalSearch(GaborJet j1, GaborJet j2){
     double dx = 0.0, dy = 0.0;
     return DEFixedLocalSearch(j1, j2, &dx, &dy);
@@ -118,8 +118,8 @@ double JetSimilarityDEFixedLocalSearch(GaborJet j1, GaborJet j2){
 
 
 /* Compute a similarity score as above only with phase
-   using a fast estimated displacement to correct for
-   phase - similar to Wiscott*/
+using a fast estimated displacement to correct for
+phase - similar to Wiscott*/
 double JetSimilarityDENarrowingLocalSearch(GaborJet j1, GaborJet j2){
     double dx = 0, dy = 0;
     return DENarrowingLocalSearch(j1, j2, &dx, &dy);
@@ -127,7 +127,7 @@ double JetSimilarityDENarrowingLocalSearch(GaborJet j1, GaborJet j2){
 
 
 /* Compute a similarity score based on the City Block
-   distance measure */
+distance measure */
 double JetSimilarityCityBlock(GaborJet j1, GaborJet j2){
     double sim = 0;
     int i;
@@ -143,7 +143,7 @@ double JetSimilarityCityBlock(GaborJet j1, GaborJet j2){
 }
 
 /* Compute a similarity score based on the Correlation
-   distance measure */
+distance measure */
 double JetSimilarityCorrelation(GaborJet j1, GaborJet j2){
     int i;
 
@@ -152,7 +152,7 @@ double JetSimilarityCorrelation(GaborJet j1, GaborJet j2){
     double j1scale = 0.0, j2scale = 0.0;
 
     assert(j1 && j2 && j1->length && j1->length == j2->length);
-    
+
     /* Pass one: compute the pixel mean. */
     for(i = 0; i < j1->length; i++){
         j1mean += j1->realPart[i];
@@ -181,15 +181,15 @@ double JetSimilarityCorrelation(GaborJet j1, GaborJet j2){
 }
 
 /* Compute a similarity score based on the Covariance
-   distance measure */
+distance measure */
 double JetSimilarityCovariance(GaborJet j1, GaborJet j2){
     int i;
     double magi = 0.0,
-          magj = 0.0,
-          dot = 0.0;
+        magj = 0.0,
+        dot = 0.0;
 
     assert(j1 && j2 && j1->length && j1->length==j2->length);
-    
+
     for (i = 0; i < j1->length; i++) {
         magi += SQR(j1->realPart[i]) + SQR(j1->imagPart[i]);
         magj += SQR(j2->realPart[i]) + SQR(j2->imagPart[i]);
@@ -247,9 +247,9 @@ double JetSimilarityResponsePhase(GaborJet j1, GaborJet j2){
 }
 
 /*****************************************************************************
-    Displacement estimators are used to find the displacement between two
-    jets.  These functions optimize a similarity function for a displacement
-    vector. For more info see DSB.
+Displacement estimators are used to find the displacement between two
+jets.  These functions optimize a similarity function for a displacement
+vector. For more info see DSB.
 *****************************************************************************/
 
 
@@ -261,7 +261,7 @@ double estimateDisplacementRandom(GaborJet j1, GaborJet j2, double *tdx, double 
     int i;
     double sim = 0.0;
     double dx  = randBM(),
-          dy  = randBM();
+        dy  = randBM();
 
     assert(j1 &&  j1->length && j2 && j1->length==j2->length);
 
@@ -327,7 +327,7 @@ double DEPredictiveStep(GaborJet j1, GaborJet j2, double *tdx, double *tdy){
     int i;
     double sim = 0.0;
     double dx  = 0.0,
-          dy  = 0.0;
+        dy  = 0.0;
     double Gxx, Gxy, Gyx, Gyy;
     double Px, Py;
 
@@ -396,7 +396,7 @@ double DEPredictiveIter(GaborJet j1, GaborJet j2, double *tdx, double *tdy){
     int i,n;
     double sim = 0.0;
     double dx  = 0.0,
-          dy  = 0.0;
+        dy  = 0.0;
     double ddx, ddy;
     double Gxx, Gxy, Gyx, Gyy;
     double Px, Py;
@@ -412,7 +412,7 @@ double DEPredictiveIter(GaborJet j1, GaborJet j2, double *tdx, double *tdy){
 
         Px  = 0;
         Py  = 0;
-        
+
         for(i = 0; i < j1->length; i++){
             double ang = j1->ang[i] - j2->ang[i] - (dx * j1->params->kx[2*i] + dy * j1->params->ky[2*i]);
 
@@ -443,7 +443,7 @@ double DEPredictiveIter(GaborJet j1, GaborJet j2, double *tdx, double *tdy){
             dy += 0.0;
         }
     }
-    
+
     /* Compute the similarity with the estimated displacement. */
     j12 = 0.0;
     j11 = 0.0;
@@ -470,7 +470,7 @@ double DEPredictiveIter(GaborJet j1, GaborJet j2, double *tdx, double *tdy){
 double DEFixedLocalSearch(GaborJet j1, GaborJet j2, double *tdx, double *tdy){
     double sim  = 0.0;
     double dx   = 0.0,
-          dy   = 0.0;
+        dy   = 0.0;
     int change = 1,
         iter   = 50;
     double nextx, nexty;
@@ -533,7 +533,7 @@ double DEFixedLocalSearch(GaborJet j1, GaborJet j2, double *tdx, double *tdy){
 double DENarrowingLocalSearch(GaborJet j1, GaborJet j2, double *tdx, double *tdy){
     double sim  = 0.0;
     double dx   = 0.0,
-          dy   = 0.0;
+        dy   = 0.0;
     int change = 1,
         iter   = 50;
     double nextx, nexty;
@@ -602,14 +602,14 @@ double DENarrowingLocalSearch(GaborJet j1, GaborJet j2, double *tdx, double *tdy
 
     *tdx = dx;
     *tdy = dy;
-    
+
     /*printf("BestSim: %f\n",bestsim); */
     return bestsim;
 }
 
 
 /* This function performs a simple L2 distance
-   measurement on the geometry of the face graph */
+measurement on the geometry of the face graph */
 double GeometrySimL2(FaceGraph f1, FaceGraph f2){
     double totalSim = 0.0;
     int i;
@@ -621,7 +621,7 @@ double GeometrySimL2(FaceGraph f1, FaceGraph f2){
 }
 
 /* This function performs a correlation based distance
-   measurement on the geometry of the face graph */
+measurement on the geometry of the face graph */
 double GeometrySimCorrelation(FaceGraph f1, FaceGraph f2){
     int i;
     double sum1 = 0.0, sum2 = 0.0;
@@ -899,9 +899,9 @@ double GeometrySimLeastSquaresNLS(FaceGraph f1, FaceGraph f2){
 
 
 /*****************************************************************************
-    Face graph similarity measures determine the similarity between face
-    graphs.  The similarity measures are based on the geometry of the
-    graph and the values of the Gabor Jets.
+Face graph similarity measures determine the similarity between face
+graphs.  The similarity measures are based on the geometry of the
+graph and the values of the Gabor Jets.
 *****************************************************************************/
 
 /* Magnitude only similarity measure */

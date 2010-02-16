@@ -26,13 +26,13 @@ OTHER DEALINGS IN THE SOFTWARE.
 #include <csuCommon.h>
 
 /*
-  eigen_verify
- 
-  Verify properties of the eigen vectors.
- 
-  The eigenbasis should be ortonormal: R'*R - I == 0
-  The basis should be decomposed such that: MR - RD == 0
-  returns true if tests fail.
+eigen_verify
+
+Verify properties of the eigen vectors.
+
+The eigenbasis should be ortonormal: R'*R - I == 0
+The basis should be decomposed such that: MR - RD == 0
+returns true if tests fail.
 */
 int eigen_verify(Matrix M, Matrix lambda, Matrix R) {
     Matrix RtR = transposeMultiplyMatrixL(R, R);
@@ -93,12 +93,12 @@ int eigen_verify(Matrix M, Matrix lambda, Matrix R) {
 
 
 /**
-  Verify properties of the eigen basis used for pca.
- 
-  The eigenbasis should be ortonormal: U'*U - I == 0
-  The basis should be decomposed such that: X == U*D*V'
- 
-  returns true if tests fail.
+Verify properties of the eigen basis used for pca.
+
+The eigenbasis should be ortonormal: U'*U - I == 0
+The basis should be decomposed such that: X == U*D*V'
+
+returns true if tests fail.
 */
 int basis_verify(Matrix X, Matrix U) {
     Matrix UtX = transposeMultiplyMatrixL(U, X);
@@ -154,20 +154,21 @@ int basis_verify(Matrix X, Matrix U) {
 
 /**
 eigentrain
- 
+
 computes the eigen space for matrix images.
- 
-  This function is used in the training procedure of the face recognition pca
-   algorithm.
-   INPUT:  the data matrix of images
-   OUTPUT: mean: the mean value of the images
-           eigen_values: eigenvalues
-           eigen_base: eigenvectors
-           
-   The data matrix is mean centered, and this is a side effect.
+
+This function is used in the training procedure of the face recognition pca
+algorithm.
+INPUT:  the data matrix of images
+OUTPUT: mean: the mean value of the images
+eigen_values: eigenvalues
+eigen_base: eigenvectors
+
+The data matrix is mean centered, and this is a side effect.
 */
 void eigentrain(Matrix *mean, Matrix *eigen_vals,
-                Matrix *eigen_base, Matrix images) {
+                Matrix *eigen_base, Matrix images) 
+{
     double p = 0.0;
     Matrix M, eigenvectors;
 
@@ -188,9 +189,9 @@ void eigentrain(Matrix *mean, Matrix *eigen_vals,
 
 
     MESSAGE("Computing snap shot eigen vectors using the double precision cv eigensolver.");
-		
+
     cvJacobiEigens_64d(M->data, eigenvectors->data, (*eigen_vals)->data, images->col_dim, p, 1);
-		
+
     freeMatrix(M);
 
     DEBUG(1, "Verifying the eigen vectors");
@@ -207,8 +208,8 @@ void eigentrain(Matrix *mean, Matrix *eigen_vals,
     basis_normalize(*eigen_base);
 
     /*Remove last elements because they are unneeded.  Mean centering the image
-      guarantees that the data points define a hyperplane that passes through
-      the origin. Therefore all points are in a k - 1 dimensional subspace.
+    guarantees that the data points define a hyperplane that passes through
+    the origin. Therefore all points are in a k - 1 dimensional subspace.
     */
     (*eigen_base)->col_dim -= 1;
     (*eigen_vals)->row_dim -= 1;
@@ -217,7 +218,7 @@ void eigentrain(Matrix *mean, Matrix *eigen_vals,
     DEBUG(1, "Verifying eigenbasis");
     if (debuglevel >= 3)
         basis_verify(images, *eigen_base);
-	
+
     /* The eigenvectors for the smaller covariance (snap shot) are not needed */
     freeMatrix(eigenvectors);
 }

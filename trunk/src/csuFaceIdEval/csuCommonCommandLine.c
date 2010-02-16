@@ -1,7 +1,7 @@
 /*
- *  csuCommonCommandLine.c
- *  csuEvalFaceRec
- */
+*  csuCommonCommandLine.c
+*  csuEvalFaceRec
+*/
 
 /*
 Copyright (c) 2003 Colorado State University
@@ -44,7 +44,7 @@ int readOption(int argc, char** argv, int *i, const char* opt){
     else{
         clParseError(argc, argv, (*i), "Error parsing command line.");
     }
-    
+
     return 0;
 }
 
@@ -98,7 +98,7 @@ int readOptionYesNo(int argc, char** argv, int *i, const char* opt, int* flag){
     }
 
     return 0;
-    
+
 }
 
 /* returns true only if opt is parsed and following argument string matches arg
@@ -230,7 +230,7 @@ int readOptionDouble2(int argc, char** argv, int *i, const char* opt, double *ar
     }
 
     return 0;
-    
+
 }
 
 /* this reads in an option and four doubles. i+=4 */

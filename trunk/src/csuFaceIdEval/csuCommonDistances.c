@@ -34,22 +34,22 @@ November 2007...
 #include <csuCommon.h>
 
 /* ===========================================================================
- New distance measure functions. These functions take a single matrix of
- column vectors, each column representing a different image after projection
- into subspace. They also take the column indices of the two images to be
- compared.
+New distance measure functions. These functions take a single matrix of
+column vectors, each column representing a different image after projection
+into subspace. They also take the column indices of the two images to be
+compared.
 
- All of these functions return "distances" in the sense that smaller is better.
- So, for example, covariance and correlation are flipped and shifted so that
- zero is the best score between two images.
+All of these functions return "distances" in the sense that smaller is better.
+So, for example, covariance and correlation are flipped and shifted so that
+zero is the best score between two images.
 
- The last measures also take the variance estimates for the subspace dimension,
- in other words the eigenvalues from the subspace decomposition. These are used
- to normalize measures by variance along the dimensions.
+The last measures also take the variance estimates for the subspace dimension,
+in other words the eigenvalues from the subspace decomposition. These are used
+to normalize measures by variance along the dimensions.
 */
 
 /*  The L1 norm and L2 norms are standard. This code actually does the square root
- for L2, not strictly speaking necessary for a nearest neighbor classifier.
+for L2, not strictly speaking necessary for a nearest neighbor classifier.
 */
 double distanceCityBlock(const Matrix ims, int i, int j) {
     int k;
@@ -71,11 +71,11 @@ double distanceEuclidean(const Matrix ims, int i, int j) {
 
 
 /* This is the standard covariance definition, it is the cosine
- of the angle between the two vectors. When the vectors are
- identical, it is 1.0, when they are orthogonal, it is zero.
+of the angle between the two vectors. When the vectors are
+identical, it is 1.0, when they are orthogonal, it is zero.
 
- However, in order produce a distance, this function returns
- one minus the covariance.
+However, in order produce a distance, this function returns
+one minus the covariance.
 */
 
 double distanceCovariance(const Matrix ims, int i, int j) {
@@ -91,12 +91,12 @@ double distanceCovariance(const Matrix ims, int i, int j) {
 }
 
 /**
-    This is a standard correlation measure between two vectors with
- one major caveat.  Because all subsequent processing treats these
- measures as distance, the correlation mapped into the range 0 to 2
- as follows:
-  correlation  1  goes to 0
-  correlation -1  goes to 2.
+This is a standard correlation measure between two vectors with
+one major caveat.  Because all subsequent processing treats these
+measures as distance, the correlation mapped into the range 0 to 2
+as follows:
+correlation  1  goes to 0
+correlation -1  goes to 2.
 */
 
 double distanceCorrelation(const Matrix ims, int i, int j) {
@@ -126,11 +126,11 @@ double distanceCorrelation(const Matrix ims, int i, int j) {
 }
 
 /* This is what gets called Mahalanobis distance in the FERET evaluations. It
- is somewhat ill named. It is closer to a covariance without normalization
- by length and with a correction applied to each dimension. The correction
- is indeed the scale factor required to tranform into the space of unit
- variance in all dimensions. Hence, lacking a better shorthand term, this
- is called Mahalanobis Angle.
+is somewhat ill named. It is closer to a covariance without normalization
+by length and with a correction applied to each dimension. The correction
+is indeed the scale factor required to tranform into the space of unit
+variance in all dimensions. Hence, lacking a better shorthand term, this
+is called Mahalanobis Angle.
 */
 double distanceYamborAngle(Matrix ims, int i, int j, Matrix values) {
     int k;
@@ -148,11 +148,11 @@ double distanceYamborAngle(Matrix ims, int i, int j, Matrix values) {
 }
 
 /* This is what gets called Mahalanobis distance in the FERET evaluations. It
- is somewhat ill named. It is closer to a covariance without normalization
- by length and with a correction applied to each dimension. The correction
- is indeed the scale factor required to tranform into the space of unit
- variance in all dimensions. Hence, lacking a better shorthand term, this
- is called Mahalanobis Angle.
+is somewhat ill named. It is closer to a covariance without normalization
+by length and with a correction applied to each dimension. The correction
+is indeed the scale factor required to tranform into the space of unit
+variance in all dimensions. Hence, lacking a better shorthand term, this
+is called Mahalanobis Angle.
 */
 double distanceMahCosine(Matrix ims, int i, int j, Matrix values) {
     static int first_call = 1;
@@ -172,7 +172,7 @@ double distanceMahCosine(Matrix ims, int i, int j, Matrix values) {
         for(k = 0; k < optVals->row_dim; k++){
             ME(optVals,k,0) = 1.0/sqrt(ME(values, k, 0));
         }
-	//saveMatrixAscii("OP.mat", "OP", (optVals), matlabFormat);
+        //saveMatrixAscii("OP.mat", "OP", (optVals), matlabFormat);
     }
 
     /* Transform the vector into Mahalanobis space */
@@ -200,7 +200,7 @@ double distanceMahCosine(Matrix ims, int i, int j, Matrix values) {
     return (1.0 - sum);
 }
 /*    L2 norm distance in Mahalanobis space
- */
+*/
 double distanceMahL2(const Matrix ims, int i, int j, const Matrix values) {
     int k;
     double sum = 0.0;
@@ -245,7 +245,7 @@ double distanceYamborDistance(const Matrix ims, int i, int j, const Matrix value
 }
 
 /*    L1 norm distance in Mahalanobis space
- */
+*/
 double distanceMahL1(const Matrix ims, int i, int j, const Matrix values) {
     int k;
     double sum = 0.0;
@@ -269,61 +269,61 @@ double distanceMahL1(const Matrix ims, int i, int j, const Matrix values) {
 /*START		Changed by Zeeshan: For LPP & ICA*/
 int elementComparator (const void *a, const void *b)
 {
-  	const dbPair *p1 = (dbPair *)a;
-  	const dbPair *p2 = (dbPair *)b;
+    const dbPair *p1 = (dbPair *)a;
+    const dbPair *p2 = (dbPair *)b;
 
-  	if (p1->key < p2->key)
-    		return -1;
+    if (p1->key < p2->key)
+        return -1;
 
-  	if (p1->key > p2->key)
-    		return 1;
-  	
-	return 0;
+    if (p1->key > p2->key)
+        return 1;
+
+    return 0;
 }
 
 double GetKthItemInRowAfterSorting(Matrix m, int r, int K)
 {
-  	int i;
-	double kthItem;
-  	dbPair *toSort = (dbPair*) malloc (m->col_dim * sizeof (dbPair));
+    int i;
+    double kthItem;
+    dbPair *toSort = (dbPair*) malloc (m->col_dim * sizeof (dbPair));
 
-  	for(i = 0; i < m->col_dim; i++)
-    	{
-      		toSort[i].key   = ME(m, r, i);
-      		toSort[i].index = i;
-    	}
+    for(i = 0; i < m->col_dim; i++)
+    {
+        toSort[i].key   = ME(m, r, i);
+        toSort[i].index = i;
+    }
 
-  	qsort (toSort, m->col_dim, sizeof (dbPair), elementComparator);
-  	
-  	kthItem = ME(m, r, toSort[K].index);
-	
-  	free (toSort);
-	
-  	return kthItem;
+    qsort (toSort, m->col_dim, sizeof (dbPair), elementComparator);
+
+    kthItem = ME(m, r, toSort[K].index);
+
+    free (toSort);
+
+    return kthItem;
 }
 
 double GetSumOfKItemInRowAfterSorting(Matrix m, int r, int K)
 {
-  	int i;
-	double sum = 0.0;
-  	dbPair *toSort = (dbPair*) malloc (m->col_dim * sizeof (dbPair));
+    int i;
+    double sum = 0.0;
+    dbPair *toSort = (dbPair*) malloc (m->col_dim * sizeof (dbPair));
 
-  	for(i = 0; i < m->col_dim; i++)
-    	{
-      	    toSort[i].key   = ME(m, r, i);
-      	    toSort[i].index = i;
-    	}
+    for(i = 0; i < m->col_dim; i++)
+    {
+        toSort[i].key   = ME(m, r, i);
+        toSort[i].index = i;
+    }
 
-  	qsort (toSort, m->col_dim, sizeof (dbPair), elementComparator);
-  	
-    	for(i = 0; i <= K; i++)
-    	{
-  	    sum += ME(m, r, toSort[i].index);
-	}  	
+    qsort (toSort, m->col_dim, sizeof (dbPair), elementComparator);
 
-  	free (toSort);
-	
-  	return sum;
+    for(i = 0; i <= K; i++)
+    {
+        sum += ME(m, r, toSort[i].index);
+    }  	
+
+    free (toSort);
+
+    return sum;
 }
 
 double distanceNormalizedCosine(Matrix ims, int i, int j, Matrix values) 
@@ -336,32 +336,32 @@ double distanceNormalizedCosine(Matrix ims, int i, int j, Matrix values)
 
     if(first_call)
     {
-	first_call = 0;
-	
-	nIms = makeMatrix(ims->row_dim, ims->col_dim);
-		
-	//normalize all vectors to have magnitude 1
-	for (k = 0; k < ims->col_dim; k++)
-	{
-	    sum = 0.0; // will store magnitude
-	    for (l = 0; l < ims->row_dim; l++)
-	    {
-		sum += (ME(ims, l, k) * ME(ims, l, k));
-	    }	
+        first_call = 0;
 
-	    sum = sqrt(sum);
+        nIms = makeMatrix(ims->row_dim, ims->col_dim);
 
-	    for (l = 0; l < ims->row_dim; l++)
-	    {		
+        //normalize all vectors to have magnitude 1
+        for (k = 0; k < ims->col_dim; k++)
+        {
+            sum = 0.0; // will store magnitude
+            for (l = 0; l < ims->row_dim; l++)
+            {
+                sum += (ME(ims, l, k) * ME(ims, l, k));
+            }	
+
+            sum = sqrt(sum);
+
+            for (l = 0; l < ims->row_dim; l++)
+            {		
                 ME(nIms, l, k) = ME(ims, l, k) / sum; // devide by magnitude	
-	    }		
-	}
+            }		
+        }
     }
 
     sum = 0.0;
     for (k = 0; k < ims->row_dim; k++)
     {
-       	sum += (ME(nIms, k, i) * ME(nIms, k, j) / ME(values, k, 0));
+        sum += (ME(nIms, k, i) * ME(nIms, k, j) / ME(values, k, 0));
     }
 
     return (1.0 - sum);
@@ -374,37 +374,37 @@ double distanceUZI(Matrix ims, int i, int j, int k) {
 
     int x, y, z;
     double sum = 0.0;
-    
+
     if(i != P)
     {
-	//printf("Computing T Matrix for image %d. \n", i);
-	P = i;
-	optVals = makeMatrix(ims->row_dim, ims->col_dim);
-	
-	for( x = 0; x < ims->row_dim; x++ )
-	    for( y = 0; y < ims->col_dim; y++ )
-	    {
-		ME(optVals, x, y) = (ME(ims, x, y) - ME(ims, x, i)) * (ME(ims, x, y) - ME(ims, x, i)); 
-	    }
-	
-	if(t == NULL)
-	    t = makeMatrix(ims->row_dim, ims->col_dim);
+        //printf("Computing T Matrix for image %d. \n", i);
+        P = i;
+        optVals = makeMatrix(ims->row_dim, ims->col_dim);
 
-        if (k == 0)
-            k = 5;
+        for( x = 0; x < ims->row_dim; x++ )
+            for( y = 0; y < ims->col_dim; y++ )
+            {
+                ME(optVals, x, y) = (ME(ims, x, y) - ME(ims, x, i)) * (ME(ims, x, y) - ME(ims, x, i)); 
+            }
 
-	for( y = 0; y < t->row_dim; y++ )
-	{
-	    ME(t, y, i) = GetSumOfKItemInRowAfterSorting(optVals, y, k) / k;//K is hardcoded here
-	    ME(t, y, i) = abs((double)ME(t, y, i)) + (double)1.0; 
-	}
+            if(t == NULL)
+                t = makeMatrix(ims->row_dim, ims->col_dim);
 
-	freeMatrix(optVals);
+            if (k == 0)
+                k = 5;
+
+            for( y = 0; y < t->row_dim; y++ )
+            {
+                ME(t, y, i) = GetSumOfKItemInRowAfterSorting(optVals, y, k) / k;//K is hardcoded here
+                ME(t, y, i) = abs((double)ME(t, y, i)) + (double)1.0; 
+            }
+
+            freeMatrix(optVals);
     }
 
     for (z = 0; z < ims->row_dim; z++) 
     {
-          sum += (ME(ims, z, i) - ME(ims, z, j)) * (ME(ims, z, i) - ME(ims, z, j)) / (ME(t, z, i) * ME(t, z, i) * ims->col_dim);
+        sum += (ME(ims, z, i) - ME(ims, z, j)) * (ME(ims, z, i) - ME(ims, z, j)) / (ME(t, z, i) * ME(t, z, i) * ims->col_dim);
     }
 
     return sum;
