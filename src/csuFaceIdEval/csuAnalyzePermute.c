@@ -35,21 +35,21 @@ OTHER DEALINGS IN THE SOFTWARE.
 #define OPENNING "Sample Recognition Rate Distributions from swapped Gallery and Probe Sets."
 
 /*
-   ============================================================================
- Copyright 2002, Colorado State University. All Rights Reserved.           
- --------------------------------------------------------------------------- 
- Permission to use, copy or modify this software and its documentation for   
- educational and research purposes only, provided that this copyright notice  
- appear on all copies and supporting documentation.                          
- ---------------------------------------------------------------------------        
- File:    csuPermute.c                                                     
- Authors: J. Ross Beveridge, Kai She, David Bolme                                        
- Date:    May 24, 2002                                                  
-   ============================================================================
+============================================================================
+Copyright 2002, Colorado State University. All Rights Reserved.           
+--------------------------------------------------------------------------- 
+Permission to use, copy or modify this software and its documentation for   
+educational and research purposes only, provided that this copyright notice  
+appear on all copies and supporting documentation.                          
+---------------------------------------------------------------------------        
+File:    csuPermute.c                                                     
+Authors: J. Ross Beveridge, Kai She, David Bolme                                        
+Date:    May 24, 2002                                                  
+============================================================================
 */
 
 /* ===========================================================================
- Compile time configuration optiosn     
+Compile time configuration optiosn     
 */
 
 #define PRINT_LEVEL 2        /* Zero for a quiet program - nothing to stdout */
@@ -58,19 +58,19 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 
 /* ===========================================================================
- Structures user here are:
-  FERETID
-  FIDPR
-  PGSET
+Structures user here are:
+FERETID
+FIDPR
+PGSET
 */
 
 /*
- The FERETID structure is used to facilitate most of the operations 
- performed in this file.  It contains critical information about the FERET 
- subject derived from the name. It is also used to carry back pointer information 
- for each test image. Specifically, the local subject index, running from 0 
- to the numSubjects-1, and the local replicate index, running from 0 to 
- numReplicates-1.  
+The FERETID structure is used to facilitate most of the operations 
+performed in this file.  It contains critical information about the FERET 
+subject derived from the name. It is also used to carry back pointer information 
+for each test image. Specifically, the local subject index, running from 0 
+to the numSubjects-1, and the local replicate index, running from 0 to 
+numReplicates-1.  
 */
 
 typedef struct feretid {
@@ -87,9 +87,9 @@ typedef struct feretid {
 FERETID;
 
 /*
- The FIDPR, or FERERTID Pair, is a simple struct to maintain points to two
- instances of FERETIDs as well as a locally cached copy of the distance 
- between them. This simplifies sorting lists of paired images.
+The FIDPR, or FERERTID Pair, is a simple struct to maintain points to two
+instances of FERETIDs as well as a locally cached copy of the distance 
+between them. This simplifies sorting lists of paired images.
 */
 typedef struct fidpr {
     FERETID** ids;   /* Will become a two element array, the ith and jth FERETID */
@@ -98,8 +98,8 @@ typedef struct fidpr {
 FIDPR;
 
 /* The PGSET struct provides a single clean place to store information about
- a particular randomized selection of probe and gallery images. More is said
- below about its use. */
+a particular randomized selection of probe and gallery images. More is said
+below about its use. */
 
 typedef struct pgset {
     int* gallery; /* Gallery replicate ri stored for each subject index si */
@@ -120,20 +120,20 @@ typedef struct {
 
 
 /*
- The next set of functions parse a FERET name and create an instance of a
- FERETID struct to represent that image. This section also includes code
- for the FIDPR struct.
+The next set of functions parse a FERET name and create an instance of a
+FERETID struct to represent that image. This section also includes code
+for the FIDPR struct.
 */
 
 
 /*
- Create a new instance of the FERETID structure.  Parses the name to derive 
- the subject ID, the image type and the date.   The index passsed in is 
- used to record the local index of this particular FERETID. This index is 
- the index into the distance matrix for this particular image. When the 
- original set of image names are read from the test image names file, each 
- is given a unique local index such that the indices run from 0 to 
- numImages-1.
+Create a new instance of the FERETID structure.  Parses the name to derive 
+the subject ID, the image type and the date.   The index passsed in is 
+used to record the local index of this particular FERETID. This index is 
+the index into the distance matrix for this particular image. When the 
+original set of image names are read from the test image names file, each 
+is given a unique local index such that the indices run from 0 to 
+numImages-1.
 */
 FERETID* parseFERETID (char *name, int index, int subject) {
     FERETID* fid;
@@ -182,13 +182,13 @@ static int compareFIDPRs(const void *f1, const void *f2) {
 
 
 /*
- Process test image names by building the master list of FERETIDs and 
- the subject replicates table.
+Process test image names by building the master list of FERETIDs and 
+the subject replicates table.
 */
 
 /* Given the array of FERETIDs, return the largest FERET subject index.
-    This is extremely useful because we will want to built integer arrays
-    that count how many times a subject appears in the test image set. */
+This is extremely useful because we will want to built integer arrays
+that count how many times a subject appears in the test image set. */
 int maxSubjectIndex( FERETID** fids, int numImages) {
     int i, max;
 
@@ -201,17 +201,17 @@ int maxSubjectIndex( FERETID** fids, int numImages) {
 }
 
 /* For each FERET subject ID, count up how many images are in the test
- image set.  These are the replicates from which probe and galleries 
- will be constructed. While doing this, it is convenient to record
- what will become the local subject index and the local replicate index, 
- i.e. FERETID fields si and ri.  This is a good place to do this 
- operation, because by going through subject ID in ascending order, 
- and assigning each a unique local index, the resulting table (si, ri) 
- will be sorted from least to greatest FERET subject id. 
- 
- This function returns a count array indicating how many replicates
- appear for each subject. A zero indicates that there is a gap in the
- FERET subject ids, and zeroes can be expected. */
+image set.  These are the replicates from which probe and galleries 
+will be constructed. While doing this, it is convenient to record
+what will become the local subject index and the local replicate index, 
+i.e. FERETID fields si and ri.  This is a good place to do this 
+operation, because by going through subject ID in ascending order, 
+and assigning each a unique local index, the resulting table (si, ri) 
+will be sorted from least to greatest FERET subject id. 
+
+This function returns a count array indicating how many replicates
+appear for each subject. A zero indicates that there is a gap in the
+FERET subject ids, and zeroes can be expected. */
 int* subjectCounts(FERETID** fids, int numImages, int *subjectIndexBound) {
     int i, j, max, siLocal;
     int *subCounts, *subIndex;
@@ -261,7 +261,7 @@ FERETID*** subjectReplicatesTable(ImageList **iml, int *numImages, int *numSubje
     *numSubjects = 0;
     expectedReplicates = 0;
     /*  First pass through subject replicates list to determine how many subject, how many replicates,
-        and that there are the same number of replicates for each subject */
+    and that there are the same number of replicates for each subject */
     for (subject = *iml; subject; subject = subject->next_subject) {
         (*numSubjects)++;
         (*numReplicates) = 0;
@@ -304,16 +304,16 @@ FERETID*** subjectReplicatesTable(ImageList **iml, int *numImages, int *numSubje
 
 
 /*
- The function readDistances uses the function getLocalIndex to determine
- the local index of the image for which a distance value is currently being
- read from file.
- 
- getLocalIndex is given an image name, it then performs an exhaustive search
- of the subject replicate table to find a match.  If the match is found the
- local index of the image is returned.  Otherwise -1 is returned to indicate no
- match was found.
- 
- */
+The function readDistances uses the function getLocalIndex to determine
+the local index of the image for which a distance value is currently being
+read from file.
+
+getLocalIndex is given an image name, it then performs an exhaustive search
+of the subject replicate table to find a match.  If the match is found the
+local index of the image is returned.  Otherwise -1 is returned to indicate no
+match was found.
+
+*/
 
 int getLocalIndex(char *name, FERETID*** srt, int numReplicates, int maxSub) {
     int i, j;
@@ -330,16 +330,16 @@ int getLocalIndex(char *name, FERETID*** srt, int numReplicates, int maxSub) {
 }
 
 /* This procedure iterates through the list of subject names opening the
- corresponding file of distances to other images in the data directory.
- Note that the subject names ARE the file names for the sake of this code.
- When reading a given data file, each record is assumed to contain two
- entries: the name of the other image and the distance to this other 
- image. The code is not robust with respect to changes in this format.
- 
- This code is robust with respect to placing the distance into the distance
- matrix based upon the image name. So, entries corresponding to images not
- in the test image file are ignored. Also, if the order of the images in
- the distance file is permuted, this code will still behave properly.
+corresponding file of distances to other images in the data directory.
+Note that the subject names ARE the file names for the sake of this code.
+When reading a given data file, each record is assumed to contain two
+entries: the name of the other image and the distance to this other 
+image. The code is not robust with respect to changes in this format.
+
+This code is robust with respect to placing the distance into the distance
+matrix based upon the image name. So, entries corresponding to images not
+in the test image file are ignored. Also, if the order of the images in
+the distance file is permuted, this code will still behave properly.
 */
 
 
@@ -383,8 +383,8 @@ float** readDistances(FERETID** fids, FERETID*** srt, int numImages, int numRepl
 
 
 /*
- For each test image, build a sorted array of paired FERET ids, one for 
- test images, and the other for all other test images. 
+For each test image, build a sorted array of paired FERET ids, one for 
+test images, and the other for all other test images. 
 */
 FIDPR*** buildSortedPairedMatrix(FERETID** fids, int numImages, float** dist) {
     int i, j;
@@ -433,22 +433,22 @@ void printPairedMatrix( FIDPR*** fidprs, int numImages) {
 }
 
 /*
- Generate subsets of test images to serve as gallery and probe sets
- 
- These choices are stored in a PGSET struct that keeps track of the 
- gallery images and the probe images using two different representations.
- The first is an array indexed by local subject id, the same as the srt
- table, and it indicates which replicate is in the set for each subject.
- The second is a marker array indexed by image index, running from 0 to 
- numImages, and a one in the marker array indicates inclusion of the 
- image in the probe/gallery set. This second form is convenient for
- controlling selection and counting while iterating through the complete
- set of test images.
- 
- The PGDSET structure is intended to be reused: creating a new one for 
- each of thousands of random choices of probe and gallery sets would be 
- slow at best and proably exhaust memory.
- */
+Generate subsets of test images to serve as gallery and probe sets
+
+These choices are stored in a PGSET struct that keeps track of the 
+gallery images and the probe images using two different representations.
+The first is an array indexed by local subject id, the same as the srt
+table, and it indicates which replicate is in the set for each subject.
+The second is a marker array indexed by image index, running from 0 to 
+numImages, and a one in the marker array indicates inclusion of the 
+image in the probe/gallery set. This second form is convenient for
+controlling selection and counting while iterating through the complete
+set of test images.
+
+The PGDSET structure is intended to be reused: creating a new one for 
+each of thousands of random choices of probe and gallery sets would be 
+slow at best and proably exhaust memory.
+*/
 
 PGSET* makePGSET(int numImages, int numSubjects) {
     PGSET* pgs = (PGSET*) malloc(sizeof(PGSET));
@@ -467,8 +467,8 @@ PGSET* makePGSET(int numImages, int numSubjects) {
 }
 
 /* The next two functions are very convenient for debugging, but not
- used in the mature released code. Of course, they are kept around 
- because, well debugging may become relevant again :-)
+used in the mature released code. Of course, they are kept around 
+because, well debugging may become relevant again :-)
 */
 void listPGSETimages1(PGSET* pgs, FERETID** fids, int numImages) {
     int i, c;
@@ -502,36 +502,36 @@ void listPGSETimages2(PGSET* pgs, FERETID*** srt, int numSubjects) {
 
 
 /**
- The randomized selection of probe and gallery images is accomplished by
- shuffling the local subject indices in the srt table and then selecting
- from the columns of this matrix using a fixed pattern. The pattern grows
- in length as the number of replicates increase. So, for example, if
- numReplicates = 2
-       r1  r2
-   1   p   g
-   2   g   p
- For 3 replicates
-       r1  r2  r3
-   1   p   g   -
-   2   p   -   g
-   3   g   p   -
-   4   -   p   g
-   5   g   -   p
-   6   -   g   p
- For 4 replicates
-       r1  r2  r3  r4
-   1   p   g   -   -
-   2   p   -   g   -
-   3   p   -   -   g
-   4   g   p   -   -
-   5   -   p   g   -
-   6   -   p   -   g
-   7   g   -   p   -
-   8   -   g   p   -
-   9   -   -   p   g
-  10   g   -   -   p
-  11   -   g   -   p
-  12   -   -   g   p
+The randomized selection of probe and gallery images is accomplished by
+shuffling the local subject indices in the srt table and then selecting
+from the columns of this matrix using a fixed pattern. The pattern grows
+in length as the number of replicates increase. So, for example, if
+numReplicates = 2
+r1  r2
+1   p   g
+2   g   p
+For 3 replicates
+r1  r2  r3
+1   p   g   -
+2   p   -   g
+3   g   p   -
+4   -   p   g
+5   g   -   p
+6   -   g   p
+For 4 replicates
+r1  r2  r3  r4
+1   p   g   -   -
+2   p   -   g   -
+3   p   -   -   g
+4   g   p   -   -
+5   -   p   g   -
+6   -   p   -   g
+7   g   -   p   -
+8   -   g   p   -
+9   -   -   p   g
+10   g   -   -   p
+11   -   g   -   p
+12   -   -   g   p
 */
 
 void fullBalancePattern(int* p, int* g, int numReplicates) {
@@ -550,64 +550,64 @@ void fullBalancePattern(int* p, int* g, int numReplicates) {
 }
 
 /*
-    The repetive pattern of selection from the columns of the srt matrix are
- captured in the probe pattern, pp, and gallery pattern, gp arrays.  These
- are then used in conjunction with a shuffled set of indices into the rows
- of the srt matrix to gather the probe and gallery sets.
+The repetive pattern of selection from the columns of the srt matrix are
+captured in the probe pattern, pp, and gallery pattern, gp arrays.  These
+are then used in conjunction with a shuffled set of indices into the rows
+of the srt matrix to gather the probe and gallery sets.
 */
 void balancedSelectionProbeGallery(PGSET* pgs, FERETID*** srt, int numImages,
                                    int numSubjects, int numReplicates) {
-    int i, si, ri;
-    int *shuff;
-    int *pp, *gp;
-    int runLen;
+                                       int i, si, ri;
+                                       int *shuff;
+                                       int *pp, *gp;
+                                       int runLen;
 
-    runLen = numReplicates * (numReplicates - 1);
-    pp = (int*) malloc(sizeof(int) * (runLen));
-    assert(pp);
-    gp = (int*) malloc(sizeof(int) * (runLen));
-    assert(gp);
-    fullBalancePattern(pp, gp, numReplicates);
+                                       runLen = numReplicates * (numReplicates - 1);
+                                       pp = (int*) malloc(sizeof(int) * (runLen));
+                                       assert(pp);
+                                       gp = (int*) malloc(sizeof(int) * (runLen));
+                                       assert(gp);
+                                       fullBalancePattern(pp, gp, numReplicates);
 
-    shuff = shuffle(numSubjects);
-    for (i = 0; i < numSubjects; i++) {
-        pgs->gallery[shuff[i]] = gp[i % runLen];
-        pgs->probes[shuff[i]] = pp[i % runLen];
-    }
+                                       shuff = shuffle(numSubjects);
+                                       for (i = 0; i < numSubjects; i++) {
+                                           pgs->gallery[shuff[i]] = gp[i % runLen];
+                                           pgs->probes[shuff[i]] = pp[i % runLen];
+                                       }
 
-    for (i = 0; i < numImages; i++) {
-        pgs->gMarker[i] = 0;
-        pgs->pMarker[i] = 0;
-    }
+                                       for (i = 0; i < numImages; i++) {
+                                           pgs->gMarker[i] = 0;
+                                           pgs->pMarker[i] = 0;
+                                       }
 
-    for (si = 0; si < numSubjects; si++) {
-        ri = pgs->gallery[si];
-        i = srt[si][ri]->index;
-        pgs->gMarker[i] = 1;
-        ri = pgs->probes[si];
-        i = srt[si][ri]->index;
-        pgs->pMarker[i] = 1;
-    }
+                                       for (si = 0; si < numSubjects; si++) {
+                                           ri = pgs->gallery[si];
+                                           i = srt[si][ri]->index;
+                                           pgs->gMarker[i] = 1;
+                                           ri = pgs->probes[si];
+                                           i = srt[si][ri]->index;
+                                           pgs->pMarker[i] = 1;
+                                       }
 }
 
 /*
- Given a probe and gallery set selection and the test images sorted
- by ascending distance, compute the recognition counts at ranks 1 through
- the upper bound specified.  Recognition count is the raw number correctly
- recognized at a given rank. It may latter be turned into a percentage, 
- i.e. a rank.
- 
- As an intermediate step, the recognition rank is determined for each of the
- probe images.  As a nod to efficiency in this particular code, the arrays
- used to store recognition rank and recognition rate are passed as
- arguments.  
- 
- Recognition rank is indexed from zero to numSubjects minus one.  Each entry
- representing the recognition rank for a distinct probe image.  Recognition
- Count is indexed from one to numSubjects inclusive.  The zero position
- represents the number of images correctly recognized at rank one, and the
- first position rank two.  etc.  While the logic computes it, note that the
- numSubjects position must have a constant value: the number of subjects.
+Given a probe and gallery set selection and the test images sorted
+by ascending distance, compute the recognition counts at ranks 1 through
+the upper bound specified.  Recognition count is the raw number correctly
+recognized at a given rank. It may latter be turned into a percentage, 
+i.e. a rank.
+
+As an intermediate step, the recognition rank is determined for each of the
+probe images.  As a nod to efficiency in this particular code, the arrays
+used to store recognition rank and recognition rate are passed as
+arguments.  
+
+Recognition rank is indexed from zero to numSubjects minus one.  Each entry
+representing the recognition rank for a distinct probe image.  Recognition
+Count is indexed from one to numSubjects inclusive.  The zero position
+represents the number of images correctly recognized at rank one, and the
+first position rank two.  etc.  While the logic computes it, note that the
+numSubjects position must have a constant value: the number of subjects.
 */
 
 int* makeRecRanks(int numSubjects) {
@@ -625,10 +625,10 @@ int* makeRecCount(int numSubjects) {
 }
 
 /* This two dimensional array of recognition counts is indexed by the
- iteration number t and the rank.  It is large, but it also represents
- the complete summary of the performance over the iterations. Finally,
- it will be used to build histograms of the recognition count at rank 1,
- rank 2, etc.
+iteration number t and the rank.  It is large, but it also represents
+the complete summary of the performance over the iterations. Finally,
+it will be used to build histograms of the recognition count at rank 1,
+rank 2, etc.
 */
 
 int** makeRecCounts(int iterations, int numSubjects) {
@@ -650,11 +650,11 @@ void printRecCount(int* recCount, int max) {
 }
 
 /*  The recognition rank is found by searching down the sorted list of
- FERETID Pairs until a match is found between the probe and the gallery
- subject.  Here the first index of ids in the pair represents the probe
- and the second represents the gallery. Thus, the probe subject ID can
- be taken from any of the entries: it is taken from the first for 
- convenience. 
+FERETID Pairs until a match is found between the probe and the gallery
+subject.  Here the first index of ids in the pair represents the probe
+and the second represents the gallery. Thus, the probe subject ID can
+be taken from any of the entries: it is taken from the first for 
+convenience. 
 */
 
 int recognitionRank(FIDPR** gal, int* marker, int numImages) {
@@ -681,31 +681,31 @@ int recognitionRank(FIDPR** gal, int* marker, int numImages) {
 
 void loadRecognitionCounts(PGSET* pgs, FIDPR*** fidprs, int* recRanks, int* recCount,
                            int numImages, int numSubjects) {
-    int i, pi, rank, count;
+                               int i, pi, rank, count;
 
-    pi = 0;
-    for (i = 0; i < numImages; i++) {
-        if (pgs->pMarker[i]) {
-            recRanks[pi] = recognitionRank(fidprs[i], pgs->gMarker, numImages);
-            /* printf("\n Recognition rank for probe %d is %d.", pi, recRanks[pi]); */
-            pi++;
-        }
-    }
-    i = 0;
-    for (rank = 1; rank <= numSubjects; rank++) {
-        count = 0;
-        for (i = 0; i < numSubjects; i++) {
-            if (recRanks[i] <= rank)
-                count++;
-        }
-        recCount[rank] = count;
-    }
+                               pi = 0;
+                               for (i = 0; i < numImages; i++) {
+                                   if (pgs->pMarker[i]) {
+                                       recRanks[pi] = recognitionRank(fidprs[i], pgs->gMarker, numImages);
+                                       /* printf("\n Recognition rank for probe %d is %d.", pi, recRanks[pi]); */
+                                       pi++;
+                                   }
+                               }
+                               i = 0;
+                               for (rank = 1; rank <= numSubjects; rank++) {
+                                   count = 0;
+                                   for (i = 0; i < numSubjects; i++) {
+                                       if (recRanks[i] <= rank)
+                                           count++;
+                                   }
+                                   recCount[rank] = count;
+                               }
 }
 
 /* ====================================================================
- Histograms represent the sample distributions for recognition Count, 
- or after normalization, rate.  There is one histogram built for each
- recognition rank from one to the max rank passed in.
+Histograms represent the sample distributions for recognition Count, 
+or after normalization, rate.  There is one histogram built for each
+recognition rank from one to the max rank passed in.
 */
 
 int** histogramRecognitionCounts(int** recCounts, int iterations, int numSubjects) {
@@ -772,9 +772,9 @@ void printHistogram(int** hist, int rank, int numSubjects) {
 }
 
 /* Determine the mode, i.e. the high point, on the histograms for all rank
- values and return these in an integer array indexed from 1 to numSubjects
- inclusive. Also determine the lower bound of the confidence interval, 
- the upper bound, and the mean recognition rate. */
+values and return these in an integer array indexed from 1 to numSubjects
+inclusive. Also determine the lower bound of the confidence interval, 
+the upper bound, and the mean recognition rate. */
 int* recRateMode(int** hist, int numSubjects) {
     int rank, rr, maxrr, mode = 0;
     int* m = (int*) malloc(sizeof(int) * (numSubjects + 1));
@@ -960,21 +960,21 @@ void generateRankNComparisonReport(int n, char *outFilePrefix, AlgorithmData** a
 
 
     fprintf(f, "<TABLE BORDER=2><TR><TH>Algorithm</TH><TH>Mean</TH><TH>Mode</TH><TH>Lower</TH><TH>Upper</TH>"
-               "<TH>Mean%%</TH><TH>Mode%%</TH><TH>Lower%%</TH><TH>Upper%%</TH></TR>\n");
+        "<TH>Mean%%</TH><TH>Mode%%</TH><TH>Lower%%</TH><TH>Upper%%</TH></TR>\n");
     for(alg = 0; alg < numDistDir; alg++){
         mode = recRateMode(algData[alg]->hist, numSubjects);
         lb = recRateLowerBound(algData[alg]->hist, numSubjects, iterations, 0.025);
         ub = recRateUpperBound(algData[alg]->hist, numSubjects, iterations, 0.025);
         mean = recRateMean(algData[alg]->hist, numSubjects);
         fprintf(f, "<TR><TD>%s</TD><TD>%0.1f</TD><TD>%d</TD><TD>%d</TD><TD>%d</TD>"
-                   "<TD>%0.1f%%</TD><TD>%0.1f%%</TD><TD>%0.1f%%</TD><TD>%0.1f%%</TD></TR>\n",
-                   algData[alg]->basename, mean[n], mode[n], lb[n], ub[n], 100.0*mean[n]/ns, 100.0*mode[n]/ns, 100.0*lb[n]/ns, 100.0*ub[n]/ns);
+            "<TD>%0.1f%%</TD><TD>%0.1f%%</TD><TD>%0.1f%%</TD><TD>%0.1f%%</TD></TR>\n",
+            algData[alg]->basename, mean[n], mode[n], lb[n], ub[n], 100.0*mean[n]/ns, 100.0*mode[n]/ns, 100.0*lb[n]/ns, 100.0*ub[n]/ns);
     }
     fprintf(f, "</TABLE><HR>\n");
 
     fprintf(f, "<H2>Comparing Algorithms (Alg1 - Alg2): </H2>\n");
     fprintf(f, "<TABLE BORDER=2><TR><TH>Algorithm 1</TH><TH>Algorithm 2</TH>"
-               "<TH>Mean</TH><TH>Mode</TH><TH>Lower</TH><TH>Upper</TH><TH>P(Alg1 > Alg2)</TH><TH>P(Alg1 < Alg2)</TH></TR>\n");
+        "<TH>Mean</TH><TH>Mode</TH><TH>Lower</TH><TH>Upper</TH><TH>P(Alg1 > Alg2)</TH><TH>P(Alg1 < Alg2)</TH></TR>\n");
     for(alg1 = 0; alg1 < numDistDir; alg1++){
         for(alg2 = alg1 + 1; alg2 < numDistDir; alg2++){
             int** diffhist;
@@ -1129,21 +1129,21 @@ AlgorithmData* loadAlgoirthmData(char *distDir, FERETID*** srt, int numSubjects,
 }
 
 /*
-                                        MAIN
-   
-   This code will read the file of test images names and then build the 
-   distance matrix by reading each of the distance files in the distances
-   directory. It then, for each test image, builds a sorted list of the
-   other test images. This is done once, and expedites computing recognition
-   rate for each of the many, typicaly 10,000, iterations of randomly swapping
-   probe and gallery images. At the end, three files are generated that contain
-   summaries of the results. Specifically, there are two versions of the
-   recognition rate histograms: one using raw integer counts and the other 
-   normalized values. The later may be interpreted as probabilities and the 
-   histogram as a whole as a sample probability density function. The last
-   report gives the cumulative match curve along defined by the mode of these 
-   distributions, along with error bars defined by the two-sides ninety five 
-   percent confidence interval. 
+MAIN
+
+This code will read the file of test images names and then build the 
+distance matrix by reading each of the distance files in the distances
+directory. It then, for each test image, builds a sorted list of the
+other test images. This is done once, and expedites computing recognition
+rate for each of the many, typicaly 10,000, iterations of randomly swapping
+probe and gallery images. At the end, three files are generated that contain
+summaries of the results. Specifically, there are two versions of the
+recognition rate histograms: one using raw integer counts and the other 
+normalized values. The later may be interpreted as probabilities and the 
+histogram as a whole as a sample probability density function. The last
+report gives the cumulative match curve along defined by the mode of these 
+distributions, along with error bars defined by the two-sides ninety five 
+percent confidence interval. 
 
 */
 

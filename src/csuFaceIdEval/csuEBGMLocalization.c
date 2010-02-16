@@ -121,35 +121,35 @@ void printHtmlHeader(FILE* rFile){
     fprintf(rFile,"<CENTER>Date: %s</CENTER><br>\n",ctime(&t));
     fprintf(rFile,"<CENTER>Masks: %s</CENTER><br>\n",globals.maskFile);
     fprintf(rFile,"<p>These are the results of the gabor localization study. \n"
-                  "The purpose of this file is to study the ability of gabor \n"
-                  "jets to localized points on a face.  The images shown here \n"
-                  "are created by measuring the similarity of jets from each \n"
-                  "point in the image to the a selected jet.\n"
-                  "\n"
-                  "<p>Idealy the images should show a good basin of attraction\n"
-                  "around the correctly matched points.  This study is investigates\n"
-                  "different facal features and similarity measures.\n<p>\n"
-    );
+        "The purpose of this file is to study the ability of gabor \n"
+        "jets to localized points on a face.  The images shown here \n"
+        "are created by measuring the similarity of jets from each \n"
+        "point in the image to the a selected jet.\n"
+        "\n"
+        "<p>Idealy the images should show a good basin of attraction\n"
+        "around the correctly matched points.  This study is investigates\n"
+        "different facal features and similarity measures.\n<p>\n"
+        );
     fflush(rFile);
 }
 
 void printExp1Header(FILE* rFile){
     fprintf(rFile,"<HR><H2>Experiment 1: Show the similarity for jets taken from the same image.</H2>\n");
     fprintf(rFile,"<p>This experiment shows the results when a jet is taken from \n"
-                  "the same image that is used for testing.  For this reason the\n"
-                  "correct match should always be found.\n<p>\n"
-    );
+        "the same image that is used for testing.  For this reason the\n"
+        "correct match should always be found.\n<p>\n"
+        );
     fflush(rFile);
 }
 
 void printExp2Header(FILE* rFile){
     fprintf(rFile,"<HR><H2>Experiment 2: Show the similarity for jets taken from the same subject but different images.</H2>\n");
     fprintf(rFile,"<p>This experiment shows the results when a jet is taken from \n"
-                  "the same subject that is used for testing, however the jets are\n"
-                  "taken from different images.  This experiment will hopfully show\n"
-                  "that jets taken from the same subject are similar enough to find\n"
-                  "the same point for an unseen image of the same person.<p>\n"
-    );
+        "the same subject that is used for testing, however the jets are\n"
+        "taken from different images.  This experiment will hopfully show\n"
+        "that jets taken from the same subject are similar enough to find\n"
+        "the same point for an unseen image of the same person.<p>\n"
+        );
     fflush(rFile);
 }
 
@@ -157,10 +157,10 @@ void printExp2Header(FILE* rFile){
 void printExp3Header(FILE* rFile){
     fprintf(rFile,"<HR><H2>Experiment 3: Show the similarity jets across subjects.</H2>\n");
     fprintf(rFile,"<p>This experiment shows the results when a jet is taken from one \n"
-                  "is compared to a jet taken from another subject.  This experiment \n"
-                  "will show how well the Jets can localize points for subjects it has\n"
-                  "never seen before.<p>\n"
-    );
+        "is compared to a jet taken from another subject.  This experiment \n"
+        "will show how well the Jets can localize points for subjects it has\n"
+        "never seen before.<p>\n"
+        );
     fflush(rFile);
 }
 
@@ -250,7 +250,7 @@ void saveThermalImageMark(char *filename, Image im, double x, double y){
     Image therm = makeThermalColorImage(im);
 
     assert(im->channels == 1);
-    
+
     markPoint(therm,x,y);
 
     /* Save image to a pgm file */
@@ -311,13 +311,13 @@ void plotVectorFieldPNG(char* filename, char* title, Image displacementImage, in
     fprintf(gnuplot,"set ylabel \'Y Displacement\'\n");
     fprintf(gnuplot,"set xtics 5\n");
     fprintf(gnuplot,"set term png color\n");
-/* fprintf(gnuplot,"set size square\n"); */
+    /* fprintf(gnuplot,"set size square\n"); */
     fprintf(gnuplot,"set size .75,1.05\n");
     fprintf(gnuplot,"set size ratio -1\n");
     fprintf(gnuplot,"set output \'%s\'\n",filename);
-/*     fprintf(gnuplot,"set title \'%s\'\n",title); */
-/*     fprintf(gnuplot,"set notitle \n"); */
-/*     fprintf(gnuplot,"show title\n"); */
+    /*     fprintf(gnuplot,"set title \'%s\'\n",title); */
+    /*     fprintf(gnuplot,"set notitle \n"); */
+    /*     fprintf(gnuplot,"show title\n"); */
     fprintf(gnuplot,"plot [-8:8] [8:-8] \'-\' notitle with vector\n");
     for(j = 0; j < displacementImage->height; j++){
         for(i = 0; i < displacementImage->width; i++){
@@ -341,13 +341,13 @@ void plotVectorFieldEPS(char* filename, char* title, Image displacementImage, in
     fprintf(gnuplot,"set ylabel \'Y Displacement\'\n");
     fprintf(gnuplot,"set xtics 5\n");
     fprintf(gnuplot,"set term postscript eps monochrome\n");
-/*     //fprintf(gnuplot,"set size .5..5\n"); */
+    /*     //fprintf(gnuplot,"set size .5..5\n"); */
     fprintf(gnuplot,"set size 0.5,0.7\n");
     fprintf(gnuplot,"set size ratio -1\n");
     fprintf(gnuplot,"set output \'%s\'\n",filename);
-/*     //fprintf(gnuplot,"set title \'%s\'\n",title); */
-/*     //fprintf(gnuplot,"set notitle \n"); */
-/*     //fprintf(gnuplot,"show title\n"); */
+    /*     //fprintf(gnuplot,"set title \'%s\'\n",title); */
+    /*     //fprintf(gnuplot,"set notitle \n"); */
+    /*     //fprintf(gnuplot,"show title\n"); */
     fprintf(gnuplot,"plot [-8:8] [8:-8] \'-\' notitle with vector\n");
     for(j = 0; j < displacementImage->height; j++){
         for(i = 0; i < displacementImage->width; i++){
@@ -374,42 +374,42 @@ void plotDisplaceErrorPNG(char* filename, char* title, Image displacementImage, 
     fprintf(gnuplot,"set ylabel \'Displacement Error\'\n");
     fprintf(gnuplot,"set xtics 2\n");
     fprintf(gnuplot,"set ytics 2\n");
-/*     //fprintf(gnuplot,"set term postscript eps color\n"); */
+    /*     //fprintf(gnuplot,"set term postscript eps color\n"); */
     fprintf(gnuplot,"set term png color\n");
     fprintf(gnuplot,"set size .75,1.05\n");
     fprintf(gnuplot,"set size ratio -1\n");
     fprintf(gnuplot,"set output \'%s\'\n",filename);
-/*     //fprintf(gnuplot,"set title \'%s\'\n",title); */
-/*     //fprintf(gnuplot,"set notitle \n"); */
-/*     //fprintf(gnuplot,"show title\n"); */
+    /*     //fprintf(gnuplot,"set title \'%s\'\n",title); */
+    /*     //fprintf(gnuplot,"set notitle \n"); */
+    /*     //fprintf(gnuplot,"show title\n"); */
     fprintf(gnuplot,"plot [0:12] [0:12] \'-\' notitle with points lt -1 pt 7 ps 0.2, \'-\' notitle with lines lt 1 lw 3\n");
-/*     //for(point = 0; point < novelGraph->numVert; point++){ */
-/*         //double x = novelGraph->verts[point].x; */
-/*         //double y = novelGraph->verts[point].y; */
-        for(j = 0; j < displacementImage->height; j++){
-            for(i = 0; i < displacementImage->width; i++){
-                double ptdist = sqrt(SQR(x-i) + SQR(y-j));
-                double estx = i-ie(displacementImage,i,j,0);
-                double esty = j-ie(displacementImage,i,j,1);
-                double errordist = sqrt(SQR(estx - x) + SQR(esty - y));
-                int index = ROUND(ptdist);
+    /*     //for(point = 0; point < novelGraph->numVert; point++){ */
+    /*         //double x = novelGraph->verts[point].x; */
+    /*         //double y = novelGraph->verts[point].y; */
+    for(j = 0; j < displacementImage->height; j++){
+        for(i = 0; i < displacementImage->width; i++){
+            double ptdist = sqrt(SQR(x-i) + SQR(y-j));
+            double estx = i-ie(displacementImage,i,j,0);
+            double esty = j-ie(displacementImage,i,j,1);
+            double errordist = sqrt(SQR(estx - x) + SQR(esty - y));
+            int index = ROUND(ptdist);
 
-                fprintf(gnuplot,"%f %f\n",ptdist,errordist);
+            fprintf(gnuplot,"%f %f\n",ptdist,errordist);
 
-                if( index < 13){
-                    aError[index] += errordist;
-                    cError[index] += 1.0;
-                }
+            if( index < 13){
+                aError[index] += errordist;
+                cError[index] += 1.0;
             }
         }
-/*     //} */
+    }
+    /*     //} */
 
     fprintf(gnuplot,"e\n");
     for(i = 0; i < 13; i++){
         if(cError[i] != 0.0){
             fprintf(gnuplot,"%f %f\n", (double)i, aError[i]/cError[i]);
         } else {
-/*             //fprintf(gnuplot,"%f 0.0\n", (double)i); */
+            /*             //fprintf(gnuplot,"%f 0.0\n", (double)i); */
         }
     }
     fprintf(gnuplot,"e\n");
@@ -433,41 +433,41 @@ void plotDisplaceErrorEPS(char* filename, char* title, Image displacementImage,i
     fprintf(gnuplot,"set xtics 2\n");
     fprintf(gnuplot,"set ytics 2\n");
     fprintf(gnuplot,"set term postscript eps color \"Helvetica\" 10\n");
-/*     //fprintf(gnuplot,"set term png color\n"); */
+    /*     //fprintf(gnuplot,"set term png color\n"); */
     fprintf(gnuplot,"set size 0.5,0.7\n");
     fprintf(gnuplot,"set size ratio -1\n");
     fprintf(gnuplot,"set output \'%s\'\n",filename);
-/*     //fprintf(gnuplot,"set title \'%s\'\n",title); */
-/*     //fprintf(gnuplot,"set notitle \n"); */
-/*     //fprintf(gnuplot,"show title\n"); */
+    /*     //fprintf(gnuplot,"set title \'%s\'\n",title); */
+    /*     //fprintf(gnuplot,"set notitle \n"); */
+    /*     //fprintf(gnuplot,"show title\n"); */
     fprintf(gnuplot,"plot [0:12] [0:12] \'-\' notitle with points lt 9 pt 7 ps 0.2, \'-\' notitle with lines lt 1 lw 3\n");
-/*     //for(point = 0; point < novelGraph->numVert; point++){ */
-/*         //double x = novelGraph->verts[point].x; */
-/*         //double y = novelGraph->verts[point].y; */
-        for(j = 0; j < displacementImage->height; j++){
-            for(i = 0; i < displacementImage->width; i++){
-                double ptdist = sqrt(SQR(x-i) + SQR(y-j));
-                double estx = i-ie(displacementImage,i,j,0);
-                double esty = j-ie(displacementImage,i,j,1);
-                double errordist = sqrt(SQR(estx - x) + SQR(esty - y));
-                int index = ROUND(ptdist);
+    /*     //for(point = 0; point < novelGraph->numVert; point++){ */
+    /*         //double x = novelGraph->verts[point].x; */
+    /*         //double y = novelGraph->verts[point].y; */
+    for(j = 0; j < displacementImage->height; j++){
+        for(i = 0; i < displacementImage->width; i++){
+            double ptdist = sqrt(SQR(x-i) + SQR(y-j));
+            double estx = i-ie(displacementImage,i,j,0);
+            double esty = j-ie(displacementImage,i,j,1);
+            double errordist = sqrt(SQR(estx - x) + SQR(esty - y));
+            int index = ROUND(ptdist);
 
-                fprintf(gnuplot,"%f %f\n",ptdist,errordist);
+            fprintf(gnuplot,"%f %f\n",ptdist,errordist);
 
-                if( index < 13){
-                    aError[index] += errordist;
-                    cError[index] += 1.0;
-                }
+            if( index < 13){
+                aError[index] += errordist;
+                cError[index] += 1.0;
             }
         }
-/*     //} */
+    }
+    /*     //} */
 
     fprintf(gnuplot,"e\n");
     for(i = 0; i < 13; i++){
         if(cError[i] != 0.0){
             fprintf(gnuplot,"%f %f\n", (double)i, aError[i]/cError[i]);
         } else {
-/*             //fprintf(gnuplot,"%f 0.0\n", (double)i); */
+            /*             //fprintf(gnuplot,"%f 0.0\n", (double)i); */
         }
     }
     fprintf(gnuplot,"e\n");
@@ -489,14 +489,14 @@ void plotTotalDisplaceErrorPNG(char* filename, char* title, Image*  displacement
     fprintf(gnuplot,"set ylabel \'Displacement Error\'\n");
     fprintf(gnuplot,"set xtics 2\n");
     fprintf(gnuplot,"set ytics 2\n");
-/*     //fprintf(gnuplot,"set term postscript eps color\n"); */
+    /*     //fprintf(gnuplot,"set term postscript eps color\n"); */
     fprintf(gnuplot,"set term png color\n");
     fprintf(gnuplot,"set size .75,1.05\n");
     fprintf(gnuplot,"set size ratio -1\n");
     fprintf(gnuplot,"set output \'%s\'\n",filename);
-/*     //fprintf(gnuplot,"set title \'%s\'\n",title); */
-/*     //fprintf(gnuplot,"set notitle \n"); */
-/*     //fprintf(gnuplot,"show title\n"); */
+    /*     //fprintf(gnuplot,"set title \'%s\'\n",title); */
+    /*     //fprintf(gnuplot,"set notitle \n"); */
+    /*     //fprintf(gnuplot,"show title\n"); */
     fprintf(gnuplot,"plot [0:12] [0:12] \'-\' notitle with points lt -1 pt 7 ps 0.2, \'-\' notitle with lines lt 1 lw 3\n");
     for(point = 0; point < novelGraph->numVert; point++){
         double x = novelGraph->verts[point].x;
@@ -520,14 +520,14 @@ void plotTotalDisplaceErrorPNG(char* filename, char* title, Image*  displacement
     }
 
     fprintf(gnuplot,"e\n");
-/*     //fprintf(gnuplot,"replot \'-\' notitle with lines\n"); */
+    /*     //fprintf(gnuplot,"replot \'-\' notitle with lines\n"); */
     for(i = 0; i < 13; i++){
         if(cError[i] != 0.0){
             fprintf(gnuplot,"%f %f\n", (double)i, aError[i]/cError[i]);
         } else {
-/*             //fprintf(gnuplot,"%f 0.0\n", (double)i); */
+            /*             //fprintf(gnuplot,"%f 0.0\n", (double)i); */
         }
-     }
+    }
     fprintf(gnuplot,"e\n");
     fprintf(gnuplot,"quit\n");
     fclose(gnuplot);
@@ -549,14 +549,14 @@ void plotTotalDisplaceErrorEPS(char* filename, char* title, Image*  displacement
     fprintf(gnuplot,"set xtics 2\n");
     fprintf(gnuplot,"set ytics 2\n");
     fprintf(gnuplot,"set term postscript eps color \"Helvetica\" 10\n");
-/*     //fprintf(gnuplot,"set term png color\n"); */
+    /*     //fprintf(gnuplot,"set term png color\n"); */
     fprintf(gnuplot,"set size 0.5,0.5\n");
     fprintf(gnuplot,"set output \'%s\'\n",filename);
     fprintf(gnuplot,"set size 0.5,0.7\n");
     fprintf(gnuplot,"set size ratio -1\n");
-/*     //fprintf(gnuplot,"set title \'%s\'\n",title); */
-/*     //fprintf(gnuplot,"set notitle \n"); */
-/*     //fprintf(gnuplot,"show title\n"); */
+    /*     //fprintf(gnuplot,"set title \'%s\'\n",title); */
+    /*     //fprintf(gnuplot,"set notitle \n"); */
+    /*     //fprintf(gnuplot,"show title\n"); */
     fprintf(gnuplot,"plot [0:12] [0:12] \'-\' notitle with points lt 9 pt 7 ps 0.2, \'-\' notitle with lines lt 1 lw 3\n");
     for(point = 0; point < novelGraph->numVert; point++){
         double x = novelGraph->verts[point].x;
@@ -584,7 +584,7 @@ void plotTotalDisplaceErrorEPS(char* filename, char* title, Image*  displacement
         if(cError[i] != 0.0){
             fprintf(gnuplot,"%f %f\n", (double)i, aError[i]/cError[i]);
         } else {
-/*             //fprintf(gnuplot,"%f 0.0\n", (double)i); */
+            /*             //fprintf(gnuplot,"%f 0.0\n", (double)i); */
         }
     }
     fprintf(gnuplot,"e\n");
@@ -656,7 +656,7 @@ void saveAngleAndDisplacement(Image** displacementImages, GraphDiscription bunch
             char imName[1024];
             Image angle = makeImage(displacementImages[est][point]->width, displacementImages[est][point]->height, 1);
             Image dist  = makeImage(displacementImages[est][point]->width, displacementImages[est][point]->height, 1);
-            
+
             writeProgress ("Computing angle and distance images", est+point*NUM_DISPLACE, NUM_DISPLACE*bunchGraph->numVert);
 
             for(x = 0; x < angle->width; x++){
@@ -680,19 +680,19 @@ void saveAngleAndDisplacement(Image** displacementImages, GraphDiscription bunch
             IE(angle,1,0,0) = 1.0;
             IE(dist,0,0,0) = -16.0 ;
             IE(dist,1,0,0) = 0.0 ;
-            
+
             /* save out images */
             sprintf(imName, "%s/exp%03d_%s_%s_ang.png", globals.outputDir, expNum, globals.disLabels[est], bunchGraph->vertLabels[point]);
             saveThermalImageMark(imName,angle,
-                    bunchGraph->verts[point].x,bunchGraph->verts[point].y);
+                bunchGraph->verts[point].x,bunchGraph->verts[point].y);
 
             sprintf(imName, "%s/exp%03d_%s_%s_angbw.png", globals.outputDir, expNum, globals.disLabels[est], bunchGraph->vertLabels[point]);
             saveBWImage(imName,angle);
 
-            
+
             sprintf(imName, "%s/exp%03d_%s_%s_dist.png", globals.outputDir, expNum, globals.disLabels[est], bunchGraph->vertLabels[point]);
             saveThermalImageMark(imName,dist,
-                    bunchGraph->verts[point].x,bunchGraph->verts[point].y);
+                bunchGraph->verts[point].x,bunchGraph->verts[point].y);
 
             sprintf(imName, "%s/exp%03d_%s_%s_distbw.png", globals.outputDir, expNum, globals.disLabels[est], bunchGraph->vertLabels[point]);
             saveBWImage(imName,dist);
@@ -795,7 +795,7 @@ void runImageLocalizationExperiement(ImageList* line){
         time_t t = time(0);
         sprintf(htmlName, "%s/00exp%03d_%s.html", globals.outputDir, expNum, novelGraph->vertLabels[point]);
         expfile = fopen(htmlName,"w");
-        
+
         fprintf(expfile,"<HTML><HEAD><TITLE>Experiment %d: %s</TITLE></HEAD>\n<BODY>\n",expNum,novelGraph->vertLabels[point]);
         fprintf(expfile,"<H1>Experiment %d: %s</H1><BR>\n",expNum,novelGraph->vertLabels[point]);
         fprintf(expfile,"<H2>Date: %s</H1><BR>\n",ctime(&t));
@@ -822,7 +822,7 @@ void runImageLocalizationExperiement(ImageList* line){
         }
         fprintf(expfile,"</TR></TABLE>\n");
 
-        
+
         fprintf(expfile,"<HR><H3>Jet Displacement</H3><BR>\n");
         fprintf(expfile,"<TABLE BORDER=2>\n");
         fprintf(expfile,"<TR>\n");
@@ -853,7 +853,7 @@ void runImageLocalizationExperiement(ImageList* line){
     /* Add this experiment to the final web page list */
 
     /* Free image memory */
-    
+
     freeGraphDiscription(novelGraph);
     freeImage(novelImage);
     expNum++;
@@ -865,13 +865,13 @@ int main(int argc,char** argv){
     ImageList* expList;
     ImageList* line;
     JetSimilarityMeasure distanceMeasures[NUM_MEASURES] = {
-      &JetSimilarityMag,
-      &JetSimilarityPhase,
-      &JetSimilarityDEPredictiveStep,
-      &JetSimilarityDEPredictiveIter,
-      &JetSimilarityDEFixedLocalSearch,
-      &JetSimilarityDENarrowingLocalSearch,
-      &JetSimilarityCorrelation,
+        &JetSimilarityMag,
+        &JetSimilarityPhase,
+        &JetSimilarityDEPredictiveStep,
+        &JetSimilarityDEPredictiveIter,
+        &JetSimilarityDEFixedLocalSearch,
+        &JetSimilarityDENarrowingLocalSearch,
+        &JetSimilarityCorrelation,
     };
 
     JetDisplacementEstimator displacementEstimators[NUM_DISPLACE] = {
@@ -882,13 +882,13 @@ int main(int argc,char** argv){
     };
 
     char* simLabels[NUM_MEASURES] = {
-      "JetSimilarityMag",
-      "JetSimilarityPhase",
-      "JetSimilarityDEPredictiveStep",
-      "JetSimilarityDEPredictiveIter",
-      "JetSimilarityDEFixedLocalSearch",
-      "JetSimilarityDENarrowingLocalSearch",
-      "JetSimilarityCorrelation",
+        "JetSimilarityMag",
+        "JetSimilarityPhase",
+        "JetSimilarityDEPredictiveStep",
+        "JetSimilarityDEPredictiveIter",
+        "JetSimilarityDEFixedLocalSearch",
+        "JetSimilarityDENarrowingLocalSearch",
+        "JetSimilarityCorrelation",
     };
 
     char* disLabels[NUM_DISPLACE] = {
@@ -899,7 +899,7 @@ int main(int argc,char** argv){
     };
 
     process_command(argc,argv);
-    
+
     /* Set up global variables */
     globals.measures = distanceMeasures;
     globals.estimators = displacementEstimators;
@@ -911,7 +911,7 @@ int main(int argc,char** argv){
 
     /* Read in experiment image list */
     expList = getImageNames(globals.expSpec, NULL);
-    
+
     /* For each line in the imagelist file conduct an experiment */
     for( line = expList; line != NULL; line = line->next_subject){
         runImageLocalizationExperiement(line);

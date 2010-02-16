@@ -61,7 +61,7 @@ int main(int argc, char** argv){
     for(;i < argc; i++){
         printf("Converting: %s\n",argv[i]);
         im = readPGMImage(argv[i]);
-        
+
         removeExtention(argv[i]);
 
         sprintf(outfilename,"%s.sfi",argv[i]);

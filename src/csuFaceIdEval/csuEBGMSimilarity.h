@@ -36,8 +36,8 @@ OTHER DEALINGS IN THE SOFTWARE.
 /************************ Jet Similarity Functions *************************/
 
 /* The following functions compute similarity between two
- * Gabor Jets.  They are described in detail csuGaborJets.c
- */
+* Gabor Jets.  They are described in detail csuGaborJets.c
+*/
 typedef double (*JetSimilarityMeasure)(GaborJet j1, GaborJet j2);
 
 double JetSimilarityMag(GaborJet j1, GaborJet j2);
@@ -52,7 +52,7 @@ double JetSimilarityCorrelation(GaborJet j1, GaborJet j2);
 double JetSimilarityCovariance(GaborJet j1, GaborJet j2);
 
 /* These similarty measures are discussed in David Bolme's thesis.
-   Results were generated using csuEBGMLocalization */
+Results were generated using csuEBGMLocalization */
 double JetSimilarityResponseMag(GaborJet j1, GaborJet j2);
 double JetSimilarityResponsePhase(GaborJet j1, GaborJet j2);
 double JetSimilarityDisplacementCheckMag(GaborJet j1, GaborJet j2);
@@ -61,9 +61,9 @@ double JetSimilarityDisplacementCheckPhase(GaborJet j1, GaborJet j2);
 /********************** Jet Displacement Estimation ************************/
 
 /* This function estimates the displacement of gabor jet
- * relative to a sample jet.  The method that is used is
- * simmillar to auto correlation.  Also look at the similarity
- * function for phase 1 and 3 for related code. */
+* relative to a sample jet.  The method that is used is
+* simmillar to auto correlation.  Also look at the similarity
+* function for phase 1 and 3 for related code. */
 typedef double (*JetDisplacementEstimator)(GaborJet j1, GaborJet j2, double *tdx, double *tdy);
 
 double estimateDisplacementRandom (GaborJet j1, GaborJet j2, double *tdx, double *tdy);

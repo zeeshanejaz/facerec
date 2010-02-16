@@ -47,235 +47,235 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 typedef struct
 {
-  char *imageList;
-  char *imageDirectory;
-  char *trainingFilename;
+    char *imageList;
+    char *imageDirectory;
+    char *trainingFilename;
 
-  char *distanceMatrix;
-  int maxRank;
+    char *distanceMatrix;
+    int maxRank;
 
-  int nExtrapersonal;
-  int nIntrapersonal;
+    int nExtrapersonal;
+    int nIntrapersonal;
 
-  int cutOffMode;
-  double cutOff;
-  int dropNVectors;
+    int cutOffMode;
+    double cutOff;
+    int dropNVectors;
 
-/*START: Changed by Zeeshan: for LPP*/
-  int uselpp;
-  int k_lpp;
-  int useAdaptiveK;
-  int lppDropNVectors;
-  char* dist_lpp;
-/*END: Changed by Zeeshan: for LPP*/ 
+    /*START: Changed by Zeeshan: for LPP*/
+    int uselpp;
+    int k_lpp;
+    int useAdaptiveK;
+    int lppDropNVectors;
+    char* dist_lpp;
+    /*END: Changed by Zeeshan: for LPP*/ 
 
-/*START:	Changed by Zeeshan: For ICA*/
-  int useICA;
-  int arch;
-  double learningRate;
-  int blockSize;
-  int iterations;
-/*END:		Changed by Zeeshan: For ICA*/
+    /*START:	Changed by Zeeshan: For ICA*/
+    int useICA;
+    int arch;
+    double learningRate;
+    int blockSize;
+    int iterations;
+    /*END:		Changed by Zeeshan: For ICA*/
 
-  int argc;
-  char **argv;
+    int argc;
+    char **argv;
 }
 Arguments;
 
 /**
- * Display a standard usage parameters or help if there is a problem with the
- * command line.
- */
+* Display a standard usage parameters or help if there is a problem with the
+* command line.
+*/
 void usage(const char* name)
 {
-  printf ("Usage: %s [OPTIONS] training_images.srt training_output_prefix\n", name);
-  printf ("  Parameters\n");
-  printf ("    training_images.srt:   Input image names.\n");
-  printf ("    training_output_prefix Prefix which is used to save the subspaces\n");
-  printf ("  Options\n");
-  printf ("    -imDir <dir>:          Image directory.\n"
-	  "        DEFAULT = \".\"\n");
-  printf ("    -ni <n>:               Total number of interpersonal images.\n"
-	  "        DEFAULT = 100\n");
-  printf ("    -ne <n>:               Total number of extrapersonal images.\n"
-	  "        DEFAULT = 100\n");
-  printf ("    -distances <file>:     Sort images using this distance matrix.\n"
-	  "        DEFAULT = \"Random\"\n");
-  printf ("    -maxRank n             When sorting, take these many top-ranked images\n");
-  printf("     -dropNVectors <int>: Drops the first N vectors which are normally lighting effects.\n        DEFAULT = 0\n");
-  printf("     -cutOffMode <mode>:  Selects the method for eigen vector selection after PCA trianing\n");
-  printf("                          and droping the first vectors.  DEFAULT = SIMPLE\n");
-  printf("          NONE            Retain eigenvectors.\n");
-  printf("          SIMPLE          Retain a percentage of the eigenvectors. \n");
-  printf("                          Expects value between 0.0 and 100.0, DEFAULT PERCENT = %f \n", DEFAULT_CUTOFF_PERCENT_SIMPLE);
-  printf("          ENERGY          Retain  eigenvectors accounting for a percentage of the total energy.\n");
-  printf("                          Expects value between 0.0 and 100.0, DEFAULT PERCENT = %f\n", DEFAULT_CUTOFF_PERCENT_ENERGY);
-  printf("          STRETCH         Retains all eigenvectors greater than a percentage of the largest eigenvector.\n");
-  printf("                          Expects value between 0.0 and 100.0, DEFAULT PERCENT = %f\n", DEFAULT_CUTOFF_PERCENT_STRETCH);
-  printf("          CLASSES         Retains as many eigenvectors as there LDA Classes: use only with LDA.\n");
-  printf("                          Ignores cutOff value and uses number of classes instead\n");
-  printf("     -cutOff <percent>:   Percentage of eigen vectors to retain (see cutOffMode).\n        DEFAULT = (See cutoff mode)\n");
+    printf ("Usage: %s [OPTIONS] training_images.srt training_output_prefix\n", name);
+    printf ("  Parameters\n");
+    printf ("    training_images.srt:   Input image names.\n");
+    printf ("    training_output_prefix Prefix which is used to save the subspaces\n");
+    printf ("  Options\n");
+    printf ("    -imDir <dir>:          Image directory.\n"
+        "        DEFAULT = \".\"\n");
+    printf ("    -ni <n>:               Total number of interpersonal images.\n"
+        "        DEFAULT = 100\n");
+    printf ("    -ne <n>:               Total number of extrapersonal images.\n"
+        "        DEFAULT = 100\n");
+    printf ("    -distances <file>:     Sort images using this distance matrix.\n"
+        "        DEFAULT = \"Random\"\n");
+    printf ("    -maxRank n             When sorting, take these many top-ranked images\n");
+    printf("     -dropNVectors <int>: Drops the first N vectors which are normally lighting effects.\n        DEFAULT = 0\n");
+    printf("     -cutOffMode <mode>:  Selects the method for eigen vector selection after PCA trianing\n");
+    printf("                          and droping the first vectors.  DEFAULT = SIMPLE\n");
+    printf("          NONE            Retain eigenvectors.\n");
+    printf("          SIMPLE          Retain a percentage of the eigenvectors. \n");
+    printf("                          Expects value between 0.0 and 100.0, DEFAULT PERCENT = %f \n", DEFAULT_CUTOFF_PERCENT_SIMPLE);
+    printf("          ENERGY          Retain  eigenvectors accounting for a percentage of the total energy.\n");
+    printf("                          Expects value between 0.0 and 100.0, DEFAULT PERCENT = %f\n", DEFAULT_CUTOFF_PERCENT_ENERGY);
+    printf("          STRETCH         Retains all eigenvectors greater than a percentage of the largest eigenvector.\n");
+    printf("                          Expects value between 0.0 and 100.0, DEFAULT PERCENT = %f\n", DEFAULT_CUTOFF_PERCENT_STRETCH);
+    printf("          CLASSES         Retains as many eigenvectors as there LDA Classes: use only with LDA.\n");
+    printf("                          Ignores cutOff value and uses number of classes instead\n");
+    printf("     -cutOff <percent>:   Percentage of eigen vectors to retain (see cutOffMode).\n        DEFAULT = (See cutoff mode)\n");
 
-/*START: Changed by Zeeshan: for LPP*/
-  printf("    -lpp:    		   enable lpp training. (Must not use LDA when ON)\n        DEFAULT = PCA Only\n");
-  printf("    -k <int>:    	   neighbourhood count for LPP.\n        DEFAULT = 5\n");
-  printf("    -useAdaptiveK:       enable adptive K.\n        DEFAULT = FALSE\n");
-  printf("    -lppDropNVectors <int>: number of vectors to drop from the end of the laplacian subspace.\n        DEFAULT = 0\n");
-  printf("    -lppDist <char*>:    	   Distance measure for weight map.\n      DEFAULT = MahCosine\n");
-/*END: Changed by Zeeshan: for LPP*/
- 
-/*START: Changed by Zeeshan: for ICA*/
-  printf("    -ica:    		   enable ica training. (Must not use LDA or LPP when ON)\n        DEFAULT = PCA Only\n");
-  printf("    -icaArch <int>:      architechture of ICA to use.\n        DEFAULT = 1\n");
-  printf("    -lBlocks <int>: 	   size of blocks during learning.\n        DEFAULT = 50\n");
-  printf("    -lItrs <int>:        number of iterations for learning.\n      DEFAULT = 1000\n");
-  printf("    -lRate <float>:      the learning rate for each iteration.\n      DEFAULT = 0.0002\n");
-/*END: Changed by Zeeshan: for ICA*/
+    /*START: Changed by Zeeshan: for LPP*/
+    printf("    -lpp:    		   enable lpp training. (Must not use LDA when ON)\n        DEFAULT = PCA Only\n");
+    printf("    -k <int>:    	   neighbourhood count for LPP.\n        DEFAULT = 5\n");
+    printf("    -useAdaptiveK:       enable adptive K.\n        DEFAULT = FALSE\n");
+    printf("    -lppDropNVectors <int>: number of vectors to drop from the end of the laplacian subspace.\n        DEFAULT = 0\n");
+    printf("    -lppDist <char*>:    	   Distance measure for weight map.\n      DEFAULT = MahCosine\n");
+    /*END: Changed by Zeeshan: for LPP*/
 
-  printf ("    -quiet:                Turn off all messages.\n"
-	  "        DEFAULT = messages on\n");
-  printf ("    -debuglevel <int>:     Level of debug information to display"
-	  "        (automatically sets quiet to no).\n"
-	  "        DEFAULT = 0\n");
-  exit (1);
+    /*START: Changed by Zeeshan: for ICA*/
+    printf("    -ica:    		   enable ica training. (Must not use LDA or LPP when ON)\n        DEFAULT = PCA Only\n");
+    printf("    -icaArch <int>:      architechture of ICA to use.\n        DEFAULT = 1\n");
+    printf("    -lBlocks <int>: 	   size of blocks during learning.\n        DEFAULT = 50\n");
+    printf("    -lItrs <int>:        number of iterations for learning.\n      DEFAULT = 1000\n");
+    printf("    -lRate <float>:      the learning rate for each iteration.\n      DEFAULT = 0.0002\n");
+    /*END: Changed by Zeeshan: for ICA*/
+
+    printf ("    -quiet:                Turn off all messages.\n"
+        "        DEFAULT = messages on\n");
+    printf ("    -debuglevel <int>:     Level of debug information to display"
+        "        (automatically sets quiet to no).\n"
+        "        DEFAULT = 0\n");
+    exit (1);
 }
 
 /**
- * Process the command line and initialize the variables
- *
- * @param argc The number of arguments
- * @param argv The arguments
- */
+* Process the command line and initialize the variables
+*
+* @param argc The number of arguments
+* @param argv The arguments
+*/
 void
 process_command (int argc, char **argv, Arguments * args)
 {
-  int i;
-  int param_num = 0;
-  int cutOffSet = 0;
+    int i;
+    int param_num = 0;
+    int cutOffSet = 0;
 
-  /******* Set up default values *******/
+    /******* Set up default values *******/
 
-  args->argc = argc;
-  args->argv = argv;
+    args->argc = argc;
+    args->argv = argv;
 
-  args->nIntrapersonal = 100;
-  args->nExtrapersonal = 100;
-  args->distanceMatrix = NULL;
-  args->maxRank        = -1;
+    args->nIntrapersonal = 100;
+    args->nExtrapersonal = 100;
+    args->distanceMatrix = NULL;
+    args->maxRank        = -1;
 
-  args->cutOffMode      = CUTOFF_SIMPLE;
-  args->cutOff          = DEFAULT_CUTOFF_PERCENT_SIMPLE;
-  args->dropNVectors    = 0;
+    args->cutOffMode      = CUTOFF_SIMPLE;
+    args->cutOff          = DEFAULT_CUTOFF_PERCENT_SIMPLE;
+    args->dropNVectors    = 0;
 
-/*START: Changed by Zeeshan: for LPP*/
-  args->uselpp          = 0;
-  args->k_lpp          	= 5;
-  args->useAdaptiveK    = 0;
-  args->dist_lpp        = strdup("MahCosine");
-/*END: Changed by Zeeshan: for LPP*/
+    /*START: Changed by Zeeshan: for LPP*/
+    args->uselpp          = 0;
+    args->k_lpp          	= 5;
+    args->useAdaptiveK    = 0;
+    args->dist_lpp        = strdup("MahCosine");
+    /*END: Changed by Zeeshan: for LPP*/
 
-/*START:	Changed by Zeeshan: For ICA*/
-  args->useICA		= 0;
-  args->arch		= 1;
-  args->learningRate	= 0.0002;
-  args->blockSize	= 50;
-  args->iterations	= 1000;
-/*END:		Changed by Zeeshan: For ICA*/
+    /*START:	Changed by Zeeshan: For ICA*/
+    args->useICA		= 0;
+    args->arch		= 1;
+    args->learningRate	= 0.0002;
+    args->blockSize	= 50;
+    args->iterations	= 1000;
+    /*END:		Changed by Zeeshan: For ICA*/
 
-  debuglevel = 0;
+    debuglevel = 0;
 
-  /******* Read command line arguments *******/
+    /******* Read command line arguments *******/
 
-  for (i = 1; i < argc; i++) {
+    for (i = 1; i < argc; i++) {
 
-    /* Catch common help requests */
-    if      (readOption       (argc, argv, &i, "-help" )) { usage(argv[0]); }
-    else if (readOption       (argc, argv, &i, "--help")) { usage(argv[0]); }
+        /* Catch common help requests */
+        if      (readOption       (argc, argv, &i, "-help" )) { usage(argv[0]); }
+        else if (readOption       (argc, argv, &i, "--help")) { usage(argv[0]); }
 
-    /* Read in input directories */
-    else if (readOptionString (argc, argv, &i, "-imDir",     &(args->imageDirectory)));
-    else if (readOptionString (argc, argv, &i, "-distances", &(args->distanceMatrix)));
+        /* Read in input directories */
+        else if (readOptionString (argc, argv, &i, "-imDir",     &(args->imageDirectory)));
+        else if (readOptionString (argc, argv, &i, "-distances", &(args->distanceMatrix)));
 
-    /* Read in number of images to generate */
-    else if (readOptionInt    (argc, argv, &i, "-ni", &(args->nIntrapersonal)));
-    else if (readOptionInt    (argc, argv, &i, "-ne", &(args->nExtrapersonal)));
+        /* Read in number of images to generate */
+        else if (readOptionInt    (argc, argv, &i, "-ni", &(args->nIntrapersonal)));
+        else if (readOptionInt    (argc, argv, &i, "-ne", &(args->nExtrapersonal)));
 
-    /* Read in maxRank */
-    else if (readOptionInt    (argc, argv, &i, "-maxRank", &(args->maxRank)));
+        /* Read in maxRank */
+        else if (readOptionInt    (argc, argv, &i, "-maxRank", &(args->maxRank)));
 
-    /* Read in PCA training options */
-    else if (readOptionInt    (argc, argv, &i, "-dropNVectors", &(args->dropNVectors)));
+        /* Read in PCA training options */
+        else if (readOptionInt    (argc, argv, &i, "-dropNVectors", &(args->dropNVectors)));
 
-    else if (readOptionMatch(argc, argv, &i, "-cutOffMode", "NONE"))
-      { args->cutOffMode = CUTOFF_NONE; }
-    else if (readOptionMatch(argc, argv, &i, "-cutOffMode", "SIMPLE"))
-      { args->cutOffMode = CUTOFF_SIMPLE; }
-    else if (readOptionMatch(argc, argv, &i, "-cutOffMode", "ENERGY"))
-      { args->cutOffMode = CUTOFF_ENERGY; }
-    else if (readOptionMatch(argc, argv, &i, "-cutOffMode", "STRETCH"))
-      { args->cutOffMode = CUTOFF_STRETCH; }
-    else if (readOptionMatch(argc, argv, &i, "-cutOffMode", "CLASSES"))
-      { args->cutOffMode = CUTOFF_CLASSES; }
+        else if (readOptionMatch(argc, argv, &i, "-cutOffMode", "NONE"))
+        { args->cutOffMode = CUTOFF_NONE; }
+        else if (readOptionMatch(argc, argv, &i, "-cutOffMode", "SIMPLE"))
+        { args->cutOffMode = CUTOFF_SIMPLE; }
+        else if (readOptionMatch(argc, argv, &i, "-cutOffMode", "ENERGY"))
+        { args->cutOffMode = CUTOFF_ENERGY; }
+        else if (readOptionMatch(argc, argv, &i, "-cutOffMode", "STRETCH"))
+        { args->cutOffMode = CUTOFF_STRETCH; }
+        else if (readOptionMatch(argc, argv, &i, "-cutOffMode", "CLASSES"))
+        { args->cutOffMode = CUTOFF_CLASSES; }
 
-/*START: Changed by Zeeshan: for LPP*/
-    else if (readOption (argc, argv, &i, "-lpp" ))                     { args->uselpp = 1; }
-    else if (readOptionInt (argc, argv, &i, "-k", &(args->k_lpp) )) ;
-    else if (readOption (argc, argv, &i, "-useAdaptiveK" ))            { args->useAdaptiveK = 1; }
-    else if (readOptionInt (argc, argv, &i, "-lppDropNVectors", &(args->lppDropNVectors) )) ;
-    else if (readOptionString (argc, argv, &i, "-lppDist", &(args->dist_lpp) )) ;
-/*END: Changed by Zeeshan: for LPP*/
+        /*START: Changed by Zeeshan: for LPP*/
+        else if (readOption (argc, argv, &i, "-lpp" ))                     { args->uselpp = 1; }
+        else if (readOptionInt (argc, argv, &i, "-k", &(args->k_lpp) )) ;
+        else if (readOption (argc, argv, &i, "-useAdaptiveK" ))            { args->useAdaptiveK = 1; }
+        else if (readOptionInt (argc, argv, &i, "-lppDropNVectors", &(args->lppDropNVectors) )) ;
+        else if (readOptionString (argc, argv, &i, "-lppDist", &(args->dist_lpp) )) ;
+        /*END: Changed by Zeeshan: for LPP*/
 
-/*START: Changed by Zeeshan: for ICA*/
-    else if (readOption (argc, argv, &i, "-ica" ))                     { args->useICA = 1; }
-    else if (readOptionInt (argc, argv, &i, "-icaArch", &(args->arch) )) ;
-    else if (readOptionInt (argc, argv, &i, "-lBlocks", &(args->blockSize) )) ;
-    else if (readOptionInt (argc, argv, &i, "-lItrs", &(args->iterations) )) ;
-    else if (readOptionDouble (argc, argv, &i, "-lRate", &(args->learningRate) )) ;
-/*END: Changed by Zeeshan: for ICA*/
+        /*START: Changed by Zeeshan: for ICA*/
+        else if (readOption (argc, argv, &i, "-ica" ))                     { args->useICA = 1; }
+        else if (readOptionInt (argc, argv, &i, "-icaArch", &(args->arch) )) ;
+        else if (readOptionInt (argc, argv, &i, "-lBlocks", &(args->blockSize) )) ;
+        else if (readOptionInt (argc, argv, &i, "-lItrs", &(args->iterations) )) ;
+        else if (readOptionDouble (argc, argv, &i, "-lRate", &(args->learningRate) )) ;
+        /*END: Changed by Zeeshan: for ICA*/
 
-    else if (readOptionDouble (argc, argv, &i, "-cutOff", &(args->cutOff)))
-      {
-	if ((args->cutOff <= 1.0) && (args->cutOff >= 0.000001)) {
-	  printf("WARNING: cutOff value is %f, expects percentage "
-		 "between 0.0 and 100.0", args->cutOff);
-	  printf("         will proceed assuming value is as desired.");
-	}
-	cutOffSet = 1;
-      }   
+        else if (readOptionDouble (argc, argv, &i, "-cutOff", &(args->cutOff)))
+        {
+            if ((args->cutOff <= 1.0) && (args->cutOff >= 0.000001)) {
+                printf("WARNING: cutOff value is %f, expects percentage "
+                    "between 0.0 and 100.0", args->cutOff);
+                printf("         will proceed assuming value is as desired.");
+            }
+            cutOffSet = 1;
+        }   
 
-    /* other flags */
-    else if (readOption       (argc, argv, &i, "-quiet")) { quiet = 1; }
-    else if (readOptionInt    (argc, argv, &i, "-debuglevel", &debuglevel));
+        /* other flags */
+        else if (readOption       (argc, argv, &i, "-quiet")) { quiet = 1; }
+        else if (readOptionInt    (argc, argv, &i, "-debuglevel", &debuglevel));
 
-    /* check if the current argument is an unparsed option */
-    else if (checkBadOption(argc,argv,&i));
+        /* check if the current argument is an unparsed option */
+        else if (checkBadOption(argc,argv,&i));
 
-    /* read required arguments */ 
-    else if (param_num == 0) {
-      args->imageList = argv[i];
-      param_num++;
+        /* read required arguments */ 
+        else if (param_num == 0) {
+            args->imageList = argv[i];
+            param_num++;
+        }
+        else if (param_num == 1) {
+            args->trainingFilename = strdup (argv[i]);
+            param_num++;
+        } 
     }
-    else if (param_num == 1) {
-      args->trainingFilename = strdup (argv[i]);
-      param_num++;
-    } 
-  }
 
-  /* make sure that there are the proper number of required arguments */
+    /* make sure that there are the proper number of required arguments */
 
-  if (param_num != 2){ clParseError(argc,argv,i,"Wrong number of required arguments"); }
+    if (param_num != 2){ clParseError(argc,argv,i,"Wrong number of required arguments"); }
 
-  /* Print out the program parameters for appropriate debug level */
+    /* Print out the program parameters for appropriate debug level */
 
-  DEBUG_INT (1, "Debuging enabled", debuglevel);
-  if(debuglevel > 0){
-    printf("***************** Program Parameters *********************\n");
-    printf ("Image directory:  %s\n", args->imageDirectory);
-    printf ("Image list:       %s\n", args->imageList);
-    printf ("nIntrapersonal:   %d\n", args->nIntrapersonal);
-    printf ("nExtrapersonal:   %d\n", args->nExtrapersonal);
-    printf ("distanceMatrix:   %s\n ", args->distanceMatrix);
-  }
+    DEBUG_INT (1, "Debuging enabled", debuglevel);
+    if(debuglevel > 0){
+        printf("***************** Program Parameters *********************\n");
+        printf ("Image directory:  %s\n", args->imageDirectory);
+        printf ("Image list:       %s\n", args->imageList);
+        printf ("nIntrapersonal:   %d\n", args->nIntrapersonal);
+        printf ("nExtrapersonal:   %d\n", args->nExtrapersonal);
+        printf ("distanceMatrix:   %s\n ", args->distanceMatrix);
+    }
 }
 
 /******************************************************************************
@@ -285,146 +285,146 @@ process_command (int argc, char **argv, Arguments * args)
 void
 makeDifferenceImages (char *imageDirectory, char *imageList, char *distanceMatrix, int maxRank, int reqNIntra, int reqNExtra, Matrix *intrapersonal, Matrix *extrapersonal)
 {
-  ImageList* imlist;
-  void *nameList = NULL;
-  char **nameArray;
-  void *subjList = NULL;
-  int *subjArray, *shuffledIndices, **sortedBySimilarityToProbe;
-  int subjId, probeIdx, galleryIdx, idx, nIntrapersonal, nExtrapersonal, rank, i, numPixels;
-  int nImages;
-  /* size_t trash; */
-  Matrix sourceImages, intraImages, extraImages;
-  ImageList *replicate, *subject;
-  char *subjName;
+    ImageList* imlist;
+    void *nameList = NULL;
+    char **nameArray;
+    void *subjList = NULL;
+    int *subjArray, *shuffledIndices, **sortedBySimilarityToProbe;
+    int subjId, probeIdx, galleryIdx, idx, nIntrapersonal, nExtrapersonal, rank, i, numPixels;
+    int nImages;
+    /* size_t trash; */
+    Matrix sourceImages, intraImages, extraImages;
+    ImageList *replicate, *subject;
+    char *subjName;
 
-  /* Read in a list of all the images */
+    /* Read in a list of all the images */
 
-  imlist = getImageNames (imageList, &nImages);
-  subjId = 0;
-  for EACH_SUBJECT (imlist, subject) {
-      for EACH_REPLICATE (subject, replicate) {
-        subjName = strdup (replicate->filename);
-	listAccumulate (&nameList, &subjName, sizeof (char *));
-	listAccumulate (&subjList, &subjId,   sizeof (int));
-	writeProgress ("Reading subjects list", subjId, 0);
-      }
-      subjId++;
-  }
-
-  nameArray = listToNullTerminatedArray (&nameList, sizeof (char *), NULL);
-  subjArray = listToNullTerminatedArray (&subjList, sizeof (int),    NULL);
-
-  /* Allocate storage for source images and difference images */
-
-  numPixels = autoFileLength (makePath (imageDirectory, nameArray[0]));
-
-  sourceImages = makeMatrix (numPixels, nImages);
-  intraImages  = makeMatrix (numPixels, reqNIntra);
-  extraImages  = makeMatrix (numPixels, reqNExtra);
-
-  DEBUG_CHECK (sourceImages != NULL, "Not enough memory to allocate matrix");
-  DEBUG_CHECK (intraImages  != NULL, "Not enough memory to allocate matrix");
-  DEBUG_CHECK (extraImages  != NULL, "Not enough memory to allocate matrix");
-
-  /* Load in all the source images */
-
-  for (i = 0; i < nImages; i++) {
-    readFile (makePath (imageDirectory, nameArray[i]), i, sourceImages);
-    writeProgress ("Loading source images", i, nImages);
-  }
-
-  /* Write out difference images */
-
-  shuffledIndices = shuffledNumbers (nImages);
-
-  idx = 0;
-  rank = 0;
-  nIntrapersonal = 0;
-  nExtrapersonal = 0;
-
-  if (maxRank == -1)
-      maxRank = nImages;
-
-  /* First, for each image generate a list of every other image
-   * sorted by similarity to that image */
-
-  sortedBySimilarityToProbe = (int**) malloc  (nImages * sizeof (int*));
-  for (probeIdx = 0; probeIdx < nImages; probeIdx++) {
-    sortedBySimilarityToProbe[probeIdx] = (int*) malloc  (nImages * sizeof (int));
-    if (sortedBySimilarityToProbe[probeIdx] == 0L)
-      {
-	fprintf (stderr, "Not enough memory to continue\n");
-	exit (1);	
-      }
-    sortSubjectsBySimilarityToProbe (nameArray[probeIdx], nameArray, distanceMatrix, sortedBySimilarityToProbe[probeIdx]);
-    writeProgress ("Sorting images", probeIdx, nImages);
-  }
-
-  /* Now write out the difference images */
-
-  while (nIntrapersonal < reqNIntra || nExtrapersonal < reqNExtra)
-    {
-      probeIdx = shuffledIndices[idx];
-
-      idx++;
-      if (idx == nImages)
-	{
-	  idx = 0;
-	  rank++;
-
-	  if (rank == maxRank)
-	    {
-	      fprintf (stderr, "\n");
-	      fprintf (stderr, "WARNING: Unable to generate enough images. Try increasing maxRank or adding more subjects to the list.\n");
-	      break;
-	    }
-	}
-      
-      galleryIdx = sortedBySimilarityToProbe[probeIdx][rank];
-	  
-      if (galleryIdx == probeIdx || !strcmp (nameArray[probeIdx], nameArray[galleryIdx]))
-	continue;
-
-      /* Compute the difference image */
-
-      if (subjArray[probeIdx] == subjArray[galleryIdx])
-	{
-	  if(nIntrapersonal < reqNIntra) {
-	    for (i = 0; i < sourceImages->row_dim; i++)
-	      ME (intraImages, i, nIntrapersonal) = ME (sourceImages, i, probeIdx) - ME (sourceImages, i, galleryIdx);
-
-	    nIntrapersonal++;
-	  }
-	}
-      else
-	{
-	  if( nExtrapersonal < reqNExtra ) {
-	    for (i = 0; i < sourceImages->row_dim; i++)
-	      ME (extraImages, i, nExtrapersonal) = ME (sourceImages, i, probeIdx) - ME (sourceImages, i, galleryIdx);
-
-	    nExtrapersonal++;
-	  }
-	}
-      
-      writeProgress ("Computing difference images", nIntrapersonal + nExtrapersonal, reqNIntra + reqNExtra);
+    imlist = getImageNames (imageList, &nImages);
+    subjId = 0;
+    for EACH_SUBJECT (imlist, subject) {
+        for EACH_REPLICATE (subject, replicate) {
+            subjName = strdup (replicate->filename);
+            listAccumulate (&nameList, &subjName, sizeof (char *));
+            listAccumulate (&subjList, &subjId,   sizeof (int));
+            writeProgress ("Reading subjects list", subjId, 0);
+        }
+        subjId++;
     }
 
-  fprintf (stdout, "Generated %d extrapersonal images\n", nExtrapersonal);
-  fprintf (stdout, "Generated %d intrapersonal images\n", nIntrapersonal);
+    nameArray = listToNullTerminatedArray (&nameList, sizeof (char *), NULL);
+    subjArray = listToNullTerminatedArray (&subjList, sizeof (int),    NULL);
 
-  /* Clean up */
+    /* Allocate storage for source images and difference images */
 
-  for (probeIdx = 0; probeIdx < nImages; probeIdx++)
-    free (sortedBySimilarityToProbe[probeIdx]);
-  free (sortedBySimilarityToProbe);
+    numPixels = autoFileLength (makePath (imageDirectory, nameArray[0]));
 
-  freeMatrix (sourceImages);
-  freeListOfStrings (nameArray);
-  free (subjArray);
-  free (shuffledIndices);
+    sourceImages = makeMatrix (numPixels, nImages);
+    intraImages  = makeMatrix (numPixels, reqNIntra);
+    extraImages  = makeMatrix (numPixels, reqNExtra);
 
-  *extrapersonal = extraImages;
-  *intrapersonal = intraImages;
+    DEBUG_CHECK (sourceImages != NULL, "Not enough memory to allocate matrix");
+    DEBUG_CHECK (intraImages  != NULL, "Not enough memory to allocate matrix");
+    DEBUG_CHECK (extraImages  != NULL, "Not enough memory to allocate matrix");
+
+    /* Load in all the source images */
+
+    for (i = 0; i < nImages; i++) {
+        readFile (makePath (imageDirectory, nameArray[i]), i, sourceImages);
+        writeProgress ("Loading source images", i, nImages);
+    }
+
+    /* Write out difference images */
+
+    shuffledIndices = shuffledNumbers (nImages);
+
+    idx = 0;
+    rank = 0;
+    nIntrapersonal = 0;
+    nExtrapersonal = 0;
+
+    if (maxRank == -1)
+        maxRank = nImages;
+
+    /* First, for each image generate a list of every other image
+    * sorted by similarity to that image */
+
+    sortedBySimilarityToProbe = (int**) malloc  (nImages * sizeof (int*));
+    for (probeIdx = 0; probeIdx < nImages; probeIdx++) {
+        sortedBySimilarityToProbe[probeIdx] = (int*) malloc  (nImages * sizeof (int));
+        if (sortedBySimilarityToProbe[probeIdx] == 0L)
+        {
+            fprintf (stderr, "Not enough memory to continue\n");
+            exit (1);	
+        }
+        sortSubjectsBySimilarityToProbe (nameArray[probeIdx], nameArray, distanceMatrix, sortedBySimilarityToProbe[probeIdx]);
+        writeProgress ("Sorting images", probeIdx, nImages);
+    }
+
+    /* Now write out the difference images */
+
+    while (nIntrapersonal < reqNIntra || nExtrapersonal < reqNExtra)
+    {
+        probeIdx = shuffledIndices[idx];
+
+        idx++;
+        if (idx == nImages)
+        {
+            idx = 0;
+            rank++;
+
+            if (rank == maxRank)
+            {
+                fprintf (stderr, "\n");
+                fprintf (stderr, "WARNING: Unable to generate enough images. Try increasing maxRank or adding more subjects to the list.\n");
+                break;
+            }
+        }
+
+        galleryIdx = sortedBySimilarityToProbe[probeIdx][rank];
+
+        if (galleryIdx == probeIdx || !strcmp (nameArray[probeIdx], nameArray[galleryIdx]))
+            continue;
+
+        /* Compute the difference image */
+
+        if (subjArray[probeIdx] == subjArray[galleryIdx])
+        {
+            if(nIntrapersonal < reqNIntra) {
+                for (i = 0; i < sourceImages->row_dim; i++)
+                    ME (intraImages, i, nIntrapersonal) = ME (sourceImages, i, probeIdx) - ME (sourceImages, i, galleryIdx);
+
+                nIntrapersonal++;
+            }
+        }
+        else
+        {
+            if( nExtrapersonal < reqNExtra ) {
+                for (i = 0; i < sourceImages->row_dim; i++)
+                    ME (extraImages, i, nExtrapersonal) = ME (sourceImages, i, probeIdx) - ME (sourceImages, i, galleryIdx);
+
+                nExtrapersonal++;
+            }
+        }
+
+        writeProgress ("Computing difference images", nIntrapersonal + nExtrapersonal, reqNIntra + reqNExtra);
+    }
+
+    fprintf (stdout, "Generated %d extrapersonal images\n", nExtrapersonal);
+    fprintf (stdout, "Generated %d intrapersonal images\n", nIntrapersonal);
+
+    /* Clean up */
+
+    for (probeIdx = 0; probeIdx < nImages; probeIdx++)
+        free (sortedBySimilarityToProbe[probeIdx]);
+    free (sortedBySimilarityToProbe);
+
+    freeMatrix (sourceImages);
+    freeListOfStrings (nameArray);
+    free (subjArray);
+    free (shuffledIndices);
+
+    *extrapersonal = extraImages;
+    *intrapersonal = intraImages;
 }
 
 /******************************************************************************
@@ -432,69 +432,69 @@ makeDifferenceImages (char *imageDirectory, char *imageList, char *distanceMatri
 ******************************************************************************/
 
 /*
-    main()
- */
+main()
+*/
 int
 main (int argc, char *argv[])
 {
-  Arguments args;
-  Matrix intraImages, extraImages;
-  Subspace intraSubspace, extraSubspace;
-  char filename[256];
+    Arguments args;
+    Matrix intraImages, extraImages;
+    Subspace intraSubspace, extraSubspace;
+    char filename[256];
 
-  process_command (argc, argv, &args);
-  MESSAGE (OPENING);
-  MESSAGE (VERSION);
+    process_command (argc, argv, &args);
+    MESSAGE (OPENING);
+    MESSAGE (VERSION);
 
-  /* Sanity check */
+    /* Sanity check */
 
-  checkReadableDirectory (args.imageDirectory, "%s is not a readable directory");
-  checkReadableFile (args.imageList, "Cannot read subject replicates list %s");
+    checkReadableDirectory (args.imageDirectory, "%s is not a readable directory");
+    checkReadableFile (args.imageList, "Cannot read subject replicates list %s");
 
-  makeDifferenceImages (args.imageDirectory,
-			args.imageList,
-			args.distanceMatrix,
-			args.maxRank,
-			args.nIntrapersonal,
-			args.nExtrapersonal,
-			&intraImages,
-			&extraImages
-			);
+    makeDifferenceImages (args.imageDirectory,
+        args.imageList,
+        args.distanceMatrix,
+        args.maxRank,
+        args.nIntrapersonal,
+        args.nExtrapersonal,
+        &intraImages,
+        &extraImages
+        );
 
-  MESSAGE("Training intrapersonal subspace");
+    MESSAGE("Training intrapersonal subspace");
 
-  subspaceTrain (&intraSubspace, intraImages, NULL, args.nIntrapersonal, args.dropNVectors, args.cutOffMode, args.cutOff, 0, 0
-/*START Changed by Zeeshan: For LPP*/
- ,args.uselpp, args.k_lpp, args.useAdaptiveK, args.lppDropNVectors, (char*)args.dist_lpp
-/*END Changed by Zeeshan: For LPP*/
-/*START Changed by Zeeshan: For ICA*/
-  ,args.useICA, args.arch, args.learningRate, args.blockSize, args.iterations
-/*END 	Changed by Zeeshan: For ICA*/
+    subspaceTrain (&intraSubspace, intraImages, NULL, args.nIntrapersonal, args.dropNVectors, args.cutOffMode, args.cutOff, 0, 0
+        /*START Changed by Zeeshan: For LPP*/
+        ,args.uselpp, args.k_lpp, args.useAdaptiveK, args.lppDropNVectors, (char*)args.dist_lpp
+        /*END Changed by Zeeshan: For LPP*/
+        /*START Changed by Zeeshan: For ICA*/
+        ,args.useICA, args.arch, args.learningRate, args.blockSize, args.iterations
+        /*END 	Changed by Zeeshan: For ICA*/
 
-);
+        );
 
-  MESSAGE("Training extrapersonal subspace");
+    MESSAGE("Training extrapersonal subspace");
 
-  subspaceTrain (&extraSubspace, extraImages, NULL, args.nExtrapersonal, args.dropNVectors, args.cutOffMode, args.cutOff, 0, 0
-/*START Changed by Zeeshan: For LPP*/
- ,args.uselpp, args.k_lpp, args.useAdaptiveK, args.lppDropNVectors, (char*)args.dist_lpp
-/*END Changed by Zeeshan: For LPP*/
-/*START Changed by Zeeshan: For ICA*/
-  ,args.useICA, args.arch, args.learningRate, args.blockSize, args.iterations
-/*END 	Changed by Zeeshan: For ICA*/
-);
-  MESSAGE("Saving intrapersonal training file");
+    subspaceTrain (&extraSubspace, extraImages, NULL, args.nExtrapersonal, args.dropNVectors, args.cutOffMode, args.cutOff, 0, 0
+        /*START Changed by Zeeshan: For LPP*/
+        ,args.uselpp, args.k_lpp, args.useAdaptiveK, args.lppDropNVectors, (char*)args.dist_lpp
+        /*END Changed by Zeeshan: For LPP*/
+        /*START Changed by Zeeshan: For ICA*/
+        ,args.useICA, args.arch, args.learningRate, args.blockSize, args.iterations
+        /*END 	Changed by Zeeshan: For ICA*/
+        );
+    MESSAGE("Saving intrapersonal training file");
 
-  sprintf (filename, "%s.intra", args.trainingFilename);
-  writeSubspace (&intraSubspace, filename, args.imageList, args.argc, args.argv);
+    sprintf (filename, "%s.intra", args.trainingFilename);
+    writeSubspace (&intraSubspace, filename, args.imageList, args.argc, args.argv);
 
-  MESSAGE("Saving extrapersonal training file");
+    MESSAGE("Saving extrapersonal training file");
 
-  sprintf (filename, "%s.extra", args.trainingFilename);
-  writeSubspace (&extraSubspace, filename, args.imageList, args.argc, args.argv);
+    sprintf (filename, "%s.extra", args.trainingFilename);
+    writeSubspace (&extraSubspace, filename, args.imageList, args.argc, args.argv);
 
-  MESSAGE("Finished Training.");
-  
-  return 0;
+    MESSAGE("Finished Training.");
+
+    return 0;
 
 }

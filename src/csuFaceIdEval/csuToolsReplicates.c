@@ -32,28 +32,28 @@ OTHER DEALINGS IN THE SOFTWARE.
 #define OPENNING "Parse list of FERET IDs into new file, one line per subject."
 
 /*
- *  ============================================================================
- *  Copyright 2002, Colorado State University. All Rights Reserved.           
- *  --------------------------------------------------------------------------- 
- *  Permission to use, copy or modify this software and its documentation for   
- *  educational and research purposes only, provided that this copyright notice  
- *  appear on all copies and supporting documentation.                          
- *  ---------------------------------------------------------------------------        
- *  File:    csuReplicatesTable.c                                                     
- *  Authors: J. Ross Beveridge                                   
- *  Date:    May 24, 2002                                                  
- *  ============================================================================
- */
+*  ============================================================================
+*  Copyright 2002, Colorado State University. All Rights Reserved.           
+*  --------------------------------------------------------------------------- 
+*  Permission to use, copy or modify this software and its documentation for   
+*  educational and research purposes only, provided that this copyright notice  
+*  appear on all copies and supporting documentation.                          
+*  ---------------------------------------------------------------------------        
+*  File:    csuReplicatesTable.c                                                     
+*  Authors: J. Ross Beveridge                                   
+*  Date:    May 24, 2002                                                  
+*  ============================================================================
+*/
 
 /* ===========================================================================
- * Compile time configuration options 
- */
+* Compile time configuration options 
+*/
 #define PRINT_LEVEL 1    /* Controls amount of text printed to stdout */
 #define MAX_FSTRLEN 100      /* Upper bound on file name string lengths */
 
 /*  ===========================================================================
- *   Local structures to build linked lists of subjects and images
- */
+*   Local structures to build linked lists of subjects and images
+*/
 typedef struct feretimage {
     char* name;        			/* The text name designating the FERET image */
     int subject;       		  	/* The unique subject identification number */
@@ -69,8 +69,8 @@ typedef struct feretsubject {
 FSU;
 
 /* ============================================================================
- * Function Prototypes
- */
+* Function Prototypes
+*/
 
 FIM* makeFIM(char* name);
 FSU* makeFSU(int id);
@@ -84,8 +84,8 @@ void printSubjectReplicatesFile(FSU* head, char* outFile);
 void readArgs(int argc, char *argv[], char **fileNames, char **outFile);
 
 /* ===========================================================================
- * Structure Constructors
- */
+* Structure Constructors
+*/
 
 FIM* makeFIM(char* name) {
     char* tt;
@@ -113,8 +113,8 @@ FSU* makeFSU(int id) {
 }
 
 /* ===========================================================================
- * Routines to assist interpreting strings representing FERET ids.
- */
+* Routines to assist interpreting strings representing FERET ids.
+*/
 
 /* The integer corresponding to the FERET subject ID extracted from name */
 int idFromName(char* name) {
@@ -145,10 +145,10 @@ int positionOfFirstNonDigit(char *name) {
 }
 
 /* ===========================================================================
- Build up a linked list of subjects, each point pointing to a linked list
- of the images for that subject. The linked list of subjects is maintained
- in sorted order from least to greatest subject id. The images for each 
- subject are in the order encountered in the input file of image names.
+Build up a linked list of subjects, each point pointing to a linked list
+of the images for that subject. The linked list of subjects is maintained
+in sorted order from least to greatest subject id. The images for each 
+subject are in the order encountered in the input file of image names.
 */
 
 FSU* insertSubjectsFromFile(char *inFile) {
@@ -254,7 +254,7 @@ void usage(const char* progname) {
     exit(1);
 }
 /* ===========================================================================
- Read in the command line arguments, rather simple for this program 
+Read in the command line arguments, rather simple for this program 
 */
 
 void readArgs(int argc, char *argv[], char **fileNames, char **outFile) {
@@ -274,8 +274,8 @@ void readArgs(int argc, char *argv[], char **fileNames, char **outFile) {
 }
 
 /*  ---------------------------------------------------------------------------
-    Generate the output file from the subject replicates linked lists.
-    ---------------------------------------------------------------------------*/
+Generate the output file from the subject replicates linked lists.
+---------------------------------------------------------------------------*/
 
 void printSubjectReplicatesFile(FSU* head, char* outFile) {
     FILE *f;
@@ -304,13 +304,13 @@ void printSubjectReplicatesFile(FSU* head, char* outFile) {
 }
 
 /* ===========================================================================
-                                        MAIN
-   
-   This code reads a simple file with one FERET image name per row. It groups 
-   the images by subject id and then writes a new file. This new file lists 
-   all images for a single subject on one line and these lines are sorted by
-   subject ID.  This is the format read by csuSubspaceTrain.
-                                    
+MAIN
+
+This code reads a simple file with one FERET image name per row. It groups 
+the images by subject id and then writes a new file. This new file lists 
+all images for a single subject on one line and these lines are sorted by
+subject ID.  This is the format read by csuSubspaceTrain.
+
 */
 
 int main(int argc, char *argv[]) {

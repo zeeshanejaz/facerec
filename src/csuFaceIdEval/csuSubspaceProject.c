@@ -32,16 +32,16 @@ OTHER DEALINGS IN THE SOFTWARE.
 #define OPENING  "Project Test Images int Subspace and Compute Pairwise Distances."
 
 /*
- Purpose: This program projects face images into a subspace and then
- computes the distances between faces with one of several alternative
- distance measures. The subspace is defined in a training file produced
- by csuSubspaceTrain.  The subspace may be either a simple PCA
- subspace, or it may be a PCA followed by LDA subspace. The images are
- specified in a file of image names. These may be grouped either as one
- name per line or several, although for this program there is no
- difference between the two in terms of what is done.  The resulting
- distances are written out to a series of files, one per image, all
- placed in a user specified directory.
+Purpose: This program projects face images into a subspace and then
+computes the distances between faces with one of several alternative
+distance measures. The subspace is defined in a training file produced
+by csuSubspaceTrain.  The subspace may be either a simple PCA
+subspace, or it may be a PCA followed by LDA subspace. The images are
+specified in a file of image names. These may be grouped either as one
+name per line or several, although for this program there is no
+difference between the two in terms of what is done.  The resulting
+distances are written out to a series of files, one per image, all
+placed in a user specified directory.
 */
 #include <sys/stat.h>
 #include <stdio.h>
@@ -50,7 +50,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 #include <csuCommon.h>
 
 /*
- The command line arguments are managed by a single structure.
+The command line arguments are managed by a single structure.
 */
 typedef struct distDirNode {
     struct distDirNode *next;
@@ -71,9 +71,9 @@ Arguments;
 
 /* ----------------------------------------------------------------------------------- */
 /* Remind the user the usage of running this program.
-   The command of running the program should be: run and the index of the training sets.
-   All the other sets except the training sets will go to testing sets automatically.
-   INPUT:  prog is the excutable program name.
+The command of running the program should be: run and the index of the training sets.
+All the other sets except the training sets will go to testing sets automatically.
+INPUT:  prog is the excutable program name.
 */
 void usage(const char* prog) {
     printf("Usage: %s [OPTIONS] trianingFile imageNamesFile.[list/srt] [distanceDirectory distName]+\n", prog);
@@ -91,12 +91,12 @@ void usage(const char* prog) {
     printf("        MahL1 ........  L1 norm distance in Mahalanobis space.\n");
     printf("        MahL2 ........  L2 norm distance in Mahalanobis space.\n");
     printf("        YamborAngle ..  This is the same measure as \"MahAngle\" in \n"
-           "                        version 4.0 and before.  It has been depricated \n"
-	   "                        because the measure is not properly formulated.  \n"
-	   "                        MahCosine has replaced it in newer versions. \n");
+        "                        version 4.0 and before.  It has been depricated \n"
+        "                        because the measure is not properly formulated.  \n"
+        "                        MahCosine has replaced it in newer versions. \n");
     printf("        YamborDist ...  This is the distance measure presented as \n"
-           "                        \"Mahalinobis Distance\" in Wendy Yambor's \n"
-	   "                        Thesis.  It is included here for completness.\n");
+        "                        \"Mahalinobis Distance\" in Wendy Yambor's \n"
+        "                        Thesis.  It is included here for completness.\n");
     printf("        ldaSoft ......  For LDA only, a variant of L2 use by Wenyi Zhao that weights dimensions by lambda.\n");
     printf("    -imDir <dir>:       image directory. DEFAULT = \".\"\n");
     printf("    -debuglevel <int>:  Level of debug information to display. DEFAULT = 0\n");
@@ -123,47 +123,47 @@ void process_command(int argc, char** argv, Arguments* args) {
 
     for (i = 1; i < argc; i++) {
 
-      /* Catch common help requests */
-      if      (readOption       (argc, argv, &i, "-help" )) { usage(argv[0]); }
-      else if (readOption       (argc, argv, &i, "--help")) { usage(argv[0]); }
+        /* Catch common help requests */
+        if      (readOption       (argc, argv, &i, "-help" )) { usage(argv[0]); }
+        else if (readOption       (argc, argv, &i, "--help")) { usage(argv[0]); }
 
-      /* Read in input directories */
-      else if (readOptionString (argc, argv, &i, "-imDir", &(args->imageDirectory)));
+        /* Read in input directories */
+        else if (readOptionString (argc, argv, &i, "-imDir", &(args->imageDirectory)));
 
-      /* other flags */
-      else if (readOption       (argc, argv, &i, "-quiet")) { quiet = 1; }
-      else if (readOptionInt    (argc, argv, &i, "-debuglevel", &debuglevel));
+        /* other flags */
+        else if (readOption       (argc, argv, &i, "-quiet")) { quiet = 1; }
+        else if (readOptionInt    (argc, argv, &i, "-debuglevel", &debuglevel));
 
-      else if (param_num == 0) {
-	args->trainingFile = strdup (argv[i]);
-	param_num++;
-      } else if (param_num == 1) {
-	args->imageNamesFile = strdup (argv[i]);
-	param_num++;
-      } else if (param_num > 1) {
-	DistDirNode* tmp = (DistDirNode*) malloc(sizeof(DistDirNode));
-	tmp->next = args->distList;
-	tmp->distDirectory = strdup (argv[i]);
-	i++;
-	tmp->distName = strdup (argv[i]);
-	args->distList = tmp;
-	param_num++;
-      }
+        else if (param_num == 0) {
+            args->trainingFile = strdup (argv[i]);
+            param_num++;
+        } else if (param_num == 1) {
+            args->imageNamesFile = strdup (argv[i]);
+            param_num++;
+        } else if (param_num > 1) {
+            DistDirNode* tmp = (DistDirNode*) malloc(sizeof(DistDirNode));
+            tmp->next = args->distList;
+            tmp->distDirectory = strdup (argv[i]);
+            i++;
+            tmp->distName = strdup (argv[i]);
+            args->distList = tmp;
+            param_num++;
+        }
     }
 
     if (param_num < 3)
         usage(argv[0]);
 
 
-  /* Print out the program parameters for appropriate debug level */
+    /* Print out the program parameters for appropriate debug level */
 
-  DEBUG_INT (1, "Debuging enabled", debuglevel);
+    DEBUG_INT (1, "Debuging enabled", debuglevel);
 
-  if (debuglevel > 0)
+    if (debuglevel > 0)
     {
-      printf ("***************** Program Parameters *********************\n");
-      printf ("imageNamesFile: %s\n", args->imageNamesFile);
-      printf ("imageDirectory: %s\n", args->imageDirectory);
+        printf ("***************** Program Parameters *********************\n");
+        printf ("imageNamesFile: %s\n", args->imageNamesFile);
+        printf ("imageDirectory: %s\n", args->imageDirectory);
     }
 }
 
@@ -183,7 +183,7 @@ char** getNameByIndex(ImageList **srt, int numImages) {
     }
 
     /*  Move across columns and down rows of subject replicates table constructing
-     an array of image file names indexed by the same index as the images matrix. */
+    an array of image file names indexed by the same index as the images matrix. */
     i = 0;
     for (subject = *srt; subject; subject = subject->next_subject) {
         for (replicate = subject; replicate; replicate = replicate->next_replicate) {
@@ -200,22 +200,22 @@ char** getNameByIndex(ImageList **srt, int numImages) {
 
 
 /* ===========================================================================
- MAIN
+MAIN
 
- The arguments are processed and then the subspace and related information is
- read from the training file written by csuSubspaceTrain.  The subspace basis
- is read into a matrix. If the basis vectors are for a PCA subspace, then the
- basis vectors are tested for orthonormality. While this should not be
- necessary, it is a prudent check to see that nothing has gone wrong either
- in the training phase or in the transcription of the subspace basis from the
- training code to the testing code.
+The arguments are processed and then the subspace and related information is
+read from the training file written by csuSubspaceTrain.  The subspace basis
+is read into a matrix. If the basis vectors are for a PCA subspace, then the
+basis vectors are tested for orthonormality. While this should not be
+necessary, it is a prudent check to see that nothing has gone wrong either
+in the training phase or in the transcription of the subspace basis from the
+training code to the testing code.
 
- Once the training information is read, then the images specified in the
- imageNamesFile are read into the images matrix. This matrix is then mean
- centered using the mean, or centroid, associated with the training data.
- Next, the images are projected into subspace and the distances between all
- pairs of images are computed. Finally, these distances are written to files,
- one per image.
+Once the training information is read, then the images specified in the
+imageNamesFile are read into the images matrix. This matrix is then mean
+centered using the mean, or centroid, associated with the training data.
+Next, the images are projected into subspace and the distances between all
+pairs of images are computed. Finally, these distances are written to files,
+one per image.
 */
 
 int main(int argc, char *argv[]) {
@@ -235,11 +235,11 @@ int main(int argc, char *argv[]) {
     readSubspace (&subspace, args.trainingFile, 0);
 
     SAVE_MATRIX(subspace.values);
-    
+
     MESSAGE1ARG("Reading image data from directory %s and projecting onto the new basis.", args.imageDirectory);
     subspims = readAndProjectImages(&subspace, args.imageNamesFile, args.imageDirectory, &numImages, &srt);
 
-    
+
     for (ddn = args.distList; ddn != NULL; ddn = ddn->next) {
         MESSAGE1ARG("Computing distances with distance measure %s.", ddn->distName);
         distances = computeDistances(subspims, subspace.values, numImages, 0, ddn->distName);

@@ -1,10 +1,10 @@
 /*
- *  csuFace2Norm.c
- *  csuFace2Norm
- *
- *  Created by David  Bolme on Sun Jun 09 2002.
- *
- */
+*  csuFace2Norm.c
+*  csuFace2Norm
+*
+*  Created by David  Bolme on Sun Jun 09 2002.
+*
+*/
 
 /*
 Copyright (c) 2003 Colorado State University
@@ -86,7 +86,7 @@ typedef struct {
     double shiftY;
     int reflect;
     int configSuffix;
-    
+
     double eyeLx;
     double eyeLy;
     double eyeRx;
@@ -100,25 +100,25 @@ typedef struct {
 Arguments;
 
 /*
- * usage
- *
- * Display a standard usage parameters or help if there is a problem with the
- * command line.
- */
+* usage
+*
+* Display a standard usage parameters or help if there is a problem with the
+* command line.
+*/
 void usage(const char* name){
     printf("Usage: %s [OPTIONS] eye_coordinate_file input_dir\n",name);
     printf("  OUTPUT OPTIONS:  (You must specify at least one output directory)\n");
     printf("    -nrm <DIR_NAME>         - Directory to store images in nrm format (feret\n"
-           "                              compatible)\n");
+        "                              compatible)\n");
     printf("    -sfi <DIR_NAME>         - Directory to store images in raw format (gabor\n"
-           "                              compatible)\n");
+        "                              compatible)\n");
     printf("    -pgm <DIR_NAME>         - Directory to store images in pgm format ()\n");
     printf("  NORMALIZATION OPTIONS:\n");
     printf("    -mask <YES/NO>          - Specify an ellipse that defines a mask.\n"); 
     printf("                              Defaults to \"Yes\".\n");
     printf("    -mask-param x y a b     - Specify an ellipse that defines a mask. \n");
     printf("                              Defaults to FERET Standard, %0.1f, %0.1f, %0.1f, %0.1f \n", 
-                                          ELLIPSE_X, ELLIPSE_Y, ELLIPSE_A, ELLIPSE_B);
+        ELLIPSE_X, ELLIPSE_Y, ELLIPSE_A, ELLIPSE_B);
     printf("    -hist <TYPE>            - Select the type of histogram equalization.\n");
     printf("                              Default is \"POST\", Options are \"PRE\", \"POST\", \"NONE\". \n");
     printf("                              \"PRE\"  - equalize raw 0-255 pixels, like original NIST code.\n");
@@ -126,7 +126,7 @@ void usage(const char* name){
     printf("    -geometric <YES/NO>     - Turns on/off geometric normalization. Defaults to \"Yes\".\n");
     printf("    -eye-target lx ly rx ry - Choose the target eye coordinates.\n");
     printf("                              Defaults to FERET Standard, %0.1f, %0.1f, %0.1f, %0.1f \n", 
-                                          EYE_LX, EYE_LY, EYE_RX, EYE_RY);
+        EYE_LX, EYE_LY, EYE_RX, EYE_RY);
     printf("    -size width height      - Choose the target size for the images.\n");
     printf("                              Defaults to %d, %d \n", SIZE_WIDTH, SIZE_HEIGHT);
     printf("    -pixelNorm <YES/NO>     - Turns on/off pixel value normalization. Defaults to \"Yes\"\n");
@@ -151,8 +151,8 @@ void usage(const char* name){
 }
 
 /*
- * Process the command line and initialize the variables
- */
+* Process the command line and initialize the variables
+*/
 
 void processCommand(int argc, char** argv, Arguments* args) {
     int i;
@@ -216,14 +216,14 @@ void processCommand(int argc, char** argv, Arguments* args) {
 
         /* size parameters */
         else if (readOptionInt2(argc, argv, &i, "-size",&(args->sizeWidth),&(args->sizeHeight))) { }
-        
+
         /* geometric parameters */
         else if (readOptionDouble4(argc, argv, &i, "-eye-target", &(args->eyeLx), &(args->eyeLy),  &(args->eyeRx), &(args->eyeRy))) { }
         else if (readOptionYesNo  (argc, argv, &i, "-geometric",&(args->geoType))) { }
         else if (readOptionYesNo  (argc, argv, &i, "-reflect"  ,&(args->reflect))) { }
         else if (readOption       (argc, argv, &i, "-half")) { args->scale = 0.5; }
         else if (readOptionDouble (argc, argv, &i, "-scale", &(args->scale))) { }        
-        
+
         /* histogram parameters */
         else if (readOptionMatch(argc, argv, &i, "-hist", "NONE")) { args->histType   = HIST_NONE; }
         else if (readOptionMatch(argc, argv, &i, "-hist", "PRE" )) { args->histType   = HIST_PRE;  }
@@ -232,10 +232,10 @@ void processCommand(int argc, char** argv, Arguments* args) {
         /* Image Edge Smoothing */
         else if (readOptionInt (argc, argv, &i, "-preEdge", &args->preEdge)) {}
         else if (readOptionInt (argc, argv, &i, "-postEdge", &args->postEdge)) {}
-        
+
         /* Turn on noise */
         else if (readOptionDouble(argc, argv, &i, "-noise", &(args->noise))) { }
-        
+
         /* Turn of ZeroMeanOneStdDev */
         else if (readOptionYesNo(argc, argv, &i, "-pixelNorm", &args->nrmType)) { }
 
@@ -262,7 +262,7 @@ void processCommand(int argc, char** argv, Arguments* args) {
             param_num++;
         }
         else{ clParseError(argc,argv,i,"Wrong number of required arguments"); }
-        
+
     }
 
     /* make sure that there are the proper number of required arguments */
@@ -471,42 +471,42 @@ void scaleArgs(Arguments* args, double scale){
 }
 
 /*	The code to generate a file suffix will build a string that is
-	compact and easily selected for using standard unix "ls". However,
-	it is not obvious. Here is the encoding:
-		c<0/1>			Apply mask, 0=no, 1=yes	
-		f<0/1>			Pixel Value Normalization, 0=no, 1=yes	
-		g<0/1>			Geometric Normalization, 0=no, 1=yes
-		h<0/1/2>		Histogram Equalization, 0=no, 1=pre, 2=post
-		n<0/1>			Indepenent Pixel Gaussian Noise, 0=no, 1=yes
-		x<0/1>			Reduce image size by half, 0=no, 1=yes
-		m<0/1>          Mirror reflect the image, 0=no, 1=yes
-		<l/r/u/d><#>	Shift source image left, right, up or down by amount #	
-		or t0           If there is no translational shift.
-		
-	All but the last are always included in a file name. The shift tag only 
-	appears if an image is shifted.
-	
-	Normal defaulst will produce suffix "c1f1g1h2n0x0"
-	*/
+compact and easily selected for using standard unix "ls". However,
+it is not obvious. Here is the encoding:
+c<0/1>			Apply mask, 0=no, 1=yes	
+f<0/1>			Pixel Value Normalization, 0=no, 1=yes	
+g<0/1>			Geometric Normalization, 0=no, 1=yes
+h<0/1/2>		Histogram Equalization, 0=no, 1=pre, 2=post
+n<0/1>			Indepenent Pixel Gaussian Noise, 0=no, 1=yes
+x<0/1>			Reduce image size by half, 0=no, 1=yes
+m<0/1>          Mirror reflect the image, 0=no, 1=yes
+<l/r/u/d><#>	Shift source image left, right, up or down by amount #	
+or t0           If there is no translational shift.
+
+All but the last are always included in a file name. The shift tag only 
+appears if an image is shifted.
+
+Normal defaulst will produce suffix "c1f1g1h2n0x0"
+*/
 
 char* imageSuffix(Arguments* args) {
-	const int len = 32; /* large enough to include shift indicators plus slack */
-	char* s       = (char*) malloc(sizeof(char)*len);
-	strcpy(s,"c0f0g0h0n0x0m0");  /* Starts out with zeroes as default settings */
-	if (args->maskType == CL_YES) 		s[1]  = '1';
-	if (args->nrmType  == CL_YES) 		s[3]  = '1';
-	if (args->geoType  == CL_YES)		s[5]  = '1';
-	if (args->histType == HIST_PRE)  	s[7]  = '1';
-	if (args->histType == HIST_POST) 	s[7]  = '2';
-	if (args->noise    != 0.0)			s[9]  = '1';
-	if (args->scale    == 0.5)			s[11] = '1';
-	if (args->reflect  == CL_YES)	    s[13] = '1';					
-	if (args->shiftX < 0.0) 			sprintf(s,"%s%s%d", s, "r", (int) ceil(-args->shiftX));
-	if (args->shiftX > 0.0) 			sprintf(s,"%s%s%d", s, "l", (int) ceil( args->shiftX));
-	if (args->shiftY < 0.0) 			sprintf(s,"%s%s%d", s, "d", (int) ceil(-args->shiftY));
-	if (args->shiftY > 0.0) 			sprintf(s,"%s%s%d", s, "u", (int) ceil( args->shiftY));		
-	if (args->shiftX == 0.0 && args->shiftY == 0.0) sprintf(s,"%s%s", s, "t0");
-	return s;
+    const int len = 32; /* large enough to include shift indicators plus slack */
+    char* s       = (char*) malloc(sizeof(char)*len);
+    strcpy(s,"c0f0g0h0n0x0m0");  /* Starts out with zeroes as default settings */
+    if (args->maskType == CL_YES) 		s[1]  = '1';
+    if (args->nrmType  == CL_YES) 		s[3]  = '1';
+    if (args->geoType  == CL_YES)		s[5]  = '1';
+    if (args->histType == HIST_PRE)  	s[7]  = '1';
+    if (args->histType == HIST_POST) 	s[7]  = '2';
+    if (args->noise    != 0.0)			s[9]  = '1';
+    if (args->scale    == 0.5)			s[11] = '1';
+    if (args->reflect  == CL_YES)	    s[13] = '1';					
+    if (args->shiftX < 0.0) 			sprintf(s,"%s%s%d", s, "r", (int) ceil(-args->shiftX));
+    if (args->shiftX > 0.0) 			sprintf(s,"%s%s%d", s, "l", (int) ceil( args->shiftX));
+    if (args->shiftY < 0.0) 			sprintf(s,"%s%s%d", s, "d", (int) ceil(-args->shiftY));
+    if (args->shiftY > 0.0) 			sprintf(s,"%s%s%d", s, "u", (int) ceil( args->shiftY));		
+    if (args->shiftX == 0.0 && args->shiftY == 0.0) sprintf(s,"%s%s", s, "t0");
+    return s;
 }
 
 void convertImages(Arguments* args){
@@ -520,17 +520,17 @@ void convertImages(Arguments* args){
     int i;
 
     scaleArgs(args, args->scale);
-    
+
     dest.x1 = args->eyeLx;
     dest.y1 = args->eyeLy;
     dest.x2 = args->eyeRx;
     dest.y2 = args->eyeRy;
-    
-	/* Prepare file suffix encoding preprocessing settings, blank if not requested */
-	if (args->configSuffix) {
-		sprintf(suffix,"_%s", imageSuffix(args)); }
-	else {
-		suffix[0] = '\0'; }	
+
+    /* Prepare file suffix encoding preprocessing settings, blank if not requested */
+    if (args->configSuffix) {
+        sprintf(suffix,"_%s", imageSuffix(args)); }
+    else {
+        suffix[0] = '\0'; }	
 
     if(args->maskType == CL_YES){
         MESSAGE("Creating Mask.");
@@ -544,7 +544,7 @@ void convertImages(Arguments* args){
         Image pgm;
         Image geo;
         Matrix transform;
-        
+
         fgets(line, FILE_LINE_LENGTH, eyeList);
         if(feof(eyeList)) break;
 
@@ -562,7 +562,7 @@ void convertImages(Arguments* args){
         sprintf(imagename,"%s\\%s.pgm",args->inputDir,filename);
 
         MESSAGE1ARG("Processing image: %s",filename);
-        
+
         pgm = readPGMImage(imagename);
 
         if(args->histType == HIST_PRE){
@@ -574,7 +574,7 @@ void convertImages(Arguments* args){
             DEBUG(1,"   Performing Pre Pixel Normalization.");
             ZeroMeanOneStdDev(pgm);
         }
-        
+
         if(args->preEdge){
             smoothImageEdge(pgm, args->preEdge);
         }
@@ -593,7 +593,7 @@ void convertImages(Arguments* args){
             DEBUG(1,"   Adding Gausian Noise.");
             gaussianNoise(geo,args->noise);
         }
-            
+
 
         if(args->histType == HIST_POST){
             DEBUG(1,"   Performing Post Histogram Equalization.");
@@ -612,7 +612,7 @@ void convertImages(Arguments* args){
         if(args->postEdge){
             smoothImageEdge(geo, args->postEdge);
         }
-        
+
         if(args->nrmDir){
             sprintf(imagename,"%s\\%s%s.nrm", args->nrmDir, filename, suffix);
             DEBUG_STRING(1,"   Saving nrm: %s",imagename);
@@ -635,7 +635,7 @@ void convertImages(Arguments* args){
     }
 
     fclose(eyeList);
-    
+
 }
 
 int main(int argc, char** argv){

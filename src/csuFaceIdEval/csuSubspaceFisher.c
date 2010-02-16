@@ -27,14 +27,14 @@ OTHER DEALINGS IN THE SOFTWARE.
 #include <csuCommon.h>
 
 /*
-  subtractClassMean
-  
-  This function is used to subtract a mean vector from a class of images.
-  The class is stored in contiguous vectors in the class matrix.  classStart
-  and classEnd are the first and last vectors in the class.  The vectors in
-  classmatrix are subtracted in place.  This function is expected to be called
-  one time for each class.
- */
+subtractClassMean
+
+This function is used to subtract a mean vector from a class of images.
+The class is stored in contiguous vectors in the class matrix.  classStart
+and classEnd are the first and last vectors in the class.  The vectors in
+classmatrix are subtracted in place.  This function is expected to be called
+one time for each class.
+*/
 void subtractClassMean(Matrix classmatrix, int classStart, int classEnd) {
     int i, j;
     Matrix mean = makeMatrix(classmatrix->row_dim, 1);
@@ -87,20 +87,20 @@ void fisherVerify(Matrix fisherBasis, Matrix fisherValues, Matrix Sw, Matrix Sb)
 
 
 /*  findWCSMatrix
-  
-   This function creates the within-class scatter matrix 'Sw' as
-   described in Duda, "Pattern Classification", p.121.
-   
-   This function takes advantage of the fact that the images for each class 
-   are stored in consecutive columns of the data matrix. There is an outer 
-   loop through the classes, i.e. subjects, and for each subject, the start
-   and finish column indices are determined. Then the data columns for just that 
-   class are mean centered. From this, the portion of the scatter
-   matrix contributed by this class is created by the outer product of the 
-   data matrix with itself, and this is in turn, added into the within 
-   class scatter matrix. When done iterating over the classes, the results
-   is the final within class scatter matrix.
- */
+
+This function creates the within-class scatter matrix 'Sw' as
+described in Duda, "Pattern Classification", p.121.
+
+This function takes advantage of the fact that the images for each class 
+are stored in consecutive columns of the data matrix. There is an outer 
+loop through the classes, i.e. subjects, and for each subject, the start
+and finish column indices are determined. Then the data columns for just that 
+class are mean centered. From this, the portion of the scatter
+matrix contributed by this class is created by the outer product of the 
+data matrix with itself, and this is in turn, added into the within 
+class scatter matrix. When done iterating over the classes, the results
+is the final within class scatter matrix.
+*/
 
 Matrix findWCSMatrix(Matrix imspca, ImageList* srt, int *numberOfClasses, int writeTextInterm) {
     Matrix Sw;
@@ -153,19 +153,19 @@ Matrix findWCSMatrix(Matrix imspca, ImageList* srt, int *numberOfClasses, int wr
 
 
 /*  findBCSMatrix
- 
- The approach here is to use equation 116 on p. 122 of
- Duda, "Pattern Classification" to solve for the between
- class scatter matrix. The equation reads:
- 
- St = Sw + Sb  (St is total scatter matrix)
- 
- Solving for Sb,  Sb = St - Sw. Note Sw is computed above.
- 
- The total scatter matrix is easy to compute, it is what we
- think of as the covariance matrix when the points have been
- centered.
- */
+
+The approach here is to use equation 116 on p. 122 of
+Duda, "Pattern Classification" to solve for the between
+class scatter matrix. The equation reads:
+
+St = Sw + Sb  (St is total scatter matrix)
+
+Solving for Sb,  Sb = St - Sw. Note Sw is computed above.
+
+The total scatter matrix is easy to compute, it is what we
+think of as the covariance matrix when the points have been
+centered.
+*/
 Matrix findBCSMatrix(Matrix imspca, Matrix Sw) {
     Matrix Sb;
     Matrix St;
@@ -189,20 +189,20 @@ Matrix findBCSMatrix(Matrix imspca, Matrix Sw) {
 }
 
 /*  Rw will be the eigenvectors for the within class scatter matrix
-    Sw will be the square roots of the eigenvalues for the within class scatter matrix
-    These are thought of in terms of a rotation (and reflection) and scale change operator
-    that tranforms the imspca points into a new space the within class variance is equal
-    in all dimensions.
- 
-    The between class scatter matrix is transformed into this new space and then its
-    eigenvectors and values are determined. The fisher basis vectors are then derived
-    by backward mapping the resulting eigen vectors into the original space. If this is
-    not clear, and it probably is not, see the paper: "The Geometry of LDA nad PCA
-    classifiers Illustrated with 3D Examples, J. Ross Beveridge, CSU Technical Report
-    01-101". It is available under papers at
-    http://www.cs.colostate.edu/evalfacerec/index.html
- 
-     */
+Sw will be the square roots of the eigenvalues for the within class scatter matrix
+These are thought of in terms of a rotation (and reflection) and scale change operator
+that tranforms the imspca points into a new space the within class variance is equal
+in all dimensions.
+
+The between class scatter matrix is transformed into this new space and then its
+eigenvectors and values are determined. The fisher basis vectors are then derived
+by backward mapping the resulting eigen vectors into the original space. If this is
+not clear, and it probably is not, see the paper: "The Geometry of LDA nad PCA
+classifiers Illustrated with 3D Examples, J. Ross Beveridge, CSU Technical Report
+01-101". It is available under papers at
+http://www.cs.colostate.edu/evalfacerec/index.html
+
+*/
 
 void fisherTrain(Matrix imspca, ImageList *srt, Matrix *fisherBasis, Matrix *fisherValues, int writeTextInterm) {
     int i;

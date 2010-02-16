@@ -33,39 +33,39 @@ OTHER DEALINGS IN THE SOFTWARE.
 #define CL_NO  0
 
 /*
- *  These functions are used to parse basic command line options
- *  argc and argv are basic command line parameters
- *  i is the current scanning location in the command line
- *  opt is a string giving the option to look for in the command line
- *  additional parameters are option parameters that follow the
- *  option string.
- *
- *  Optional arguments should always be parsed before required arguments.
- *
- *  The functions are maid to be called within a four loop that inc i.
- *  If more that one argument is parsed i is updated to point at the last
- *  argument read to allow exicution to proceed normally on next loop.
- *
- *  Here is an example code illistrating how to parse command lines
- *  with this api:
- *
- *  int i; int num = 0;
- *
- *  Set up default values here.
- *
- *  for(i = 0; i < argc; i++){
- *      if      (readOption(argc, argv, &i, "-verbose"))                   { verbose = 1; }
- *      else if (readOptionInt(argc, argv, &i, "-debuglevel",&debuglevel)) {}
- *      else if (checkBadOption(argc, argv, &i))                           {}
- *      else if (readReqiredString(argc, argv, &i, &num, 0, filename))     {}
- *  }
- *
- *  then check to see if the correct number of required arguments were parsed
- *  if(num != 1){ clParseError(argc, argv, i, "Wrong number of command line arguments."); }
- *
- *  This code also expects that you have a useage function define that takes argv[0]
- *  as its only arguments and exits with value 1.
- */
+*  These functions are used to parse basic command line options
+*  argc and argv are basic command line parameters
+*  i is the current scanning location in the command line
+*  opt is a string giving the option to look for in the command line
+*  additional parameters are option parameters that follow the
+*  option string.
+*
+*  Optional arguments should always be parsed before required arguments.
+*
+*  The functions are maid to be called within a four loop that inc i.
+*  If more that one argument is parsed i is updated to point at the last
+*  argument read to allow exicution to proceed normally on next loop.
+*
+*  Here is an example code illistrating how to parse command lines
+*  with this api:
+*
+*  int i; int num = 0;
+*
+*  Set up default values here.
+*
+*  for(i = 0; i < argc; i++){
+*      if      (readOption(argc, argv, &i, "-verbose"))                   { verbose = 1; }
+*      else if (readOptionInt(argc, argv, &i, "-debuglevel",&debuglevel)) {}
+*      else if (checkBadOption(argc, argv, &i))                           {}
+*      else if (readReqiredString(argc, argv, &i, &num, 0, filename))     {}
+*  }
+*
+*  then check to see if the correct number of required arguments were parsed
+*  if(num != 1){ clParseError(argc, argv, i, "Wrong number of command line arguments."); }
+*
+*  This code also expects that you have a useage function define that takes argv[0]
+*  as its only arguments and exits with value 1.
+*/
 
 /* prototype to use for an external usage statement */
 void usage(const char* );
@@ -80,7 +80,7 @@ int readOptionString(int argc, char** argv, int *i, const char* opt, char** arg)
 int readOptionYesNo(int argc, char** argv, int *i, const char* opt, int* flag);
 
 /* returns true only if opt is parsed and following argument string matches arg
- * This is used to test for options like -hist PRE -hist POST -hist NONE i+=1*/
+* This is used to test for options like -hist PRE -hist POST -hist NONE i+=1*/
 int readOptionMatch(int argc, char** argv, int *i, const char* opt, const char* arg);
 
 /* this reads in an option and an int. i+=1 */

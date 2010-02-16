@@ -50,8 +50,8 @@ int ImageIsMachineLittleEndian() {
 
 
 /**
- * Normally distrubuted random number using the Box-Muller Transformation
- */
+* Normally distrubuted random number using the Box-Muller Transformation
+*/
 double randBM(){
     static int iset = 0;
     static double gset;
@@ -96,7 +96,7 @@ Image makeImage(int width,int height,int channels){
             assert(i->data[x][y]);
         }
     }
-    
+
     i->width = width;
     i->height = height;
     i->channels = channels;
@@ -209,7 +209,7 @@ Image readPGMImage(const char* filename){
     }
 
     /* Read lines, ignoring those starting with Comment Character, until the
-        Image Dimensions are read. */
+    Image Dimensions are read. */
     fchar = '#';
     while (fchar == '#') {
         fgets(line,100,infile);
@@ -218,7 +218,7 @@ Image readPGMImage(const char* filename){
     sscanf(line, " %d %d", &width, &height);
 
     /* Read lines, ignoring those starting with Comment Character, until the
-        maximum pixel value is read. */
+    maximum pixel value is read. */
     fchar = '#';
     while (fchar == '#') {
         fgets(line,100,infile);
@@ -539,7 +539,7 @@ void writeFeretImage(const Image im, const char *fname){
                 if(isinf( junk.f)){
                     printf("Error: inf value in file: %s", fname);
                     exit(1);
-		    }
+                }
 #endif
 
                 if(ImageIsMachineLittleEndian()){
@@ -580,7 +580,7 @@ double convolvePoint(PIX_TYPE x, PIX_TYPE y, int c, Image im, Image mask){
         mysum = 0;
         for(j = 0; j < mask->height; j++){
             for(i = 0; i < mask->width; i++){
-               mysum += interpLinear(im,i+offsetx,j+offsety,c) * IE(mask,i,j,c);
+                mysum += interpLinear(im,i+offsetx,j+offsety,c) * IE(mask,i,j,c);
             }
         }
     }
@@ -685,7 +685,7 @@ void ZeroMeanUnitLength(Image im){
 
 
 void ZeroMeanUnitLengthMasked(Image im, const char** mask){
-/* scales the pixel so that they have zero mean and the image is unit length*/
+    /* scales the pixel so that they have zero mean and the image is unit length*/
     int i, j, c;
 
     double mean = 0; double sqrsum = 0; double invlength = 0;
@@ -910,36 +910,36 @@ void accumulateImages(Image i1, const Image i2){
 
 
 /*
- * histEqual
- *
- * Performs an aproximate histogram equalization function.
- * (Multichannel images are supported, however design was for single
- * channel images.)
- *
- * This version of histogram equalization is optimized for use
- * with image based on floating point values.  The output image
- * is a histogram normalized version of the image where pixel values
- * are in the range 0 to 1.
- *
- * ALGORITHM:
- *   1. Determine the range of the pixel values.  And divide that
- *      range into N bins.
- *   2. Treverse the pixels and accumulate pixel counts in appropreate
- *      bins.
- *   3. Equalize the histogram by assigning a range to each bin which
- *      will equalize the probablility distribution
- *   4. For each pixel in the old image look up the apropreate bin and
- *      interpalate its new value based on the range of the bin.
- *
- * Things to note about this algorithm:
- *   1. Pixel values retain there relative ordering because the output
- *      values are interpalated.
- *   2. The algorithm can be used iteritivly to improve equalization.
- *      With enough bins the equalization will be perfict.
- *   3. Bin allocation should be robust to small changes in N.
- *   4. Selecting a small number of bins will act like a smoothing
- *      operator on the histogram.
- */
+* histEqual
+*
+* Performs an aproximate histogram equalization function.
+* (Multichannel images are supported, however design was for single
+* channel images.)
+*
+* This version of histogram equalization is optimized for use
+* with image based on floating point values.  The output image
+* is a histogram normalized version of the image where pixel values
+* are in the range 0 to 1.
+*
+* ALGORITHM:
+*   1. Determine the range of the pixel values.  And divide that
+*      range into N bins.
+*   2. Treverse the pixels and accumulate pixel counts in appropreate
+*      bins.
+*   3. Equalize the histogram by assigning a range to each bin which
+*      will equalize the probablility distribution
+*   4. For each pixel in the old image look up the apropreate bin and
+*      interpalate its new value based on the range of the bin.
+*
+* Things to note about this algorithm:
+*   1. Pixel values retain there relative ordering because the output
+*      values are interpalated.
+*   2. The algorithm can be used iteritivly to improve equalization.
+*      With enough bins the equalization will be perfict.
+*   3. Bin allocation should be robust to small changes in N.
+*   4. Selecting a small number of bins will act like a smoothing
+*      operator on the histogram.
+*/
 typedef struct hist_bin{
     int count;
     PIX_TYPE rangeStart;
@@ -1132,7 +1132,7 @@ void histEqualRect(Image im, int N, int top, int left, int bottom, int right){
         bins[x].rangeEnd = c/totalPixels;
     }
 
-     /***************** Zero Center bins *****************/
+    /***************** Zero Center bins *****************/
     for(x = 0; x < N; x++){
         int tmp = TRUNC((0.0-minVal)/binSize); /* select bin */
         PIX_TYPE frac = ((0.0-minVal)/binSize) - tmp;
@@ -1144,7 +1144,7 @@ void histEqualRect(Image im, int N, int top, int left, int bottom, int right){
         bins[x].rangeEnd   -= zeroshift;
     }
 
-   /***************** create equalized image *************/
+    /***************** create equalized image *************/
     for(x = 0; x < im->width; x++){
         for(y = 0; y < im->height; y++){
             for(c = 0; c < im->channels; c++){
@@ -1201,14 +1201,14 @@ void ZeroBorder(Image im){
 }
 
 /*	The gaussianNoise function will add zero mean Gaussian
-	Random noise to each pixel. The second argument, noise,
-	sets the standard deviation. Specifically, the standard
-	deviation will be a fraction of the full dynamic range
-	of the image where that fraction is determined by the
-	noise arguement. Hence, a value of "0.1" for noise will
-	set the standard deviation to be 10 percent of the total
-	dynamic range in the image.
-	*/
+Random noise to each pixel. The second argument, noise,
+sets the standard deviation. Specifically, the standard
+deviation will be a fraction of the full dynamic range
+of the image where that fraction is determined by the
+noise arguement. Hence, a value of "0.1" for noise will
+set the standard deviation to be 10 percent of the total
+dynamic range in the image.
+*/
 
 double gaussianNoise(Image im, double noise){
     double max;
@@ -1264,42 +1264,42 @@ void applyMask(Image im, const char **mask){
 }
 
 /**
- * Converts a grayscale image into a binary mask.
- * The pixel value midway between the minimum
- * and maximum in the source image is taken as
- * a cutoff. Values above this become 1 in the
- * mask, values below this become 0.
- *
- * @param im Source grayscale image
- * @param c Channel in source image to convert into mask
- * @returns The mask
- */
+* Converts a grayscale image into a binary mask.
+* The pixel value midway between the minimum
+* and maximum in the source image is taken as
+* a cutoff. Values above this become 1 in the
+* mask, values below this become 0.
+*
+* @param im Source grayscale image
+* @param c Channel in source image to convert into mask
+* @returns The mask
+*/
 char**
 imageToMask(Image im, int c){
-  double max = imageMax(im,NULL);
-  double min = imageMin(im,NULL);
-  double threshold = (max + min)/2;
-  char **mask;
-  int i,j;
+    double max = imageMax(im,NULL);
+    double min = imageMin(im,NULL);
+    double threshold = (max + min)/2;
+    char **mask;
+    int i,j;
 
-  mask = (char**) malloc(sizeof(char*)*im->width);
-  assert(mask); /* problem allocating space for mask */
-  
-  for(i = 0; i < im->width; i++){
-    mask[i] = (char*) malloc(sizeof(char)*im->height);
-    assert(mask[i]); /* problem allocating space for mask */
-  }
-  
-  for(j = 0; j < im->height; j++){
-      for(i = 0; i < im->width; i++){
-	if (IE(im,i,j,c) >= threshold)
-	  mask[i][j] = 1;
-	else
-	  mask[i][j] = 0;
-      }
-  }
-  
-  return mask;
+    mask = (char**) malloc(sizeof(char*)*im->width);
+    assert(mask); /* problem allocating space for mask */
+
+    for(i = 0; i < im->width; i++){
+        mask[i] = (char*) malloc(sizeof(char)*im->height);
+        assert(mask[i]); /* problem allocating space for mask */
+    }
+
+    for(j = 0; j < im->height; j++){
+        for(i = 0; i < im->width; i++){
+            if (IE(im,i,j,c) >= threshold)
+                mask[i][j] = 1;
+            else
+                mask[i][j] = 0;
+        }
+    }
+
+    return mask;
 }
 
 void markPoint(Image im, PIX_TYPE X, PIX_TYPE Y){
@@ -1393,13 +1393,13 @@ Image makeThermalComboImage(Image thrm, Image bw){
 }
 
 /**
- Computes the maximum value of the pixels in an image. If a mask is
- provided only masked values are considered. If mask is NULL, all
- pixels are counted.
- 
- @param im An image
- @param mask A mask, or NULL
- @returns The maximum pixel value
+Computes the maximum value of the pixels in an image. If a mask is
+provided only masked values are considered. If mask is NULL, all
+pixels are counted.
+
+@param im An image
+@param mask A mask, or NULL
+@returns The maximum pixel value
 */
 PIX_TYPE
 imageMax(Image im, const char **mask)
@@ -1408,35 +1408,35 @@ imageMax(Image im, const char **mask)
     int x, y = 0, c = 0;
 
     for(x = 0; x < im->width; x++)
-      for(y = 0; y < im->height; y++)
-	for(c = 0; c < im->channels; c++)
-	  if ((!mask) || mask[x][y])
-	    {
-	      m = IE(im,x,y,c);
-	      goto MAX_LOOP; /* Oh no! A goto! */
-	    }
+        for(y = 0; y < im->height; y++)
+            for(c = 0; c < im->channels; c++)
+                if ((!mask) || mask[x][y])
+                {
+                    m = IE(im,x,y,c);
+                    goto MAX_LOOP; /* Oh no! A goto! */
+                }
 
-    DEBUG (1,"Warning: All pixels masked!");
+                DEBUG (1,"Warning: All pixels masked!");
 
-    for (x = 0 ;x < im->width; x++)
-      for (y = 0;y < im->height; y++)
-	for (c = 0;c < im->channels; c++)
-	  {
-	  MAX_LOOP:
-	    m = MAX (m,IE(im,x,y,c));
-	  }
+                for (x = 0 ;x < im->width; x++)
+                    for (y = 0;y < im->height; y++)
+                        for (c = 0;c < im->channels; c++)
+                        {
+MAX_LOOP:
+                            m = MAX (m,IE(im,x,y,c));
+                        }
 
-    return m;
+                        return m;
 }
 
 /**
- Computes the minium value of the pixels in an image. If a mask is
- provided only masked values are considered. If mask is NULL, all
- pixels are counted.
- 
- @param im An image
- @param mask A mask, or NULL
- @returns The minimum pixel value
+Computes the minium value of the pixels in an image. If a mask is
+provided only masked values are considered. If mask is NULL, all
+pixels are counted.
+
+@param im An image
+@param mask A mask, or NULL
+@returns The minimum pixel value
 */
 PIX_TYPE
 imageMin(Image im, const char **mask)
@@ -1445,95 +1445,95 @@ imageMin(Image im, const char **mask)
     int x, y = 0, c = 0;
 
     for(x = 0; x < im->width; x++)
-      for(y = 0; y < im->height; y++)
-	for(c = 0; c < im->channels; c++)
-	  if ((!mask) || mask[x][y])
-	    {
-	      m = IE(im,x,y,c);
-	      goto MIN_LOOP; /* Argh! A goto! */
-	    }
+        for(y = 0; y < im->height; y++)
+            for(c = 0; c < im->channels; c++)
+                if ((!mask) || mask[x][y])
+                {
+                    m = IE(im,x,y,c);
+                    goto MIN_LOOP; /* Argh! A goto! */
+                }
 
-    DEBUG (1, "Warning: All pixels masked!");
+                DEBUG (1, "Warning: All pixels masked!");
 
-    for (x = 0;x < im->width; x++)
-        for (y = 0;y < im->height; y++)
-            for (c = 0 ;c < im->channels; c++)
-	      if ((!mask) || mask[x][y])
-		{
-		MIN_LOOP:
-		  m = MIN (m,IE(im,x,y,c));
-		}
+                for (x = 0;x < im->width; x++)
+                    for (y = 0;y < im->height; y++)
+                        for (c = 0 ;c < im->channels; c++)
+                            if ((!mask) || mask[x][y])
+                            {
+MIN_LOOP:
+                                m = MIN (m,IE(im,x,y,c));
+                            }
 
-    return m;
+                            return m;
 }
 
 /**
- Computes the mean value of the pixels in an image. If a mask is
- provided only masked values are considered. If mask is NULL, all
- pixels are counted.
- 
- @param im An image
- @param mask A mask, or NULL
- @returns The mean pixel value
+Computes the mean value of the pixels in an image. If a mask is
+provided only masked values are considered. If mask is NULL, all
+pixels are counted.
+
+@param im An image
+@param mask A mask, or NULL
+@returns The mean pixel value
 */
 PIX_TYPE
 imageMean (Image im, const char **mask)
 {
-  int x, y, c, nPix = 0;
-  PIX_TYPE sum = 0;
+    int x, y, c, nPix = 0;
+    PIX_TYPE sum = 0;
 
-  for (x = 0; x < im->width; x++)
-    for (y = 0; y < im->height; y++)
-      for (c = 0; c < im->channels; c++)
-	if ((!mask) || mask[x][y])
-	  {
-	    sum += IE(im,x,y,c);
-	    nPix++;
-	  }
+    for (x = 0; x < im->width; x++)
+        for (y = 0; y < im->height; y++)
+            for (c = 0; c < im->channels; c++)
+                if ((!mask) || mask[x][y])
+                {
+                    sum += IE(im,x,y,c);
+                    nPix++;
+                }
 
-  return sum / nPix;
+                return sum / nPix;
 }
 
 /**
- Computes the variance of the value of the pixels in an image. If
- a mask is provided only masked values are considered. If mask is
- NULL, all pixels are counted.
- 
- @param im An image
- @param mask A mask, or NULL
- @returns The mean pixel value
+Computes the variance of the value of the pixels in an image. If
+a mask is provided only masked values are considered. If mask is
+NULL, all pixels are counted.
+
+@param im An image
+@param mask A mask, or NULL
+@returns The mean pixel value
 */
 PIX_TYPE
 imageVariance (Image im, const char **mask)
 {
-  int x, y, c, nPix = 0;
-  PIX_TYPE sqsum = 0, mean = imageMean (im, mask);
-  
-  for (x = 0; x < im->width; x++)
-    for (y = 0; y < im->height; y++)
-      for (c = 0; c < im->channels; c++)
-	if ((!mask) || mask[x][y])
-	  {
-	    nPix++;
-	    sqsum += SQR (IE(im,x,y,c) - mean);
-	  }
+    int x, y, c, nPix = 0;
+    PIX_TYPE sqsum = 0, mean = imageMean (im, mask);
 
-  return sqsum/(nPix - 1);
+    for (x = 0; x < im->width; x++)
+        for (y = 0; y < im->height; y++)
+            for (c = 0; c < im->channels; c++)
+                if ((!mask) || mask[x][y])
+                {
+                    nPix++;
+                    sqsum += SQR (IE(im,x,y,c) - mean);
+                }
+
+                return sqsum/(nPix - 1);
 }
 
 /**
- Computes the standard deviation of the values of the pixels in an
- image. If a mask is provided only masked values are considered.
- If mask is NULL, all pixels are counted.
- 
- @param im An image
- @param mask A mask, or NULL
- @returns The std-dev (square root of the variance) of the pixel values.
+Computes the standard deviation of the values of the pixels in an
+image. If a mask is provided only masked values are considered.
+If mask is NULL, all pixels are counted.
+
+@param im An image
+@param mask A mask, or NULL
+@returns The std-dev (square root of the variance) of the pixel values.
 */
 PIX_TYPE
 imageStdDev (Image im, const char **mask)
 {
-  return sqrt (imageVariance (im, mask));
+    return sqrt (imageVariance (im, mask));
 }
 
 /*
@@ -1543,133 +1543,133 @@ Helper function used by imageMedian
 int
 pixelComparator (const void *aV, const void *bV)
 {
-  const PIX_TYPE *a = (const PIX_TYPE*) aV;
-  const PIX_TYPE *b = (const PIX_TYPE*) bV;
+    const PIX_TYPE *a = (const PIX_TYPE*) aV;
+    const PIX_TYPE *b = (const PIX_TYPE*) bV;
 
-  if (*a < *b) return -1;
-  if (*a > *b) return 1;
-  return 0;
+    if (*a < *b) return -1;
+    if (*a > *b) return 1;
+    return 0;
 }
 
 /**
- Computes the median of the values of the pixels in an
- image. If a mask is provided only masked values are considered.
- If mask is NULL, all pixels are counted.
- 
- @param im An image
- @param mask A mask, or NULL
- @returns The median of the pixel values
+Computes the median of the values of the pixels in an
+image. If a mask is provided only masked values are considered.
+If mask is NULL, all pixels are counted.
+
+@param im An image
+@param mask A mask, or NULL
+@returns The median of the pixel values
 */
 PIX_TYPE
 imageMedian (Image im, const char **mask)
 {
-  int x, y, c, nPix = imageNumOfPixels (im, mask);
-  PIX_TYPE *sortedPixels, *pp, median;
+    int x, y, c, nPix = imageNumOfPixels (im, mask);
+    PIX_TYPE *sortedPixels, *pp, median;
 
-  /* Copy the pixel values into a big array */
+    /* Copy the pixel values into a big array */
 
-  sortedPixels = (PIX_TYPE*) malloc (sizeof (PIX_TYPE) * nPix);
+    sortedPixels = (PIX_TYPE*) malloc (sizeof (PIX_TYPE) * nPix);
 
-  pp = sortedPixels;
-  for (x = 0; x < im->width; x++)
-    for (y = 0; y < im->height; y++)
-      for (c = 0; c < im->channels; c++)
-	if ((!mask) || mask[x][y])
-	  *pp++ = IE(im,x,y,c);
+    pp = sortedPixels;
+    for (x = 0; x < im->width; x++)
+        for (y = 0; y < im->height; y++)
+            for (c = 0; c < im->channels; c++)
+                if ((!mask) || mask[x][y])
+                    *pp++ = IE(im,x,y,c);
 
-  /* Sort the result */
+    /* Sort the result */
 
-  qsort (sortedPixels, nPix, sizeof (PIX_TYPE), pixelComparator);
+    qsort (sortedPixels, nPix, sizeof (PIX_TYPE), pixelComparator);
 
-  median = sortedPixels [nPix/2];
+    median = sortedPixels [nPix/2];
 
-  free (sortedPixels);
+    free (sortedPixels);
 
-  return median;
+    return median;
 }
 
 /**
- Computes the MAD (median absolute deviation) of the values of
- the pixels in an image:
+Computes the MAD (median absolute deviation) of the values of
+the pixels in an image:
 
-   median (abs (Y[i] - median (Y)))
+median (abs (Y[i] - median (Y)))
 
- If a mask is provided only masked values
- are considered. If mask is NULL, all pixels are counted.
- 
- @param im An image
- @param mask A mask, or NULL
- @returns The MAD of the pixel values
+If a mask is provided only masked values
+are considered. If mask is NULL, all pixels are counted.
+
+@param im An image
+@param mask A mask, or NULL
+@returns The MAD of the pixel values
 */
 PIX_TYPE
 imageMad (Image im, const char **mask)
 {
-  int x, y, c, nPix = imageNumOfPixels (im, mask);
-  PIX_TYPE *sortedPixels, *pp, median, mad;
+    int x, y, c, nPix = imageNumOfPixels (im, mask);
+    PIX_TYPE *sortedPixels, *pp, median, mad;
 
-  /* Copy the pixel values into a big array */
+    /* Copy the pixel values into a big array */
 
-  sortedPixels = (PIX_TYPE*) malloc (sizeof (PIX_TYPE) * nPix);
+    sortedPixels = (PIX_TYPE*) malloc (sizeof (PIX_TYPE) * nPix);
 
-  pp = sortedPixels;
-  for (x = 0; x < im->width; x++)
-    for (y = 0; y < im->height; y++)
-      for (c = 0; c < im->channels; c++)
-	if ((!mask) || mask[x][y])
-	  *pp++ = IE(im,x,y,c);
+    pp = sortedPixels;
+    for (x = 0; x < im->width; x++)
+        for (y = 0; y < im->height; y++)
+            for (c = 0; c < im->channels; c++)
+                if ((!mask) || mask[x][y])
+                    *pp++ = IE(im,x,y,c);
 
-  /* Sort the result */
+    /* Sort the result */
 
-  qsort (sortedPixels, nPix, sizeof (PIX_TYPE), pixelComparator);
+    qsort (sortedPixels, nPix, sizeof (PIX_TYPE), pixelComparator);
 
-  median = sortedPixels [nPix/2];
+    median = sortedPixels [nPix/2];
 
-  /* Now, subtract the median from the original pixel values */
+    /* Now, subtract the median from the original pixel values */
 
-  pp = sortedPixels;
-  for (x = 0; x < im->width; x++)
-    for (y = 0; y < im->height; y++)
-      for (c = 0; c < im->channels; c++)
-	if ((!mask) || mask[x][y])
-	  *pp++ = fabs(IE(im,x,y,c) - median); 
+    pp = sortedPixels;
+    for (x = 0; x < im->width; x++)
+        for (y = 0; y < im->height; y++)
+            for (c = 0; c < im->channels; c++)
+                if ((!mask) || mask[x][y])
+                    *pp++ = fabs(IE(im,x,y,c) - median); 
 
-  /* Sort the result */
+    /* Sort the result */
 
-  qsort (sortedPixels, nPix, sizeof (PIX_TYPE), pixelComparator);
+    qsort (sortedPixels, nPix, sizeof (PIX_TYPE), pixelComparator);
 
-  mad = sortedPixels [nPix/2];
+    mad = sortedPixels [nPix/2];
 
-  free (sortedPixels);
+    free (sortedPixels);
 
-  return mad;
+    return mad;
 }
 
 /**
- Computes the number of pixels in an image. If a mask is
- provided only masked values are considered. If mask is
- NULL, all pixels are counted.
- 
- @param im An image
- @param mask A mask, or NULL
- @returns The number of pixel values in an image.
+Computes the number of pixels in an image. If a mask is
+provided only masked values are considered. If mask is
+NULL, all pixels are counted.
+
+@param im An image
+@param mask A mask, or NULL
+@returns The number of pixel values in an image.
 */
 int
 imageNumOfPixels (Image im, const char **mask)
 {
-  int x, y, nPix = 0;
+    int x, y, nPix = 0;
 
-  if (!mask)
-    nPix = im->width * im->height * im->channels;
-  else
+    if (!mask)
+        nPix = im->width * im->height * im->channels;
+    else
     {
-      for (x = 0; x < im->width; x++)
-	for (y = 0; y < im->height; y++)
-	  if (mask[x][y])
-	    nPix++;
-      nPix *= im->channels;
+        for (x = 0; x < im->width; x++)
+            for (y = 0; y < im->height; y++)
+                if (mask[x][y])
+                    nPix++;
+        nPix *= im->channels;
     }
 
-  return nPix;
+    return nPix;
 }
 
 
@@ -1721,20 +1721,20 @@ void computeImageStatisticsMask(ImageStatistics *is, Image im, const char **mask
     for(x = 0; x < im->width; x++){
         for(y = 0; y < im->height; y++){
             for(c = 0; c < im->channels; c++){
-	      if(!mask || mask[x][y]){
-                sum += IE(im,x,y,c);
-		nPix++;
-		
-                if(first || is->min > IE(im,x,y,c)){
-		  is->min = IE(im,x,y,c);
-		  is->min_x = x; is->min_y = y; is->min_c = c;
+                if(!mask || mask[x][y]){
+                    sum += IE(im,x,y,c);
+                    nPix++;
+
+                    if(first || is->min > IE(im,x,y,c)){
+                        is->min = IE(im,x,y,c);
+                        is->min_x = x; is->min_y = y; is->min_c = c;
+                    }
+                    if(first || is->max < IE(im,x,y,c)){
+                        is->max = IE(im,x,y,c);
+                        is->max_x = x; is->max_y = y; is->max_c = c;
+                    }
+                    first = 0;
                 }
-                if(first || is->max < IE(im,x,y,c)){
-		  is->max = IE(im,x,y,c);
-		  is->max_x = x; is->max_y = y; is->max_c = c;
-                }
-		first = 0;
-	      }
             }
         }
     }
@@ -1744,9 +1744,9 @@ void computeImageStatisticsMask(ImageStatistics *is, Image im, const char **mask
     for(x = 0; x < im->width; x++){
         for(y = 0; y < im->height; y++){
             for(c = 0; c < im->channels; c++){
-	       if(!mask || mask[x][y]){
-		 sqsum += SQR(IE(im,x,y,c) - is->mean);
-	       }
+                if(!mask || mask[x][y]){
+                    sqsum += SQR(IE(im,x,y,c) - is->mean);
+                }
             }
         }
     }

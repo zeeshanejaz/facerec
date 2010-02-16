@@ -39,26 +39,26 @@ OTHER DEALINGS IN THE SOFTWARE.
 typedef char** ListOfStrings;
 
 /**
-  image_list
-  
-  This is a data structure that sorts the images by the subject and replicates. s inticates
-  a subject or paticular person and r indicates a replicate of that person.  The final data
-  structure should look like this:
-    s1r1-s1r2-s1r3-...-NULL
-     |
-    s2r1-s2r2-s3r3-...-NULL
-     |
-    ...
-     |
-    NULL
-  
-  This list is to allow for different sized classes for use in the LDA training.
-  
-  Node fields:
-    filename:        name of file image was read from.
-    image_number:    index to image in the data matrix
-    next_replicate:  pointer to node containing the next replicate
-    next_subject:    pointer to node contianing the next subject
+image_list
+
+This is a data structure that sorts the images by the subject and replicates. s inticates
+a subject or paticular person and r indicates a replicate of that person.  The final data
+structure should look like this:
+s1r1-s1r2-s1r3-...-NULL
+|
+s2r1-s2r2-s3r3-...-NULL
+|
+...
+|
+NULL
+
+This list is to allow for different sized classes for use in the LDA training.
+
+Node fields:
+filename:        name of file image was read from.
+image_number:    index to image in the data matrix
+next_replicate:  pointer to node containing the next replicate
+next_subject:    pointer to node contianing the next subject
 */
 
 typedef struct image_list_node {

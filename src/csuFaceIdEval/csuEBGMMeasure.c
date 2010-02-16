@@ -64,7 +64,7 @@ int completed = 0;
 int total = 0;
 
 /* Displays the useage information for this program and information about what the 
-   program does. */
+program does. */
 void usage( const char* name){
     printf("useage: %s imagelist.srt face_graph_dir dist_measure distance_dir\n\n",name);
 
@@ -104,9 +104,9 @@ void usage( const char* name){
     printf("\n");
     exit(1);
 }
-  
-        
-        
+
+
+
 void processCommand(int argc, char** argv, Arguments* args) {
     int i;
     int param_num = 0;
@@ -223,7 +223,7 @@ void NormalizeGeometry(FaceGraph f1){
 void computeDistanceMatrix(Matrix distance, FaceGraph* graphs, int mini, int maxi, int minj, int maxj, FaceGraphSimilarity distMeasure){
     int i,j;
     static time_t current_time = 0;
-    
+
     if( (maxi - mini > MAX_BLOCK_SIZE) || (maxi - mini > MAX_BLOCK_SIZE) ){
         int sizei = maxi - mini;
         int sizej = maxj - minj;
@@ -232,7 +232,7 @@ void computeDistanceMatrix(Matrix distance, FaceGraph* graphs, int mini, int max
         computeDistanceMatrix(distance, graphs, mini, mini+sizei/2, minj+sizej/2, maxj, distMeasure);
         computeDistanceMatrix(distance, graphs, mini+sizei/2, maxi, minj+sizej/2, maxj, distMeasure);
         if(current_time + 10 < time(NULL)) {
-        	/* Estimate the remaining time and print status report */
+            /* Estimate the remaining time and print status report */
             int hour, min, sec;
             double remaining_time;
             current_time = time(NULL);
@@ -265,9 +265,9 @@ int main(int argc, char** argv){
     int i, j;
     Arguments args;
     DistDirNode* distrec;
-    
+
     processCommand(argc, argv, &args);
-    
+
     MESSAGE("Reading in image names");
     imagenames = getImageNames(args.imageNamesFile, &imageCount);
 
@@ -294,7 +294,7 @@ int main(int argc, char** argv){
         /* Create distance matrix */
         completed = 0;
         total = imageCount*imageCount;
-        
+
         MESSAGE("Computing Distance Matrix");
         start_time = time(NULL);
 

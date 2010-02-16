@@ -57,11 +57,11 @@ typedef struct {
 Arguments;
 
 /*
- * usage
- *
- * Display a standard usage parameters or help if there is a problem with the
- * command line.
- */
+* usage
+*
+* Display a standard usage parameters or help if there is a problem with the
+* command line.
+*/
 void usage(const char* name){
     printf("Usage: %s [OPTIONS] input_dir imagelist output_dir mask_file\n",name);
     printf("  Computes Gabor Jets at a regular interval and outputs the values in sfi format\n");
@@ -85,7 +85,7 @@ void processCommand(int argc, char** argv, Arguments* args) {
     args->maskFile       = NULL;
     args->inputDir       = NULL;
     args->sfiDir         = NULL;
-    
+
     args->gridStartX     = GRID_START_X;
     args->gridStartY     = GRID_START_Y;
     args->gridSpaceX     = GRID_SPACE_X;
@@ -150,7 +150,7 @@ void convertImages(Arguments* args){
     int x, y,i,j;
     char imagename[MAX_FILENAME_LENGTH];
     char filename[MAX_FILENAME_LENGTH];
-    
+
     MESSAGE("Creating gabor masks.");
     masks = readMasksFile(args->maskFile);
 
@@ -162,7 +162,7 @@ void convertImages(Arguments* args){
         }
     }
 
-       
+
     list = fopen(args->imageList,"r");
     if(!list){
         printf("Error opening file: %s\n", args->imageList);
@@ -172,20 +172,20 @@ void convertImages(Arguments* args){
     while(fscanf(list, "%s", imagename) == 1){
         Image im;
         Image grid;
-        
+
         sprintf(filename, "%s\\%s", args->inputDir, imagename);
         im = readRawImage(filename);
         MESSAGE1ARG("Processing file: %s",filename);
 
         /* Find the number of points in the grid */
-        
+
         i = 0;
         for( x = args->gridStartX; x < im->width; x += args->gridSpaceX){
             for( y = args->gridStartY; y < im->height; y+= args->gridSpaceY){
                 i++;
             }
         }
-        
+
         grid = makeImage(i,masks->size,1);
 
         /* Compute convolutions */
@@ -198,7 +198,7 @@ void convertImages(Arguments* args){
                 }
                 i++;
             }
-            
+
         }
 
         sprintf(filename, "%s\\%s", args->sfiDir, imagename);
@@ -209,9 +209,9 @@ void convertImages(Arguments* args){
 
     }
 
-    
+
     fclose(list);
-   
+
 }
 
 int main(int argc, char** argv){

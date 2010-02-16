@@ -43,12 +43,12 @@ double WiskottDCFree;
 /*************************** Gabor Parameters ******************************/
 
 /* These parameters hold on to the information
- * needed for the gabor kernel.  For many
- * applications, it is assumed that every other
- * gabor kernel is identical but out of phase by
- * 90 degrees (even and odd).  Jets assume this
- * structure and store complex values.  Therefore
- * a jet stores length/2 complex values. */
+* needed for the gabor kernel.  For many
+* applications, it is assumed that every other
+* gabor kernel is identical but out of phase by
+* 90 degrees (even and odd).  Jets assume this
+* structure and store complex values.  Therefore
+* a jet stores length/2 complex values. */
 typedef struct{
     int length;
 
@@ -74,8 +74,8 @@ void freeJetParams(GaborJetParams params);
 /******************************** Gabor Mask *******************************/
 
 /* This structure holds on to images of gabor kernels that
- * are used in convolution to determine the gabor coeffecents
- */
+* are used in convolution to determine the gabor coeffecents
+*/
 typedef struct{
     int size;
     Image *masks;
@@ -172,11 +172,11 @@ typedef struct{
 typedef graph_discription *GraphDiscription;
 
 /* This function reads in a discription of a graph and loads it into
- * a graph discription structure.  The file format is asci were the
- * first token is the number of vericies followed by verticy labels
- * and guess x, y coordinates.  This is followed by the number of edges
- * and the indexes of the vericies that they connect.
- */
+* a graph discription structure.  The file format is asci were the
+* first token is the number of vericies followed by verticy labels
+* and guess x, y coordinates.  This is followed by the number of edges
+* and the indexes of the vericies that they connect.
+*/
 GraphDiscription readGraphDiscription(const char* filename);
 void             saveGraphDiscription(const char* filename,GraphDiscription);
 void             freeGraphDiscription(GraphDiscription gd);

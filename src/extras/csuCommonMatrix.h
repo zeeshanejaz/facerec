@@ -30,7 +30,7 @@ Implementation of Laplacianfaces Algorithm for Face Recognition
 November 2007...
 
 Changes in this file:
-	Added a new function to subtract a scalar value from a matrix
+Added a new function to subtract a scalar value from a matrix
 */
 
 #ifndef MATRIX_INCLUDED
@@ -118,10 +118,10 @@ extern "C" Matrix matrixRows( const Matrix mat, int row1, int row2);
 extern "C" Matrix duplicateMatrix(const Matrix mat);
 
 typedef enum {
-  octaveFormat = 0x00,
-  matlabFormat = 0x01,
-  appendToFile = 0x02,
-  formatMask   = 0x01
+    octaveFormat = 0x00,
+    matlabFormat = 0x01,
+    appendToFile = 0x02,
+    formatMask   = 0x01
 } MatrixSaveMode;
 
 extern MatrixSaveMode asciiFormat;  /* set to zero for octive format otherwize use matlab */
@@ -166,7 +166,7 @@ extern "C" Matrix calculateStandardDeviation(Matrix ims);
 
 extern "C" Matrix choleskyDecomposition (Matrix B);
 /*used by cholesky decomposition, computes sum 
-	upto a specified row and specified column*/
+upto a specified row and specified column*/
 extern "C" double computeDigonalSum (Matrix LP, int i, int j);
 /*END: Changed by Zeeshan*/
 

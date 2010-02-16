@@ -1,8 +1,8 @@
 /**
-  File:    csuRankCurve.c
-  Authors: J. Ross Beveridge, David S. Bolme
-  Date:    May 24, 2002                                                  
-  ============================================================================
+File:    csuRankCurve.c
+Authors: J. Ross Beveridge, David S. Bolme
+Date:    May 24, 2002                                                  
+============================================================================
 */
 
 /*
@@ -31,7 +31,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 */
 
 /*  csuRankCurve reads distances between probe and gallery images and generates
-    a single new text file that lists recognition rates at different ranks.
+a single new text file that lists recognition rates at different ranks.
 */
 
 #define OPENING "Cumulative Match Curve from Probe, Gallery and Distances Files."
@@ -67,12 +67,12 @@ Arguments;
 
 
 /* usage
- 
-   Remind the user the usage of running this program.
-   The command of running the program should be: run and the index of the training sets. 
-   All the other sets except the training sets will go to testing sets automatically.
- 
-   INPUT:  prog is the excutable program name.
+
+Remind the user the usage of running this program.
+The command of running the program should be: run and the index of the training sets. 
+All the other sets except the training sets will go to testing sets automatically.
+
+INPUT:  prog is the excutable program name.
 */
 void usage(const char* prog) {
     printf("Usage: %s [OPTIONS] probesNamesFile.[list/srt] galleryNamesFile.[list/srt] [distDir]+ \n", prog);
@@ -91,10 +91,10 @@ void usage(const char* prog) {
 }
 
 /*
-   process_command
- 
-   process the command line arguments.  see usage for a description of functionality.
- */
+process_command
+
+process the command line arguments.  see usage for a description of functionality.
+*/
 void process_command(int argc, char** argv, Arguments* args) {
     int i;
     int param_num;
@@ -182,9 +182,9 @@ void process_command(int argc, char** argv, Arguments* args) {
 
 
 /* sameSubject
- *
- * Compares two image names to determine if they corrispond to the same subject.
- */
+*
+* Compares two image names to determine if they corrispond to the same subject.
+*/
 int sameSubject(char* name1, char* name2, int width) {
     int len1, len2, i, flag;
 
@@ -205,10 +205,10 @@ int sameSubject(char* name1, char* name2, int width) {
 
 
 /*  isInImageList
- *
- *  This checks to see if filename is included in the ImageNames list. This is done by traversing
- *  the list and determining if the filenames match.
- */
+*
+*  This checks to see if filename is included in the ImageNames list. This is done by traversing
+*  the list and determining if the filenames match.
+*/
 int isInImagelist(char* filename, ImageList* ImageNames) {
     ImageList *subject, *replicate;
 
@@ -224,13 +224,13 @@ int isInImagelist(char* filename, ImageList* ImageNames) {
 }
 
 /*  getProbeRank
- *
- *   This function reads the distance file for a probe image and determines the rank of the
- *   nearest image of the same subject.  The gallery distances are stored in an array.  As
- *   they are read in the distance to the closest image of the same subject is determined.
- *   The array is then scanned again to determine the number of images that are closer to
- *   the original (the rank).  The file is then closed and the rank is returned.  
- */
+*
+*   This function reads the distance file for a probe image and determines the rank of the
+*   nearest image of the same subject.  The gallery distances are stored in an array.  As
+*   they are read in the distance to the closest image of the same subject is determined.
+*   The array is then scanned again to determine the number of images that are closer to
+*   the original (the rank).  The file is then closed and the rank is returned.  
+*/
 typedef struct {
     char* galleryName;
     double distance;
@@ -239,83 +239,83 @@ DistanceRec;
 
 int getProbeRank(char* distDir, char* probeName, int numGalleryImages,
                  ImageList* galleryImageNames, DistanceRec* distRecs, int width) {
-    int i;
-    FILE* distanceFile = NULL;
-    char filename[MAX_FILENAME_LENGTH];
-    char galleryName[MAX_FILENAME_LENGTH];
-    double distance;
-    double minDistance;
-    int rank = -1;
-    int noMinFound = 1;
+                     int i;
+                     FILE* distanceFile = NULL;
+                     char filename[MAX_FILENAME_LENGTH];
+                     char galleryName[MAX_FILENAME_LENGTH];
+                     double distance;
+                     double minDistance;
+                     int rank = -1;
+                     int noMinFound = 1;
 
-    sprintf(filename, "%s\\%s", distDir, probeName);
+                     sprintf(filename, "%s\\%s", distDir, probeName);
 
-    if (debuglevel > 0)
-        fprintf(stdout, "Reading probe distance file: %s ", filename);
-    fflush(stdout);
+                     if (debuglevel > 0)
+                         fprintf(stdout, "Reading probe distance file: %s ", filename);
+                     fflush(stdout);
 
-    distanceFile = fopen(filename, "r");
+                     distanceFile = fopen(filename, "r");
 
-    if(!distanceFile){
-        printf("Error opening distance file: %s", filename);
-        exit(1);
-    }
+                     if(!distanceFile){
+                         printf("Error opening distance file: %s", filename);
+                         exit(1);
+                     }
 
-    minDistance = 0.0;
-    noMinFound = 1;
-    i = 0;
-    while ((fscanf(distanceFile, "%s %lf", galleryName, &distance) == 2) && (i < numGalleryImages)) {
+                     minDistance = 0.0;
+                     noMinFound = 1;
+                     i = 0;
+                     while ((fscanf(distanceFile, "%s %lf", galleryName, &distance) == 2) && (i < numGalleryImages)) {
 
-        if ( !distRecs[i].galleryName && isInImagelist(galleryName, galleryImageNames) ) {
-            distRecs[i].galleryName = strdup(galleryName);
-            if (sameSubject(probeName, galleryName, width)) {
-                if (noMinFound) {
-                    minDistance = distance; noMinFound = 0;}
-                else {
-                    minDistance = MIN(minDistance , distance); }
-            }
-            distRecs[i].distance = distance;
-            i++;
-        } else if ( distRecs[i].galleryName && strcmp(distRecs[i].galleryName, galleryName) == 0 ) {
-            if (sameSubject(probeName, galleryName, width)) {
-                if (noMinFound) {
-                    minDistance = distance;
-                    noMinFound = 0;
-                } else {
-                    minDistance = minDistance < distance ? minDistance : distance;
-                }
-            }
-            distRecs[i].distance = distance;
-            i++;
-        }
-    }
+                         if ( !distRecs[i].galleryName && isInImagelist(galleryName, galleryImageNames) ) {
+                             distRecs[i].galleryName = strdup(galleryName);
+                             if (sameSubject(probeName, galleryName, width)) {
+                                 if (noMinFound) {
+                                     minDistance = distance; noMinFound = 0;}
+                                 else {
+                                     minDistance = MIN(minDistance , distance); }
+                             }
+                             distRecs[i].distance = distance;
+                             i++;
+                         } else if ( distRecs[i].galleryName && strcmp(distRecs[i].galleryName, galleryName) == 0 ) {
+                             if (sameSubject(probeName, galleryName, width)) {
+                                 if (noMinFound) {
+                                     minDistance = distance;
+                                     noMinFound = 0;
+                                 } else {
+                                     minDistance = minDistance < distance ? minDistance : distance;
+                                 }
+                             }
+                             distRecs[i].distance = distance;
+                             i++;
+                         }
+                     }
 
-    if (debuglevel > 0)
-        printf("MinDistance: %f ", minDistance);
-    DEBUG_CHECK(i == numGalleryImages, "Error: All distance files must list images in the same order");
+                     if (debuglevel > 0)
+                         printf("MinDistance: %f ", minDistance);
+                     DEBUG_CHECK(i == numGalleryImages, "Error: All distance files must list images in the same order");
 
-    fclose(distanceFile);
+                     fclose(distanceFile);
 
-    rank = 0;
+                     rank = 0;
 
-    for (i = 0; i < numGalleryImages; i++) {
-        if (!sameSubject(probeName, distRecs[i].galleryName, width) && distRecs[i].distance <= minDistance)
-            rank++;
-    }
+                     for (i = 0; i < numGalleryImages; i++) {
+                         if (!sameSubject(probeName, distRecs[i].galleryName, width) && distRecs[i].distance <= minDistance)
+                             rank++;
+                     }
 
-    if (debuglevel > 0)
-        fprintf(stdout, "Rank: %d\n", rank);
-    fflush(stdout);
+                     if (debuglevel > 0)
+                         fprintf(stdout, "Rank: %d\n", rank);
+                     fflush(stdout);
 
-    return rank;
+                     return rank;
 }
 
 
 /*  allocate/free RankCurves
- *
- *  These functions allocates a two dimensional array used for storing the cumlative
- *  rank curves.
- */
+*
+*  These functions allocates a two dimensional array used for storing the cumlative
+*  rank curves.
+*/
 
 int** allocateRankCurves(int numDistDirs, int numGalleryImages) {
     int **rankcurve;
@@ -345,85 +345,85 @@ void freeRankCurves(int **rankcurve, int numDistDirs, int numGalleryImages) {
 }
 
 /* buildRankCurves
- *
- * This function reads in each probe file consecutivly and builds rank curves for
- * each distance directory. 
- */
+*
+* This function reads in each probe file consecutivly and builds rank curves for
+* each distance directory. 
+*/
 void buildRankCurves(ImageList* probeImageNames, int numProbeImages,
                      ImageList* galleryImageNames, int numGalleryImages, Arguments *args) {
-    int i, j;
-    int rank;
-    int** rankcurve;
-    ImageList* subject;
-    ImageList* replicate;
-    FILE* imageRankFile;
-    FILE* cumulativeRankFile;
-    DistanceRec* distRecs = (DistanceRec*)malloc(sizeof(DistanceRec) * numGalleryImages);
-    char filename[MAX_FILENAME_LENGTH];
+                         int i, j;
+                         int rank;
+                         int** rankcurve;
+                         ImageList* subject;
+                         ImageList* replicate;
+                         FILE* imageRankFile;
+                         FILE* cumulativeRankFile;
+                         DistanceRec* distRecs = (DistanceRec*)malloc(sizeof(DistanceRec) * numGalleryImages);
+                         char filename[MAX_FILENAME_LENGTH];
 
-    /* Set up the rank curve and output files */
-    sprintf(filename, "%s\\%s_Images.txt", args->outDir, args->outFile);
-    imageRankFile = fopen(filename, "w");
-    DEBUG_CHECK(imageRankFile, "Error opening file");
+                         /* Set up the rank curve and output files */
+                         sprintf(filename, "%s\\%s_Images.txt", args->outDir, args->outFile);
+                         imageRankFile = fopen(filename, "w");
+                         DEBUG_CHECK(imageRankFile, "Error opening file");
 
-    sprintf(filename, "%s\\%s_Curve.txt", args->outDir, args->outFile);
-    cumulativeRankFile = fopen(filename, "w");
-    DEBUG_CHECK(cumulativeRankFile, "Error opening file");
+                         sprintf(filename, "%s\\%s_Curve.txt", args->outDir, args->outFile);
+                         cumulativeRankFile = fopen(filename, "w");
+                         DEBUG_CHECK(cumulativeRankFile, "Error opening file");
 
-    /* Allocate Memory for the rank curve data */
-    rankcurve = allocateRankCurves(args->numDistDirs, numGalleryImages);
+                         /* Allocate Memory for the rank curve data */
+                         rankcurve = allocateRankCurves(args->numDistDirs, numGalleryImages);
 
-    /* Build up the rank information */
-    DEBUG_CHECK(distRecs, "Error Allocating Memory.");
-    for (i = 0; i < numGalleryImages; i++) {
-        distRecs[i].galleryName = NULL;
-        distRecs[i].distance = 0.0;
-    }
-    /* Print out file headers */
-    fprintf(imageRankFile, "%s", "ProbeName");
-    for (i = 0; i < args->numDistDirs; i++) {
-        fprintf(imageRankFile, "\t%s", args->distDirs[i]);
-    }
-    fprintf(imageRankFile, "\n");
+                         /* Build up the rank information */
+                         DEBUG_CHECK(distRecs, "Error Allocating Memory.");
+                         for (i = 0; i < numGalleryImages; i++) {
+                             distRecs[i].galleryName = NULL;
+                             distRecs[i].distance = 0.0;
+                         }
+                         /* Print out file headers */
+                         fprintf(imageRankFile, "%s", "ProbeName");
+                         for (i = 0; i < args->numDistDirs; i++) {
+                             fprintf(imageRankFile, "\t%s", args->distDirs[i]);
+                         }
+                         fprintf(imageRankFile, "\n");
 
-    for (subject = probeImageNames; subject != NULL ; subject = subject->next_subject) {
-        for (replicate = subject; replicate != NULL ; replicate = replicate->next_replicate) {
-            printf("Processing Probe: %s       \r",replicate->filename);
-            fprintf(imageRankFile, "%s", replicate->filename);
-            for (i = 0; i < args->numDistDirs; i++) {
-                int rank = getProbeRank(args->distDirs[i], replicate->filename, numGalleryImages, galleryImageNames, distRecs, args->idWidth);
-                rankcurve[i][rank]++; /* add to the ranking histogram */
-                fprintf(imageRankFile, "\t%d", rank);
-            }
-            fprintf(imageRankFile, "\n");
-        }
-    }
-    free(distRecs);
+                         for (subject = probeImageNames; subject != NULL ; subject = subject->next_subject) {
+                             for (replicate = subject; replicate != NULL ; replicate = replicate->next_replicate) {
+                                 printf("Processing Probe: %s       \r",replicate->filename);
+                                 fprintf(imageRankFile, "%s", replicate->filename);
+                                 for (i = 0; i < args->numDistDirs; i++) {
+                                     int rank = getProbeRank(args->distDirs[i], replicate->filename, numGalleryImages, galleryImageNames, distRecs, args->idWidth);
+                                     rankcurve[i][rank]++; /* add to the ranking histogram */
+                                     fprintf(imageRankFile, "\t%d", rank);
+                                 }
+                                 fprintf(imageRankFile, "\n");
+                             }
+                         }
+                         free(distRecs);
 
-    /* Output the final rank curve information. */
-    fprintf(cumulativeRankFile, "%s", "Rank");
-    for (j = 0; j < args->numDistDirs; j++) {
-        fprintf(cumulativeRankFile, "\t%s", args->distDirs[j]);
-        fprintf(cumulativeRankFile, "\t%s", args->distDirs[j]);
-    }
-    fprintf(cumulativeRankFile, "\n");
+                         /* Output the final rank curve information. */
+                         fprintf(cumulativeRankFile, "%s", "Rank");
+                         for (j = 0; j < args->numDistDirs; j++) {
+                             fprintf(cumulativeRankFile, "\t%s", args->distDirs[j]);
+                             fprintf(cumulativeRankFile, "\t%s", args->distDirs[j]);
+                         }
+                         fprintf(cumulativeRankFile, "\n");
 
-    rank = 0;
-    for ( i = 0; i < numGalleryImages; i++) {
-        fprintf(cumulativeRankFile, "%d", i);
-        for (j = 0; j < args->numDistDirs; j++) {
-            if (i != 0)
-                rankcurve[j][i] += rankcurve[j][i - 1];
-            fprintf(cumulativeRankFile, "\t%d", rankcurve[j][i]);
-            fprintf(cumulativeRankFile, "\t%f", ((float)rankcurve[j][i]) / numProbeImages);
-        }
-        fprintf(cumulativeRankFile, "\n");
-    }
+                         rank = 0;
+                         for ( i = 0; i < numGalleryImages; i++) {
+                             fprintf(cumulativeRankFile, "%d", i);
+                             for (j = 0; j < args->numDistDirs; j++) {
+                                 if (i != 0)
+                                     rankcurve[j][i] += rankcurve[j][i - 1];
+                                 fprintf(cumulativeRankFile, "\t%d", rankcurve[j][i]);
+                                 fprintf(cumulativeRankFile, "\t%f", ((float)rankcurve[j][i]) / numProbeImages);
+                             }
+                             fprintf(cumulativeRankFile, "\n");
+                         }
 
-    /* clean up the files */
-    freeRankCurves(rankcurve, args->numDistDirs, numGalleryImages);
-    fclose(cumulativeRankFile);
-    fclose(imageRankFile);
+                         /* clean up the files */
+                         freeRankCurves(rankcurve, args->numDistDirs, numGalleryImages);
+                         fclose(cumulativeRankFile);
+                         fclose(imageRankFile);
 }
 
 /* main */
