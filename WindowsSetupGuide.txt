@@ -1,0 +1,14 @@
+Included compatible binary version of GNUPLOT for windows from http://www.tatsuromatsuoka.com/gnuplot/Eng/cygbin/ in the folder winFaceIdEval/gnuplot.
+
+Download and install Python for windows from http://www.python.org/
+
+Open the solution file src/winFaceIdEval.sln in Microsoft Visual Studio 2008 for compilation. After compilation the generated binaries will automatically copy to the winFaceIdEval/bin folder.
+
+Run the terminal from the shortcut provided. This shortcut invokes the delay load variable feature of command prompt and is hence requried. Any script can be execute now using command scripts/scriptname.bat
+
+This archive was downloaded from http://visprs.com/ project hosted at http://code.google.com/facerec/
+
+Author:
+Zeeshan Ejaz Bhatti
+Vision and Pattern Recognition Systems
+http://visprs.com/members/zeeshan
