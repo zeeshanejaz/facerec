@@ -69,6 +69,13 @@ typedef struct
   char* dist_lpp;
 /*END: Changed by Zeeshan: for LPP*/ 
 
+/*START:	Changed by Zeeshan: For ICA*/
+  int useICA;
+  int arch;
+  double learningRate;
+  int blockSize;
+  int iterations;
+/*END:		Changed by Zeeshan: For ICA*/
 
   int argc;
   char **argv;
@@ -117,6 +124,14 @@ void usage(const char* name)
   printf("    -lppDist <char*>:    	   Distance measure for weight map.\n      DEFAULT = MahCosine\n");
 /*END: Changed by Zeeshan: for LPP*/
  
+/*START: Changed by Zeeshan: for ICA*/
+  printf("    -ica:    		   enable ica training. (Must not use LDA or LPP when ON)\n        DEFAULT = PCA Only\n");
+  printf("    -icaArch <int>:      architechture of ICA to use.\n        DEFAULT = 1\n");
+  printf("    -lBlocks <int>: 	   size of blocks during learning.\n        DEFAULT = 50\n");
+  printf("    -lItrs <int>:        number of iterations for learning.\n      DEFAULT = 1000\n");
+  printf("    -lRate <float>:      the learning rate for each iteration.\n      DEFAULT = 0.0002\n");
+/*END: Changed by Zeeshan: for ICA*/
+
   printf ("    -quiet:                Turn off all messages.\n"
 	  "        DEFAULT = messages on\n");
   printf ("    -debuglevel <int>:     Level of debug information to display"
@@ -158,6 +173,14 @@ process_command (int argc, char **argv, Arguments * args)
   args->useAdaptiveK    = 0;
   args->dist_lpp        = strdup("MahCosine");
 /*END: Changed by Zeeshan: for LPP*/
+
+/*START:	Changed by Zeeshan: For ICA*/
+  args->useICA		= 0;
+  args->arch		= 1;
+  args->learningRate	= 0.0002;
+  args->blockSize	= 50;
+  args->iterations	= 1000;
+/*END:		Changed by Zeeshan: For ICA*/
 
   debuglevel = 0;
 
@@ -201,6 +224,14 @@ process_command (int argc, char **argv, Arguments * args)
     else if (readOptionInt (argc, argv, &i, "-lppDropNVectors", &(args->lppDropNVectors) )) ;
     else if (readOptionString (argc, argv, &i, "-lppDist", &(args->dist_lpp) )) ;
 /*END: Changed by Zeeshan: for LPP*/
+
+/*START: Changed by Zeeshan: for ICA*/
+    else if (readOption (argc, argv, &i, "-ica" ))                     { args->useICA = 1; }
+    else if (readOptionInt (argc, argv, &i, "-icaArch", &(args->arch) )) ;
+    else if (readOptionInt (argc, argv, &i, "-lBlocks", &(args->blockSize) )) ;
+    else if (readOptionInt (argc, argv, &i, "-lItrs", &(args->iterations) )) ;
+    else if (readOptionDouble (argc, argv, &i, "-lRate", &(args->learningRate) )) ;
+/*END: Changed by Zeeshan: for ICA*/
 
     else if (readOptionDouble (argc, argv, &i, "-cutOff", &(args->cutOff)))
       {
@@ -436,6 +467,10 @@ main (int argc, char *argv[])
 /*START Changed by Zeeshan: For LPP*/
  ,args.uselpp, args.k_lpp, args.useAdaptiveK, args.lppDropNVectors, (char*)args.dist_lpp
 /*END Changed by Zeeshan: For LPP*/
+/*START Changed by Zeeshan: For ICA*/
+  ,args.useICA, args.arch, args.learningRate, args.blockSize, args.iterations
+/*END 	Changed by Zeeshan: For ICA*/
+
 );
 
   MESSAGE("Training extrapersonal subspace");
@@ -444,6 +479,9 @@ main (int argc, char *argv[])
 /*START Changed by Zeeshan: For LPP*/
  ,args.uselpp, args.k_lpp, args.useAdaptiveK, args.lppDropNVectors, (char*)args.dist_lpp
 /*END Changed by Zeeshan: For LPP*/
+/*START Changed by Zeeshan: For ICA*/
+  ,args.useICA, args.arch, args.learningRate, args.blockSize, args.iterations
+/*END 	Changed by Zeeshan: For ICA*/
 );
   MESSAGE("Saving intrapersonal training file");
 

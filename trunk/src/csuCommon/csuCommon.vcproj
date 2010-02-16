@@ -194,6 +194,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\csuFaceIdEval\csuSubspaceIndependent.c"
+				>
+			</File>
+			<File
+				RelativePath="..\csuFaceIdEval\csuSubspaceIndependent.h"
+				>
+			</File>
+			<File
 				RelativePath="..\csuFaceIdEval\csuSubspaceLaplacian.c"
 				>
 			</File>
